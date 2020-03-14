@@ -24,7 +24,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Color _monitorToggleColor = Colors.white;
   int _brightnessValue = 200;
   int _alertDuration = 10;
-  String _settings = 'BRIGHTNESS:200;ALERTDURATION:10;';
+  String _settings = 'BRIGHTNESS:200|ALERTDURATION:10|Monitor:ON|;';
 
   @override
   void initState() {
@@ -34,15 +34,21 @@ class _MyHomePageState extends State<MyHomePage> {
         _settings = value;
 
         String _tempBrightness =
-            _settings.substring(0, _settings.indexOf(';') + 1);
-        String _tempAlertDuration = _settings.replaceAll(_tempBrightness, '');
+            _settings.substring(0, _settings.indexOf('|') + 1);
+        String _tempAlertDuration = _settings
+            .replaceAll(_tempBrightness, '');
+        _tempAlertDuration = _tempAlertDuration.substring(0, _tempAlertDuration.indexOf('|')+1);
+        String _tempMonitorToggle =
+            _settings.replaceAll(_tempBrightness + _tempAlertDuration, '');
 
         setState(() {
-          _brightnessValue = int.parse(_tempBrightness.substring(
-              _tempBrightness.indexOf(':') + 1, _tempBrightness.indexOf(';')));
-          _alertDuration = int.parse(_tempAlertDuration.substring(
-              _tempAlertDuration.indexOf(':') + 1,
-              _tempAlertDuration.indexOf(';')));
+          _brightnessValue = int.parse(_extractValue(_tempBrightness));
+          _alertDuration = int.parse(_extractValue(_tempAlertDuration));
+          if (_extractValue(_tempMonitorToggle).compareTo('ON') == 0) {
+            _monitorToggleColor = Colors.white;
+          } else {
+            _monitorToggleColor = Colors.black45;
+          }
         });
       }
     });
@@ -50,6 +56,11 @@ class _MyHomePageState extends State<MyHomePage> {
     print('_settings: ' + _settings);
     print('_brightnessValue: $_brightnessValue');
     print('_alertDuration: $_alertDuration');
+    if(_monitorToggleColor == Colors.white){
+      print('Monitor: ON');
+    } else {
+      print('Monitor: OFF');
+    }
   }
 
   @override
@@ -316,12 +327,18 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  String _extractValue(String setting) {
+    print('initial setting: ' +setting);
+    setting = setting.substring(setting.indexOf(':') + 1, setting.indexOf('|'));
+    print('resulting setting: ' +setting);
+    return setting;
+  }
+
   Future<File> _persistBrightnessSetting(int newValue) {
     //make sure that everything is in a unified format
     _settings = _settings.toUpperCase().trim().replaceAll(' ', '');
 
-    _settings = _settings.replaceRange(
-        _settings.indexOf(':') + 1, _settings.indexOf(';'), '$newValue');
+    _settings = _replaceValue(_settings, '$newValue');
 
     return widget.settingsStorage.writeSettings(_settings);
   }
@@ -330,15 +347,38 @@ class _MyHomePageState extends State<MyHomePage> {
     //make sure that everything is in a unified format
     _settings = _settings.toUpperCase().trim().replaceAll(' ', '');
 
-    String _tempBrightness = _settings.substring(0, _settings.indexOf(';') + 1);
+    String _tempBrightness = _settings.substring(0, _settings.indexOf('|') + 1);
     String _tempAlertDuration = _settings.replaceAll(_tempBrightness, '');
-    _tempAlertDuration = _tempAlertDuration.replaceRange(
-        _tempAlertDuration.indexOf(':') + 1,
-        _tempAlertDuration.indexOf(';'),
-        '$newValue');
+    _tempAlertDuration = _replaceValue(_tempAlertDuration, '$newValue');
 
     _settings = _tempBrightness + _tempAlertDuration;
     return widget.settingsStorage.writeSettings(_settings);
+  }
+
+  Future<File> _persistMonitorSetting(String newValue) {
+    //make sure that everything is in a unified format
+    _settings = _settings.toUpperCase().trim().replaceAll(' ', '');
+
+    String _tempBrightness = _settings.substring(0, _settings.indexOf('|') + 1);
+    String _tempAlertDuration = _settings.replaceAll(_tempBrightness, '');
+    _tempAlertDuration =
+        _tempAlertDuration.substring(0, _tempAlertDuration.indexOf('|') + 1);
+    String _tempMonitorToggle = _settings
+        .replaceAll(_tempBrightness + _tempAlertDuration, '');
+    print('_tempBrightness: ' + _tempBrightness);
+    print('_tempalertDuration: ' + _tempAlertDuration);
+    print('_tempMonitorToggle: ' + _tempMonitorToggle);
+    _tempMonitorToggle = _replaceValue(_tempMonitorToggle, newValue);
+
+    _settings = _tempBrightness + _tempAlertDuration + _tempMonitorToggle;
+    return widget.settingsStorage.writeSettings(_settings);
+  }
+
+  String _replaceValue(String setting, String newValue) {
+    print('replacementSetting: ' + setting);
+    print('repalcementValue: ' + newValue);
+    return setting.replaceRange(
+        setting.indexOf(':') + 1, setting.indexOf('|'), newValue);
   }
 
   void _setBrightness(int value, bool message) {
@@ -436,10 +476,12 @@ class _MyHomePageState extends State<MyHomePage> {
     print("MonitorOn");
     setState(() {
       _monitorToggleColor = Colors.white;
+
       if (stateChange) {
         lastRequest = "Monitor On";
       }
     });
+    _persistMonitorSetting('ON');
   }
 
   void _toggleMonitorOff(bool stateChange) {
@@ -451,6 +493,7 @@ class _MyHomePageState extends State<MyHomePage> {
         lastRequest = "Monitor Off";
       }
     });
+    _persistMonitorSetting('OFF');
   }
 
   void _rebootPi() {
