@@ -29,7 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _alertDuration = 10;
   String _settings = 'BRIGHTNESS:200|ALERTDURATION:10|Monitor:ON|;';
   bool _stateInitialized = false;
-  List<Widget> _costomCommands = List<Widget>();
+  List<Widget> _customCommands = List<Widget>();
 
   @override
   Widget build(BuildContext context) {
@@ -214,9 +214,9 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
-                padding: _deviceOrientation == Orientation.portrait ? EdgeInsets.all(16.0) : EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 4.0),
-                childAspectRatio: _deviceOrientation == Orientation.portrait ? 8.0 / 3.0 : 8.0 / 2,
-                children: _costomCommands,
+                padding: _deviceOrientation == Orientation.portrait ? EdgeInsets.all(16.0) : EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
+                childAspectRatio: _deviceOrientation == Orientation.portrait ? 8.0 / 4.5 : 8.0 / 2,
+                children: _customCommands,
               ),
             ),
             new Container(
@@ -349,13 +349,13 @@ class _MyHomePageState extends State<MyHomePage> {
         final List<Widget> _customCommandsTemp = List<Widget>();
         Card _customCommand = _createCommandCard("Test Command", "Test-notification", "Test-payload");
         Card _customCommand2 = _createCommandCard("Test Command", "Test-notification", "Test-payload");
-        Card _customCommand3= _createCommandCard("Test Command", "Test-notification", "Test-payload");
+        Card _customCommand3= _createCommandCard("Test Commandd", "Test-notification", "Test-payload");
         _customCommandsTemp.add(_customCommand);
         _customCommandsTemp.add(_customCommand2);
         _customCommandsTemp.add(_customCommand3);
 
         setState(() {
-          _costomCommands = _customCommandsTemp;
+          _customCommands = _customCommandsTemp;
           _brightnessValue = int.parse(_extractValue(_tempBrightness));
           _alertDuration = int.parse(_extractValue(_tempAlertDuration));
           if (_extractValue(_tempMonitorToggle).compareTo('ON') == 0) {
@@ -499,7 +499,15 @@ class _MyHomePageState extends State<MyHomePage> {
       MaterialPageRoute(builder: (context) => AddCommandPage()),
     );
     CommandArguments _commandArguments = result;
-    //ToDo create CustomCommandCard
+
+    Card _newCard = _createCommandCard(_commandArguments.title, _commandArguments.notification, _commandArguments.payload);
+    final List<Widget> _customCommandsTemp = List<Widget>();
+    _customCommandsTemp.addAll(_customCommands);
+    _customCommandsTemp.add(_newCard);
+
+    setState(() {
+      _customCommands = _customCommandsTemp;
+    });
   }
 
   Card _createCommandCard(String title, String notification, String payload) {
@@ -516,23 +524,18 @@ class _MyHomePageState extends State<MyHomePage> {
               child: FlatButton(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
                             title,
+                            softWrap: true,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                             textScaleFactor: 1.1,
                             style: TextStyle(
                               color: Colors.blue,
                             ),
                           ),
                         ],
-                      ),
-                    ),
-                  ],
                 ),
                 onPressed: () {
                   _sendCustomCommand(title, notification, payload);

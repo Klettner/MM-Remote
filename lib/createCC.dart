@@ -14,9 +14,8 @@ class _AddCommandPageState extends State<AddCommandPage> {
   final _payloadController = TextEditingController();
   bool _isComposingTitle = false;
   bool _isComposingNotification = false;
-  bool _isComposingPayload = false;
-  String _titleField = 'Command-name';
-  String _notificationField = 'Notification (send to mirror)';
+  String _titleField = 'Name (max. 13 characters)';
+  String _notificationField = 'Notification of mirror module';
   String _payloadField = 'Payload (optional)';
 
   @override
@@ -70,11 +69,6 @@ class _AddCommandPageState extends State<AddCommandPage> {
                 decoration: InputDecoration(
                   labelText: _payloadField,
                 ),
-                onChanged: (String text) {
-                  setState(() {
-                    _isComposingPayload = text.trim().length > 0;
-                  });
-                },
               ),
             ),
             ButtonBar(
@@ -91,7 +85,6 @@ class _AddCommandPageState extends State<AddCommandPage> {
                     setState(() {
                       _isComposingTitle = false;
                       _isComposingNotification = false;
-                      _isComposingPayload = false;
                     });
                   },
                 ),
@@ -122,7 +115,6 @@ class _AddCommandPageState extends State<AddCommandPage> {
     setState(() {
       _isComposingTitle = false;
       _isComposingNotification = false;
-      _isComposingPayload = false;
     });
     if(_noIllegalCharacters(title, notification, payload)) {
       Navigator.pop(
@@ -148,6 +140,11 @@ class _AddCommandPageState extends State<AddCommandPage> {
         if (payload.contains('|') || payload.contains(';')) {
           _payloadField = 'Payload should not contain | or ;';
           return false;
+        } else {
+          if(title.length > 13) {
+            _titleField = 'Name should not be longer than 13 characters';
+            return false;
+          }
         }
       }
     }
