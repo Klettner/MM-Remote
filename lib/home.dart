@@ -6,6 +6,9 @@ import 'package:mmremotecontrol/start.dart';
 import 'start.dart';
 import 'dart:io';
 import 'createCC.dart';
+import 'dart:async';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 class MyHomePage extends StatefulWidget {
   static const routeName = '/homePage';
@@ -234,7 +237,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               _isComposing = text.length > 0;
                             });
                           },
-                          onSubmitted: _evaluateAlert,
                           decoration: new InputDecoration.collapsed(
                             hintText: "  " + lastRequest,
                           ),
@@ -250,7 +252,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           tooltip:
                               'send an alert or send "/AlertDuration: int" to set the display-time of an alert',
                           onPressed: _isComposing
-                              ? () => _evaluateAlert(_textController.text)
+                              ? () => _evaluateAlert(_textController.text, context)
                               : null,
                         ),
                       ),
@@ -457,7 +459,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void _evaluateAlert(String text) {
+  void _evaluateAlert(String text, BuildContext context) {
     _textController.clear();
     setState(() {
       _isComposing = false;
@@ -696,4 +698,91 @@ class CommandArguments {
   final String payload;
 
   CommandArguments(this.title, this.notification, this.payload);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'notification': notification,
+      'payload': payload,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'Command{title: $title, notification: $notification, payload: $payload}';
+  }
+}
+
+class MirrorDatabase {
+  void main() async {
+    final database = openDatabase(
+
+      join(await getDatabasesPath(), 'mirror.db'),
+
+      onCreate: (db, version) {
+        return db.execute(
+          "CREATE TABLE commands(titel TEXT PRIMARY KEY, notify TEXT, payload TEXT)",
+        );
+      },
+      version: 1,
+    );
+
+
+    Future<void> insertCommand(CommandArguments commandArguments) async {
+      // Get a reference to the database.
+      final Database db = await database;
+
+      await db.insert(
+        'commands',
+        commandArguments.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    Future<List<CommandArguments>> commands() async {
+      // Get a reference to the database.
+      final Database db = await database;
+
+      // Query the table for all The Dogs.
+      final List<Map<String, dynamic>> maps = await db.query('commands');
+
+      // Convert the List<Map<String, dynamic> into a List<Dog>.
+      return List.generate(maps.length, (i) {
+        return CommandArguments(
+          maps[i]['titel'],
+          maps[i]['notification'],
+          maps[i]['payload'],
+        );
+      });
+    }
+
+    Future<void> updateCommand(CommandArguments commandArguments) async {
+      // Get a reference to the database.
+      final db = await database;
+
+      // Update the given Dog.
+      await db.update(
+        'commands',
+        commandArguments.toMap(),
+        // Ensure that the Dog has a matching id.
+        where: "titel = ?",
+        // Pass the Dog's id as a whereArg to prevent SQL injection.
+        whereArgs: [commandArguments.title],
+      );
+    }
+
+    Future<void> deleteCommand(String titel) async {
+      // Get a reference to the database.
+      final db = await database;
+
+      // Remove the Dog from the database.
+      await db.delete(
+        'commands',
+        // Use a `where` clause to delete a specific dog.
+        where: "titel = ?",
+        // Pass the Dog's id as a whereArg to prevent SQL injection.
+        whereArgs: [titel],
+      );
+    }
+  }
 }
