@@ -25,43 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _brightnessValue = 200;
   int _alertDuration = 10;
   String _settings = 'BRIGHTNESS:200|ALERTDURATION:10|Monitor:ON|;';
-
-  @override
-  void initState() {
-    super.initState();
-    widget.settingsStorage.readSettings().then((String value) {
-      if (value.compareTo('') != 0) {
-        _settings = value;
-
-        String _tempBrightness =
-            _settings.substring(0, _settings.indexOf('|') + 1);
-        String _tempAlertDuration = _settings
-            .replaceAll(_tempBrightness, '');
-        _tempAlertDuration = _tempAlertDuration.substring(0, _tempAlertDuration.indexOf('|')+1);
-        String _tempMonitorToggle =
-            _settings.replaceAll(_tempBrightness + _tempAlertDuration, '');
-
-        setState(() {
-          _brightnessValue = int.parse(_extractValue(_tempBrightness));
-          _alertDuration = int.parse(_extractValue(_tempAlertDuration));
-          if (_extractValue(_tempMonitorToggle).compareTo('ON') == 0) {
-            _monitorToggleColor = Colors.white;
-          } else {
-            _monitorToggleColor = Colors.black45;
-          }
-        });
-      }
-    });
-    print('homePage: initialState: ');
-    print('_settings: ' + _settings);
-    print('_brightnessValue: $_brightnessValue');
-    print('_alertDuration: $_alertDuration');
-    if(_monitorToggleColor == Colors.white){
-      print('Monitor: ON');
-    } else {
-      print('Monitor: OFF');
-    }
-  }
+  bool _stateInitialized = false;
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +33,11 @@ class _MyHomePageState extends State<MyHomePage> {
     final ScreenArguments args = ModalRoute.of(context).settings.arguments;
     this.ip = args.ip;
     this.port = args.port;
+
+    //Only after start of the App
+    if(!_stateInitialized) {
+      _initializeSettings(args.title);
+    }
 
     var appBar = AppBar(
       brightness: Brightness.light,
@@ -327,10 +296,46 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void _initializeSettings(String title) {
+      _stateInitialized = true;
+      widget.settingsStorage.readSettings().then((String value) {
+        if (value.compareTo('') != 0) {
+          _settings = value;
+
+          String _tempBrightness =
+              _settings.substring(0, _settings.indexOf('|') + 1);
+          String _tempAlertDuration = _settings.replaceAll(_tempBrightness, '');
+          _tempAlertDuration = _tempAlertDuration.substring(
+              0, _tempAlertDuration.indexOf('|') + 1);
+          String _tempMonitorToggle =
+              _settings.replaceAll(_tempBrightness + _tempAlertDuration, '');
+
+          setState(() {
+            _brightnessValue = int.parse(_extractValue(_tempBrightness));
+            _alertDuration = int.parse(_extractValue(_tempAlertDuration));
+            if (_extractValue(_tempMonitorToggle).compareTo('ON') == 0) {
+              _monitorToggleColor = Colors.white;
+            } else {
+              _monitorToggleColor = Colors.black45;
+            }
+          });
+        }
+      });
+      print('homePage: initialState: ');
+      print('_settings: ' + _settings);
+      print('_brightnessValue: $_brightnessValue');
+      print('_alertDuration: $_alertDuration');
+      if (_monitorToggleColor == Colors.white) {
+        print('Monitor: ON');
+      } else {
+        print('Monitor: OFF');
+      }
+  }
+
   String _extractValue(String setting) {
-    print('initial setting: ' +setting);
+    print('initial setting: ' + setting);
     setting = setting.substring(setting.indexOf(':') + 1, setting.indexOf('|'));
-    print('resulting setting: ' +setting);
+    print('resulting setting: ' + setting);
     return setting;
   }
 
@@ -363,8 +368,8 @@ class _MyHomePageState extends State<MyHomePage> {
     String _tempAlertDuration = _settings.replaceAll(_tempBrightness, '');
     _tempAlertDuration =
         _tempAlertDuration.substring(0, _tempAlertDuration.indexOf('|') + 1);
-    String _tempMonitorToggle = _settings
-        .replaceAll(_tempBrightness + _tempAlertDuration, '');
+    String _tempMonitorToggle =
+        _settings.replaceAll(_tempBrightness + _tempAlertDuration, '');
     print('_tempBrightness: ' + _tempBrightness);
     print('_tempalertDuration: ' + _tempAlertDuration);
     print('_tempMonitorToggle: ' + _tempMonitorToggle);
