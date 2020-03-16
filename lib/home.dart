@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mmremotecontrol/app.dart';
+import 'package:mmremotecontrol/createCC.dart';
 import 'package:mmremotecontrol/start.dart';
 import 'start.dart';
 import 'dart:io';
+import 'createCC.dart';
 
 class MyHomePage extends StatefulWidget {
   static const routeName = '/homePage';
@@ -27,16 +29,12 @@ class _MyHomePageState extends State<MyHomePage> {
   int _alertDuration = 10;
   String _settings = 'BRIGHTNESS:200|ALERTDURATION:10|Monitor:ON|;';
   bool _stateInitialized = false;
+  List<Widget> _costomCommands = List<Widget>();
 
   @override
   Widget build(BuildContext context) {
-    var _deviceOrientation = MediaQuery
-        .of(context)
-        .orientation;
-    final ScreenArguments args = ModalRoute
-        .of(context)
-        .settings
-        .arguments;
+    var _deviceOrientation = MediaQuery.of(context).orientation;
+    final ScreenArguments args = ModalRoute.of(context).settings.arguments;
     this.ip = args.ip;
     this.port = args.port;
     this.title = args.title;
@@ -90,18 +88,19 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Expanded(
+              flex: _deviceOrientation == Orientation.portrait ? 2 : 2,
               child: GridView.count(
                 crossAxisCount:
-                _deviceOrientation == Orientation.portrait ? 1 : 2,
-                padding: EdgeInsets.all(16.0),
+                    _deviceOrientation == Orientation.portrait ? 1 : 2,
+                padding:  _deviceOrientation == Orientation.portrait ? EdgeInsets.all(16.0) : EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
                 childAspectRatio: _deviceOrientation == Orientation.portrait
                     ? 8.0 / 3.0
-                    : 8.0 / 3.5,
+                    : 8.0 / 2.5,
                 children: <Widget>[
                   Card(
                     clipBehavior: Clip.antiAlias,
                     child: Padding(
-                      padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
                       child: new Container(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -111,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               children: <Widget>[
                                 new Container(
                                   margin:
-                                  new EdgeInsets.symmetric(horizontal: 6.0),
+                                      new EdgeInsets.symmetric(horizontal: 6.0),
                                   child: new Text(
                                     'BackgroundSlideShow:',
                                     textScaleFactor: 1.3,
@@ -165,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Card(
                     clipBehavior: Clip.antiAlias,
                     child: Padding(
-                      padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 0.0),
+                      padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
                       child: new Container(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -175,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               children: <Widget>[
                                 new Container(
                                   margin:
-                                  new EdgeInsets.symmetric(horizontal: 6.0),
+                                      new EdgeInsets.symmetric(horizontal: 6.0),
                                   child: new Text(
                                     'BrightnessSlider:',
                                     textScaleFactor: 1.3,
@@ -212,6 +211,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                padding: _deviceOrientation == Orientation.portrait ? EdgeInsets.all(16.0) : EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 4.0),
+                childAspectRatio: _deviceOrientation == Orientation.portrait ? 8.0 / 3.0 : 8.0 / 2,
+                children: _costomCommands,
+              ),
+            ),
             new Container(
               color: Colors.white,
               child: Column(
@@ -237,11 +244,11 @@ class _MyHomePageState extends State<MyHomePage> {
                         margin: new EdgeInsets.symmetric(horizontal: 4.0),
                         child: new IconButton(
                           icon:
-                          new Icon(Icons.send, semanticLabel: 'send alert'),
+                              new Icon(Icons.send, semanticLabel: 'send alert'),
                           color: Colors.black54,
                           disabledColor: Colors.black26,
                           tooltip:
-                          'send an alert or send "AlertDuration: int" to set the display-time of an alert',
+                              'send an alert or send "/AlertDuration: int" to set the display-time of an alert',
                           onPressed: _isComposing
                               ? () => _evaluateAlert(_textController.text)
                               : null,
@@ -306,7 +313,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _initializeSettings(String title) {
     _stateInitialized = true;
     _settings = title + _settings;
-   // widget.settingsStorage.writeSettings('');
+    // widget.settingsStorage.writeSettings('');
     widget.settingsStorage.readSettings().then((String value) {
       if (value.compareTo('') != 0 && value.contains(title)) {
         //choose settings of relevant device
@@ -318,13 +325,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
         //create String for every setting
         String _tempBrightness =
-        _tempSettings.substring(0, _tempSettings.indexOf('|') + 1);
-        String _tempAlertDuration = _tempSettings.replaceAll(
-            _tempBrightness, '');
+            _tempSettings.substring(0, _tempSettings.indexOf('|') + 1);
+        String _tempAlertDuration =
+            _tempSettings.replaceAll(_tempBrightness, '');
         _tempAlertDuration = _tempAlertDuration.substring(
             0, _tempAlertDuration.indexOf('|') + 1);
         String _tempMonitorToggle =
-        _tempSettings.replaceAll(_tempBrightness + _tempAlertDuration, '');
+            _tempSettings.replaceAll(_tempBrightness + _tempAlertDuration, '');
 
         //actualize settings
         _settings = title + _tempSettings;
@@ -339,7 +346,16 @@ class _MyHomePageState extends State<MyHomePage> {
           print('Monitor: OFF');
         }
 
+        final List<Widget> _customCommandsTemp = List<Widget>();
+        Card _customCommand = _createCommandCard("Test Command", "Test-notification", "Test-payload");
+        Card _customCommand2 = _createCommandCard("Test Command", "Test-notification", "Test-payload");
+        Card _customCommand3= _createCommandCard("Test Command", "Test-notification", "Test-payload");
+        _customCommandsTemp.add(_customCommand);
+        _customCommandsTemp.add(_customCommand2);
+        _customCommandsTemp.add(_customCommand3);
+
         setState(() {
+          _costomCommands = _customCommandsTemp;
           _brightnessValue = int.parse(_extractValue(_tempBrightness));
           _alertDuration = int.parse(_extractValue(_tempAlertDuration));
           if (_extractValue(_tempMonitorToggle).compareTo('ON') == 0) {
@@ -362,9 +378,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<File> _writeSetting(String setting) {
     _settings = title + ':' + setting;
 
-    widget.settingsStorage
-        .readSettings()
-        .then((String value) {
+    widget.settingsStorage.readSettings().then((String value) {
       if (value.compareTo('') != 0 && value.contains(title + ':')) {
         return widget.settingsStorage.writeSettings(value.replaceRange(
             value.indexOf(title + ':'),
@@ -374,7 +388,7 @@ class _MyHomePageState extends State<MyHomePage> {
         return widget.settingsStorage.writeSettings(value + _settings);
       }
     });
-}
+  }
 
   String _unifySettingAndDeleteDeviceName(String setting) {
     String _tempSettings = _settings.toUpperCase().trim().replaceAll(' ', '');
@@ -393,25 +407,25 @@ class _MyHomePageState extends State<MyHomePage> {
   void _persistAlertDurationSetting(int newValue) {
     String _tempSettings = _unifySettingAndDeleteDeviceName(_settings);
 
-    String _tempBrightness = _tempSettings.substring(
-        0, _tempSettings.indexOf('|') + 1);
+    String _tempBrightness =
+        _tempSettings.substring(0, _tempSettings.indexOf('|') + 1);
     String _tempAlertDuration = _tempSettings.replaceAll(_tempBrightness, '');
     _tempAlertDuration = _replaceValue(_tempAlertDuration, '$newValue');
 
     _tempSettings = _tempBrightness + _tempAlertDuration;
-    _writeSetting(_tempSettings);;
+    _writeSetting(_tempSettings);
   }
 
   void _persistMonitorSetting(String newValue) {
     String _tempSettings = _unifySettingAndDeleteDeviceName(_settings);
 
-    String _tempBrightness = _tempSettings.substring(
-        0, _tempSettings.indexOf('|') + 1);
+    String _tempBrightness =
+        _tempSettings.substring(0, _tempSettings.indexOf('|') + 1);
     String _tempAlertDuration = _tempSettings.replaceAll(_tempBrightness, '');
     _tempAlertDuration =
         _tempAlertDuration.substring(0, _tempAlertDuration.indexOf('|') + 1);
     String _tempMonitorToggle =
-    _tempSettings.replaceAll(_tempBrightness + _tempAlertDuration, '');
+        _tempSettings.replaceAll(_tempBrightness + _tempAlertDuration, '');
     print('_tempBrightness: ' + _tempBrightness);
     print('_tempalertDuration: ' + _tempAlertDuration);
     print('_tempMonitorToggle: ' + _tempMonitorToggle);
@@ -450,14 +464,20 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     String _temptext = text.toUpperCase().trim().replaceAll(' ', '');
     print(_temptext);
-    //Check if ALERTDURATION: Command was send
+    //Check if Command was send
     if (_temptext
-        .substring(0, _temptext.indexOf(':') + 1)
-        .compareTo('ALERTDURATION:') ==
+            .substring(0, _temptext.indexOf(':') + 1)
+            .compareTo('/ALERTDURATION:') ==
         0) {
       _setAlertDuration(_temptext);
     } else {
-      _sendAlert(text);
+      if (_temptext
+              .compareTo('/CREATECOMMAND') ==
+          0) {
+        _navigateAndCreateCustomCommand(context);
+      } else {
+        _sendAlert(text);
+      }
     }
   }
 
@@ -471,6 +491,77 @@ class _MyHomePageState extends State<MyHomePage> {
         lastRequest = 'Alert duration set to ' + _amount;
       });
     }
+  }
+
+  _navigateAndCreateCustomCommand(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddCommandPage()),
+    );
+    CommandArguments _commandArguments = result;
+    //ToDo create CustomCommandCard
+  }
+
+  Card _createCommandCard(String title, String notification, String payload) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 4.0),
+        child: new Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Flexible(
+              fit: FlexFit.tight,
+              child: FlatButton(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            title,
+                            textScaleFactor: 1.1,
+                            style: TextStyle(
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  _sendCustomCommand(title, notification, payload);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _sendCustomCommand(String title, String notification, String payload){
+    if(payload.trim().compareTo('') == 0){
+      http.get("http://" +
+          ip +
+          ":" +
+          port +
+          "/remote?action=NOTIFICATION&notification=" + notification);
+    } else {
+      http.get("http://" +
+          ip +
+          ":" +
+          port +
+          "/remote?action=NOTIFICATION&notification=" + notification + "&payload=" + payload);
+    }
+    setState(() {
+      lastRequest = title + " sended";
+    });
   }
 
   void _sendAlert(String text) {
@@ -594,4 +685,12 @@ class _MyHomePageState extends State<MyHomePage> {
       lastRequest = "Started SlideShow";
     });
   }
+}
+
+class CommandArguments {
+  final String title;
+  final String notification;
+  final String payload;
+
+  CommandArguments(this.title, this.notification, this.payload);
 }
