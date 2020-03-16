@@ -21,6 +21,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _textController = new TextEditingController();
   String ip;
   String port;
+  String title;
   Color _monitorToggleColor = Colors.white;
   int _brightnessValue = 200;
   int _alertDuration = 10;
@@ -29,14 +30,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var _deviceOrientation = MediaQuery.of(context).orientation;
-    final ScreenArguments args = ModalRoute.of(context).settings.arguments;
+    var _deviceOrientation = MediaQuery
+        .of(context)
+        .orientation;
+    final ScreenArguments args = ModalRoute
+        .of(context)
+        .settings
+        .arguments;
     this.ip = args.ip;
     this.port = args.port;
+    this.title = args.title;
 
     //Only after start of the App
-    if(!_stateInitialized) {
-      _initializeSettings(args.title);
+    if (!_stateInitialized) {
+      _initializeSettings(title + ':');
     }
 
     var appBar = AppBar(
@@ -85,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
               child: GridView.count(
                 crossAxisCount:
-                    _deviceOrientation == Orientation.portrait ? 1 : 2,
+                _deviceOrientation == Orientation.portrait ? 1 : 2,
                 padding: EdgeInsets.all(16.0),
                 childAspectRatio: _deviceOrientation == Orientation.portrait
                     ? 8.0 / 3.0
@@ -104,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               children: <Widget>[
                                 new Container(
                                   margin:
-                                      new EdgeInsets.symmetric(horizontal: 6.0),
+                                  new EdgeInsets.symmetric(horizontal: 6.0),
                                   child: new Text(
                                     'BackgroundSlideShow:',
                                     textScaleFactor: 1.3,
@@ -168,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               children: <Widget>[
                                 new Container(
                                   margin:
-                                      new EdgeInsets.symmetric(horizontal: 6.0),
+                                  new EdgeInsets.symmetric(horizontal: 6.0),
                                   child: new Text(
                                     'BrightnessSlider:',
                                     textScaleFactor: 1.3,
@@ -230,11 +237,11 @@ class _MyHomePageState extends State<MyHomePage> {
                         margin: new EdgeInsets.symmetric(horizontal: 4.0),
                         child: new IconButton(
                           icon:
-                              new Icon(Icons.send, semanticLabel: 'send alert'),
+                          new Icon(Icons.send, semanticLabel: 'send alert'),
                           color: Colors.black54,
                           disabledColor: Colors.black26,
                           tooltip:
-                              'send an alert or send "AlertDuration: int" to set the display-time of an alert',
+                          'send an alert or send "AlertDuration: int" to set the display-time of an alert',
                           onPressed: _isComposing
                               ? () => _evaluateAlert(_textController.text)
                               : null,
@@ -297,39 +304,52 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _initializeSettings(String title) {
-      _stateInitialized = true;
-      widget.settingsStorage.readSettings().then((String value) {
-        if (value.compareTo('') != 0) {
-          _settings = value;
+    _stateInitialized = true;
+    _settings = title + _settings;
+   // widget.settingsStorage.writeSettings('');
+    widget.settingsStorage.readSettings().then((String value) {
+      if (value.compareTo('') != 0 && value.contains(title)) {
+        //choose settings of relevant device
+        _settings = value.substring(value.indexOf(title));
+        _settings = _settings.substring(0, _settings.indexOf(';') + 1);
 
-          String _tempBrightness =
-              _settings.substring(0, _settings.indexOf('|') + 1);
-          String _tempAlertDuration = _settings.replaceAll(_tempBrightness, '');
-          _tempAlertDuration = _tempAlertDuration.substring(
-              0, _tempAlertDuration.indexOf('|') + 1);
-          String _tempMonitorToggle =
-              _settings.replaceAll(_tempBrightness + _tempAlertDuration, '');
+        //delete device name
+        String _tempSettings = _settings.substring(_settings.indexOf(':') + 1);
 
-          setState(() {
-            _brightnessValue = int.parse(_extractValue(_tempBrightness));
-            _alertDuration = int.parse(_extractValue(_tempAlertDuration));
-            if (_extractValue(_tempMonitorToggle).compareTo('ON') == 0) {
-              _monitorToggleColor = Colors.white;
-            } else {
-              _monitorToggleColor = Colors.black45;
-            }
-          });
+        //create String for every setting
+        String _tempBrightness =
+        _tempSettings.substring(0, _tempSettings.indexOf('|') + 1);
+        String _tempAlertDuration = _tempSettings.replaceAll(
+            _tempBrightness, '');
+        _tempAlertDuration = _tempAlertDuration.substring(
+            0, _tempAlertDuration.indexOf('|') + 1);
+        String _tempMonitorToggle =
+        _tempSettings.replaceAll(_tempBrightness + _tempAlertDuration, '');
+
+        //actualize settings
+        _settings = title + _tempSettings;
+
+        print('homePage: initialState: ');
+        print('_settings: ' + _settings);
+        print('_brightnessValue: $_brightnessValue');
+        print('_alertDuration: $_alertDuration');
+        if (_monitorToggleColor == Colors.white) {
+          print('Monitor: ON');
+        } else {
+          print('Monitor: OFF');
         }
-      });
-      print('homePage: initialState: ');
-      print('_settings: ' + _settings);
-      print('_brightnessValue: $_brightnessValue');
-      print('_alertDuration: $_alertDuration');
-      if (_monitorToggleColor == Colors.white) {
-        print('Monitor: ON');
-      } else {
-        print('Monitor: OFF');
+
+        setState(() {
+          _brightnessValue = int.parse(_extractValue(_tempBrightness));
+          _alertDuration = int.parse(_extractValue(_tempAlertDuration));
+          if (_extractValue(_tempMonitorToggle).compareTo('ON') == 0) {
+            _monitorToggleColor = Colors.white;
+          } else {
+            _monitorToggleColor = Colors.black45;
+          }
+        });
       }
+    });
   }
 
   String _extractValue(String setting) {
@@ -339,44 +359,66 @@ class _MyHomePageState extends State<MyHomePage> {
     return setting;
   }
 
-  Future<File> _persistBrightnessSetting(int newValue) {
-    //make sure that everything is in a unified format
-    _settings = _settings.toUpperCase().trim().replaceAll(' ', '');
+  Future<File> _writeSetting(String setting) {
+    _settings = title + ':' + setting;
 
-    _settings = _replaceValue(_settings, '$newValue');
+    widget.settingsStorage
+        .readSettings()
+        .then((String value) {
+      if (value.compareTo('') != 0 && value.contains(title + ':')) {
+        return widget.settingsStorage.writeSettings(value.replaceRange(
+            value.indexOf(title + ':'),
+            value.indexOf(title + ':') + _settings.indexOf(';') + 1,
+            _settings));
+      } else {
+        return widget.settingsStorage.writeSettings(value + _settings);
+      }
+    });
+}
 
-    return widget.settingsStorage.writeSettings(_settings);
+  String _unifySettingAndDeleteDeviceName(String setting) {
+    String _tempSettings = _settings.toUpperCase().trim().replaceAll(' ', '');
+    _tempSettings = _tempSettings.substring(_tempSettings.indexOf(':') + 1);
+    return _tempSettings;
   }
 
-  Future<File> _persistAlertDurationSetting(int newValue) {
-    //make sure that everything is in a unified format
-    _settings = _settings.toUpperCase().trim().replaceAll(' ', '');
+  void _persistBrightnessSetting(int newValue) {
+    String _tempSettings = _unifySettingAndDeleteDeviceName(_settings);
 
-    String _tempBrightness = _settings.substring(0, _settings.indexOf('|') + 1);
-    String _tempAlertDuration = _settings.replaceAll(_tempBrightness, '');
+    _tempSettings = _replaceValue(_tempSettings, '$newValue');
+
+    _writeSetting(_tempSettings);
+  }
+
+  void _persistAlertDurationSetting(int newValue) {
+    String _tempSettings = _unifySettingAndDeleteDeviceName(_settings);
+
+    String _tempBrightness = _tempSettings.substring(
+        0, _tempSettings.indexOf('|') + 1);
+    String _tempAlertDuration = _tempSettings.replaceAll(_tempBrightness, '');
     _tempAlertDuration = _replaceValue(_tempAlertDuration, '$newValue');
 
-    _settings = _tempBrightness + _tempAlertDuration;
-    return widget.settingsStorage.writeSettings(_settings);
+    _tempSettings = _tempBrightness + _tempAlertDuration;
+    _writeSetting(_tempSettings);;
   }
 
-  Future<File> _persistMonitorSetting(String newValue) {
-    //make sure that everything is in a unified format
-    _settings = _settings.toUpperCase().trim().replaceAll(' ', '');
+  void _persistMonitorSetting(String newValue) {
+    String _tempSettings = _unifySettingAndDeleteDeviceName(_settings);
 
-    String _tempBrightness = _settings.substring(0, _settings.indexOf('|') + 1);
-    String _tempAlertDuration = _settings.replaceAll(_tempBrightness, '');
+    String _tempBrightness = _tempSettings.substring(
+        0, _tempSettings.indexOf('|') + 1);
+    String _tempAlertDuration = _tempSettings.replaceAll(_tempBrightness, '');
     _tempAlertDuration =
         _tempAlertDuration.substring(0, _tempAlertDuration.indexOf('|') + 1);
     String _tempMonitorToggle =
-        _settings.replaceAll(_tempBrightness + _tempAlertDuration, '');
+    _tempSettings.replaceAll(_tempBrightness + _tempAlertDuration, '');
     print('_tempBrightness: ' + _tempBrightness);
     print('_tempalertDuration: ' + _tempAlertDuration);
     print('_tempMonitorToggle: ' + _tempMonitorToggle);
     _tempMonitorToggle = _replaceValue(_tempMonitorToggle, newValue);
 
-    _settings = _tempBrightness + _tempAlertDuration + _tempMonitorToggle;
-    return widget.settingsStorage.writeSettings(_settings);
+    _tempSettings = _tempBrightness + _tempAlertDuration + _tempMonitorToggle;
+    _writeSetting(_tempSettings);
   }
 
   String _replaceValue(String setting, String newValue) {
@@ -410,8 +452,8 @@ class _MyHomePageState extends State<MyHomePage> {
     print(_temptext);
     //Check if ALERTDURATION: Command was send
     if (_temptext
-            .substring(0, _temptext.indexOf(':') + 1)
-            .compareTo('ALERTDURATION:') ==
+        .substring(0, _temptext.indexOf(':') + 1)
+        .compareTo('ALERTDURATION:') ==
         0) {
       _setAlertDuration(_temptext);
     } else {
