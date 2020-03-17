@@ -71,10 +71,11 @@ class _StartPageState extends State<StartPage> {
     return Scaffold(
       appBar: AppBar(
         brightness: Brightness.light,
-        elevation: 0.0,
+        elevation: 10.0,
         titleSpacing: 0.0,
         title: Text('     Choose Device'),
       ),
+      backgroundColor: Colors.grey[200],
       body: new SafeArea(
         child: Column(
           children: <Widget>[
@@ -86,37 +87,35 @@ class _StartPageState extends State<StartPage> {
                     children: _widgets,
                   ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                new SizedBox(width: 5.0),
-                new RaisedButton(
-                  disabledColor: Colors.black12,
-                  color: Colors.black12,
-                  elevation: 15.0,
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.fromLTRB(5.0, 3.0, 9.0, 5.0),
-                  child: new IconButton(
-                    icon: Icon(
-                      Icons.delete,
-                      size: 35.0,
-                      color: Colors.black87,
-                      semanticLabel: 'delete last',
-                    ),
-                    tooltip: 'delete last device',
-                    onPressed: () {
-                      _deleteLastCard();
-                    },
-                  ),
-                  onPressed: null,
-                ),
-              ],
-            ),
             new SizedBox(height: 15.0),
           ],
         ),
       ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.blue,
+        notchMargin: 5.0,
+        shape: CircularNotchedRectangle(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            new SizedBox(width: 5.0, height: 50),
+               new IconButton(
+                icon: Icon(
+                  Icons.delete,
+                  size: 35.0,
+                  color: Colors.white,
+                  semanticLabel: 'delete last',
+                ),
+                tooltip: 'delete last device',
+                onPressed: () {
+                  _deleteLastCard();
+                },
+              ),
+          ],
+        ),
+      ),
       floatingActionButton: new FloatingActionButton(
+        backgroundColor: Colors.blue,
         child: new Icon(
           Icons.add,
           size: 30.0,
@@ -127,6 +126,7 @@ class _StartPageState extends State<StartPage> {
           _navigateAndCreateNewCard(context);
         },
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 

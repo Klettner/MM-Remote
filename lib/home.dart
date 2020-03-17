@@ -87,8 +87,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       appBar: appBar,
+      backgroundColor: Colors.grey[200],
       body: new Container(
-        color: Colors.white,
+        color: Colors.grey[200],
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
