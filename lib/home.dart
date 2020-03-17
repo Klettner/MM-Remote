@@ -76,33 +76,6 @@ class _MyHomePageState extends State<MyHomePage>
       title: Text(
         args.title,
       ),
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(
-            Icons.tv,
-            color: _monitorToggleColor,
-            semanticLabel: 'toggleMonitor',
-          ),
-          tooltip: 'switch monitor on/off',
-          onPressed: _toggleMonitor,
-        ),
-        IconButton(
-          icon: Icon(
-            Icons.refresh,
-            semanticLabel: 'reboot',
-          ),
-          tooltip: 'reboot mirror',
-          onPressed: _rebootPi,
-        ),
-        IconButton(
-          icon: Icon(
-            Icons.power_settings_new,
-            semanticLabel: 'shutdown',
-          ),
-          tooltip: 'shutdown mirror',
-          onPressed: _shutdownPi,
-        ),
-      ],
       bottom: TabBar(
         controller: _tabController,
         tabs: myTabs,
@@ -112,6 +85,54 @@ class _MyHomePageState extends State<MyHomePage>
 
     return Scaffold(
       appBar: appBar,
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children:  <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                title,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              //TODO: create Toggle Icon
+              leading: Icon( Icons.tv,
+                color: Colors.black54,
+                semanticLabel: 'toggleMonitor'),
+              title: Text('Toggle monitor on/off'),
+              onTap: (){
+                _toggleMonitor();
+                Navigator.of(context).pop();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.refresh,
+                semanticLabel: 'reboot'),
+              title: Text('Reboot Mirror'),
+              onTap: () {
+                _rebootPi();
+                Navigator.of(context).pop();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.power_settings_new,
+                semanticLabel: 'shutdown',),
+              title: Text('Shutdown Mirror'),
+              onTap: () {
+                _shutdownPi();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      ),
       body: Builder(
         builder: (context) => TabBarView(
           controller: _tabController,
@@ -162,21 +183,21 @@ class _MyHomePageState extends State<MyHomePage>
                                       new IconButton(
                                           icon: Icon(Icons.stop,
                                               semanticLabel: 'stop slideshow'),
-                                          tooltip: 'stop slideshow',
+                                          tooltip: 'Stop slideshow',
                                           color: Colors.black54,
                                           iconSize: 35.0,
                                           onPressed: _backgroundSlideShowStop),
                                       new IconButton(
                                           icon: Icon(Icons.play_arrow,
                                               semanticLabel: 'start slideshow'),
-                                          tooltip: 'start slideshow',
+                                          tooltip: 'Start slideshow',
                                           color: Colors.black54,
                                           iconSize: 35.0,
                                           onPressed: _backgroundSlideShowPlay),
                                       new IconButton(
                                           icon: Icon(Icons.fast_forward,
                                               semanticLabel: 'next picture'),
-                                          tooltip: 'next picture',
+                                          tooltip: 'Next picture',
                                           color: Colors.black54,
                                           iconSize: 35.0,
                                           onPressed: _backgroundSlideShowNext),
@@ -215,7 +236,7 @@ class _MyHomePageState extends State<MyHomePage>
                                     divisions: 20,
                                     activeColor: Colors.blue,
                                     inactiveColor: Colors.black54,
-                                    label: 'changing Brightness',
+                                    label: 'changing brightness',
                                     semanticFormatterCallback:
                                         (double newValue) {
                                       return '${newValue.round()}/200 brightness';
@@ -267,7 +288,7 @@ class _MyHomePageState extends State<MyHomePage>
                                   color: Colors.black54,
                                   disabledColor: Colors.black26,
                                   tooltip:
-                                      'send an alert or send "/AlertDuration: int" to set the display-time of an alert',
+                                      'Send an alert or send "/AlertDuration: int" to set the display-time of an alert',
                                   onPressed: _isComposing
                                       ? () => _evaluateAlert(
                                           _textController.text, context)
@@ -306,18 +327,21 @@ class _MyHomePageState extends State<MyHomePage>
                     Align(
                         alignment: Alignment.lerp(
                             Alignment.center, Alignment.centerRight, 0.85),
-                        child: FloatingActionButton(
-                          child: Icon(
-                            Icons.add,
-                            color: Colors.blue,
-                            size: 35,
+                        child: Tooltip(
+                          message: 'Create new custom-command',
+                          child: FloatingActionButton(
+                            child: Icon(
+                              Icons.add,
+                              color: Colors.blue,
+                              size: 35,
+                            ),
+                            backgroundColor: Colors.white,
+                            //padding: EdgeInsets.fromLTRB(20.0, 13.0, 20.0, 13.0),
+                            elevation: 5.0,
+                            onPressed: () {
+                              _navigateAndCreateCustomCommand(context);
+                            },
                           ),
-                          backgroundColor: Colors.white,
-                          //padding: EdgeInsets.fromLTRB(20.0, 13.0, 20.0, 13.0),
-                          elevation: 5.0,
-                          onPressed: () {
-                            _navigateAndCreateCustomCommand(context);
-                          },
                         )),
                     SizedBox(height: 20),
                   ],
@@ -342,7 +366,7 @@ class _MyHomePageState extends State<MyHomePage>
                         size: 35.0,
                         color: Colors.white,
                         semanticLabel: 'previous page'),
-                    tooltip: 'previous mirror-page',
+                    tooltip: 'Previous mirror-page',
                     onPressed: () {
                       _decrementPage(context);
                     }),
@@ -356,7 +380,7 @@ class _MyHomePageState extends State<MyHomePage>
                       size: 35.0,
                       color: Colors.white,
                       semanticLabel: 'next page'),
-                  tooltip: 'next mirror-page',
+                  tooltip: 'Next mirror-page',
                   onPressed: () {
                     _incrementPage(context);
                   },

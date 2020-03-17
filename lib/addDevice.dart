@@ -100,7 +100,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
                   child: Text('CREATE'),
                   elevation: 8.0,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                    borderRadius: BorderRadius.all(Radius.circular(15.0)),
                   ),
                   onPressed:
                       (_isComposingTitle && _isComposingIp && _isComposingPort)

@@ -107,7 +107,7 @@ class _StartPageState extends State<StartPage> {
                   color: Colors.white,
                   semanticLabel: 'delete last',
                 ),
-                tooltip: 'delete last device',
+                tooltip: 'Delete last device',
                 onPressed: () {
                   _deleteLastCard();
                 },
@@ -122,7 +122,7 @@ class _StartPageState extends State<StartPage> {
           size: 30.0,
           semanticLabel: 'add Device',
         ),
-        tooltip: 'add new device',
+        tooltip: 'Add new device',
         onPressed: () {
           _navigateAndCreateNewCard(context);
         },
