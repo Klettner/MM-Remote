@@ -192,30 +192,28 @@ class _StartPageState extends State<StartPage> {
             Flexible(
               fit: FlexFit.tight,
               child: FlatButton(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            title,
-                            textScaleFactor: 1.1,
-                            style: TextStyle(
-                              color: Colors.blue,
-                            ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          title,
+                          textScaleFactor: 1.1,
+                          style: TextStyle(
+                            color: Colors.blue,
                           ),
-                          SizedBox(height: 12.0),
-                          Text('IP: ' + ip),
-                          SizedBox(height: 8.0),
-                          Text('Port: ' + port),
-                          SizedBox(height: 4.0),
-                        ],
-                      ),
+                        ),
+                        SizedBox(height: 12.0),
+                        Text('IP: ' + ip),
+                        SizedBox(height: 8.0),
+                        Text('Port: ' + port),
+                        SizedBox(height: 4.0),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
                 onPressed: () {
                   Navigator.pushNamed(

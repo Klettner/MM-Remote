@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     var appBar = AppBar(
       brightness: Brightness.light,
-      elevation: 0.0,
+      elevation: 10.0,
       titleSpacing: 0.0,
       title: Text(
         args.title,
@@ -87,18 +87,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       appBar: appBar,
-      backgroundColor: Colors.grey[200],
       body: new Container(
         color: Colors.grey[200],
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Expanded(
-              flex: _deviceOrientation == Orientation.portrait ? 2 : 2,
+              flex: 2,
               child: GridView.count(
                 crossAxisCount:
                     _deviceOrientation == Orientation.portrait ? 1 : 2,
-                padding:  _deviceOrientation == Orientation.portrait ? EdgeInsets.all(16.0) : EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
+                padding: _deviceOrientation == Orientation.portrait
+                    ? EdgeInsets.all(16.0)
+                    : EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
                 childAspectRatio: _deviceOrientation == Orientation.portrait
                     ? 8.0 / 3.0
                     : 8.0 / 2.5,
@@ -107,63 +107,52 @@ class _MyHomePageState extends State<MyHomePage> {
                     clipBehavior: Clip.antiAlias,
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
-                      child: new Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            new Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                new Container(
-                                  margin:
-                                      new EdgeInsets.symmetric(horizontal: 6.0),
-                                  child: new Text(
-                                    'BackgroundSlideShow:',
-                                    textScaleFactor: 1.3,
-                                  ),
-                                ),
-                              ],
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          new Align(
+                            alignment: Alignment.centerLeft,
+                            child: new Container(
+                              margin: new EdgeInsets.symmetric(horizontal: 6.0),
+                              child: new Text(
+                                'BackgroundSlideShow:',
+                                textScaleFactor: 1.3,
+                              ),
                             ),
-                            new Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                new SizedBox(
-                                  width: 5.0,
-                                ),
-                                new Container(
-                                  child: new IconButton(
-                                      icon: Icon(Icons.stop,
-                                          semanticLabel: 'stop slideshow'),
-                                      tooltip: 'stop slideshow',
-                                      color: Colors.black54,
-                                      iconSize: 35.0,
-                                      onPressed: _backgroundSlideShowStop),
-                                ),
-                                new Container(
-                                  child: new IconButton(
-                                      icon: Icon(Icons.play_arrow,
-                                          semanticLabel: 'start slideshow'),
-                                      tooltip: 'start slideshow',
-                                      color: Colors.black54,
-                                      iconSize: 35.0,
-                                      onPressed: _backgroundSlideShowPlay),
-                                ),
-                                new Container(
-                                  child: new IconButton(
-                                      icon: Icon(Icons.fast_forward,
-                                          semanticLabel: 'next picture'),
-                                      tooltip: 'next picture',
-                                      color: Colors.black54,
-                                      iconSize: 35.0,
-                                      onPressed: _backgroundSlideShowNext),
-                                ),
-                                new SizedBox(
-                                  width: 5.0,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                          ),
+                          new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              new SizedBox(
+                                width: 5.0,
+                              ),
+                              new IconButton(
+                                  icon: Icon(Icons.stop,
+                                      semanticLabel: 'stop slideshow'),
+                                  tooltip: 'stop slideshow',
+                                  color: Colors.black54,
+                                  iconSize: 35.0,
+                                  onPressed: _backgroundSlideShowStop),
+                              new IconButton(
+                                  icon: Icon(Icons.play_arrow,
+                                      semanticLabel: 'start slideshow'),
+                                  tooltip: 'start slideshow',
+                                  color: Colors.black54,
+                                  iconSize: 35.0,
+                                  onPressed: _backgroundSlideShowPlay),
+                              new IconButton(
+                                  icon: Icon(Icons.fast_forward,
+                                      semanticLabel: 'next picture'),
+                                  tooltip: 'next picture',
+                                  color: Colors.black54,
+                                  iconSize: 35.0,
+                                  onPressed: _backgroundSlideShowNext),
+                              new SizedBox(
+                                width: 5.0,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -171,46 +160,41 @@ class _MyHomePageState extends State<MyHomePage> {
                     clipBehavior: Clip.antiAlias,
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
-                      child: new Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            new Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                new Container(
-                                  margin:
-                                      new EdgeInsets.symmetric(horizontal: 6.0),
-                                  child: new Text(
-                                    'BrightnessSlider:',
-                                    textScaleFactor: 1.3,
-                                  ),
-                                ),
-                              ],
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          new Align(
+                            alignment: Alignment.centerLeft,
+                            child: new Container(
+                              margin: new EdgeInsets.symmetric(horizontal: 6.0),
+                              child: new Text(
+                                'BrightnessSlider:',
+                                textScaleFactor: 1.3,
+                              ),
                             ),
-                            new Slider(
-                              value: _brightnessValue.toDouble(),
-                              min: 0.0,
-                              max: 200.0,
-                              divisions: 20,
-                              activeColor: Colors.blue,
-                              inactiveColor: Colors.black54,
-                              label: 'change Brightness',
-                              semanticFormatterCallback: (double newValue) {
-                                return '${newValue.round()}/200 brightness';
-                              },
-                              onChanged: (double newValue) {
-                                setState(() {
-                                  _brightnessValue = newValue.round();
-                                  _setBrightness(_brightnessValue, true);
-                                });
-                              },
-                              onChangeEnd: (double newValue) {
-                                _persistBrightnessSetting(newValue.round());
-                              },
-                            )
-                          ],
-                        ),
+                          ),
+                          new Slider(
+                            value: _brightnessValue.toDouble(),
+                            min: 0.0,
+                            max: 200.0,
+                            divisions: 20,
+                            activeColor: Colors.blue,
+                            inactiveColor: Colors.black54,
+                            label: 'changing Brightness',
+                            semanticFormatterCallback: (double newValue) {
+                              return '${newValue.round()}/200 brightness';
+                            },
+                            onChanged: (double newValue) {
+                              setState(() {
+                                _brightnessValue = newValue.round();
+                                _setBrightness(_brightnessValue, true);
+                              });
+                            },
+                            onChangeEnd: (double newValue) {
+                              _persistBrightnessSetting(newValue.round());
+                            },
+                          )
+                        ],
                       ),
                     ),
                   ),
@@ -220,8 +204,12 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
-                padding: _deviceOrientation == Orientation.portrait ? EdgeInsets.all(16.0) : EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
-                childAspectRatio: _deviceOrientation == Orientation.portrait ? 8.0 / 4.5 : 8.0 / 2,
+                padding: _deviceOrientation == Orientation.portrait
+                    ? EdgeInsets.all(16.0)
+                    : EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
+                childAspectRatio: _deviceOrientation == Orientation.portrait
+                    ? 8.0 / 4.5
+                    : 8.0 / 2,
                 children: _customCommands,
               ),
             ),
@@ -229,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Colors.white,
               child: Column(
                 children: <Widget>[
-                  new Divider(height: 5.0),
+                  new Divider(height: 1.0),
                   new Row(
                     children: <Widget>[
                       new Flexible(
@@ -255,7 +243,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           tooltip:
                               'send an alert or send "/AlertDuration: int" to set the display-time of an alert',
                           onPressed: _isComposing
-                              ? () => _evaluateAlert(_textController.text, context)
+                              ? () =>
+                                  _evaluateAlert(_textController.text, context)
                               : null,
                         ),
                       ),
@@ -268,46 +257,30 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: SizedBox(
-        height: 55.0,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+      bottomNavigationBar: new Container(
+        height: 50.0,
+        color: Colors.blue,
+        child: new Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            //new Divider(height: 5.0),
-            new Container(
-              child: new Container(
-                color: Colors.blue,
-                child: new Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    new Container(
-                      margin: new EdgeInsets.symmetric(horizontal: 4.0),
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
-                      child: new IconButton(
-                          icon: new Icon(Icons.arrow_back,
-                              size: 35.0,
-                              color: Colors.white,
-                              semanticLabel: 'previous page'),
-                          tooltip: 'previous mirror-page',
-                          onPressed: _decrementPage),
-                    ),
-                    new SizedBox(
-                      width: 150.0,
-                    ),
-                    new Container(
-                        margin: new EdgeInsets.symmetric(horizontal: 4.0),
-                        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
-                        child: new IconButton(
-                          icon: new Icon(Icons.arrow_forward,
-                              size: 35.0,
-                              color: Colors.white,
-                              semanticLabel: 'next page'),
-                          tooltip: 'next mirror-page',
-                          onPressed: _incrementPage,
-                        )),
-                  ],
-                ),
-              ),
+            new IconButton(
+                padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+                icon: new Icon(Icons.arrow_back,
+                    size: 35.0,
+                    color: Colors.white,
+                    semanticLabel: 'previous page'),
+                tooltip: 'previous mirror-page',
+                onPressed: _decrementPage),
+            new SizedBox(
+              width: 50.0,
+              height: 50.0,
+            ),
+            new IconButton(
+              padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+              icon: new Icon(Icons.arrow_forward,
+                  size: 35.0, color: Colors.white, semanticLabel: 'next page'),
+              tooltip: 'next mirror-page',
+              onPressed: _incrementPage,
             ),
           ],
         ),
@@ -365,8 +338,9 @@ class _MyHomePageState extends State<MyHomePage> {
     final List<Widget> _customCommandsTemp = List<Widget>();
 
     _mirrorDatabase.getCommands().then((List<CommandArguments> values) {
-      for(CommandArguments cargs in values){
-        _customCommandsTemp.add(_createCommandCard(cargs.title, cargs.notification, cargs.payload));
+      for (CommandArguments cargs in values) {
+        _customCommandsTemp.add(
+            _createCommandCard(cargs.title, cargs.notification, cargs.payload));
       }
       setState(() {
         _customCommands = _customCommandsTemp;
@@ -477,9 +451,7 @@ class _MyHomePageState extends State<MyHomePage> {
         0) {
       _setAlertDuration(_temptext);
     } else {
-      if (_temptext
-              .compareTo('/CREATECOMMAND') ==
-          0) {
+      if (_temptext.compareTo('/CREATECOMMAND') == 0) {
         _navigateAndCreateCustomCommand(context);
       } else {
         _sendAlert(text);
@@ -506,7 +478,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     CommandArguments _commandArguments = result;
 
-    Card _newCard = _createCommandCard(_commandArguments.title, _commandArguments.notification, _commandArguments.payload);
+    Card _newCard = _createCommandCard(_commandArguments.title,
+        _commandArguments.notification, _commandArguments.payload);
     final List<Widget> _customCommandsTemp = List<Widget>();
     _customCommandsTemp.addAll(_customCommands);
     _customCommandsTemp.add(_newCard);
@@ -517,7 +490,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Card _createCommandCard(String title, String notification, String payload) {
-    _mirrorDatabase.insertCommand(new CommandArguments(title, notification, payload));
+    _mirrorDatabase
+        .insertCommand(new CommandArguments(title, notification, payload));
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
@@ -531,18 +505,18 @@ class _MyHomePageState extends State<MyHomePage> {
               child: FlatButton(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            title,
-                            softWrap: true,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                            textScaleFactor: 1.1,
-                            style: TextStyle(
-                              color: Colors.blue,
-                            ),
-                          ),
-                        ],
+                  children: <Widget>[
+                    Text(
+                      title,
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      textScaleFactor: 1.1,
+                      style: TextStyle(
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ],
                 ),
                 onPressed: () {
                   _sendCustomCommand(title, notification, payload);
@@ -555,19 +529,23 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _sendCustomCommand(String title, String notification, String payload){
-    if(payload.trim().compareTo('') == 0){
+  void _sendCustomCommand(String title, String notification, String payload) {
+    if (payload.trim().compareTo('') == 0) {
       http.get("http://" +
           ip +
           ":" +
           port +
-          "/remote?action=NOTIFICATION&notification=" + notification);
+          "/remote?action=NOTIFICATION&notification=" +
+          notification);
     } else {
       http.get("http://" +
           ip +
           ":" +
           port +
-          "/remote?action=NOTIFICATION&notification=" + notification + "&payload=" + payload);
+          "/remote?action=NOTIFICATION&notification=" +
+          notification +
+          "&payload=" +
+          payload);
     }
     setState(() {
       lastRequest = title + " sended";
@@ -725,9 +703,8 @@ class MirrorDatabase {
   MirrorDatabase(this.tableName);
 
   void openDB(String device) async {
-     this.database = openDatabase(
+    this.database = openDatabase(
       join(await getDatabasesPath(), device + '.db'),
-
       onCreate: (db, version) {
         return db.execute(
           "CREATE TABLE $device(title TEXT PRIMARY KEY, notify TEXT, payload TEXT)",
@@ -737,48 +714,48 @@ class MirrorDatabase {
     );
   }
 
-    Future<void> insertCommand(CommandArguments commandArguments) async {
-      final Database db = await database;
+  Future<void> insertCommand(CommandArguments commandArguments) async {
+    final Database db = await database;
 
-      await db.insert(
-        tableName,
-        commandArguments.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
+    await db.insert(
+      tableName,
+      commandArguments.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<List<CommandArguments>> getCommands() async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(tableName);
+
+    // Convert the List<Map<String, dynamic> into a List<CommandArguments>.
+    return List.generate(maps.length, (i) {
+      return CommandArguments(
+        maps[i]['title'],
+        maps[i]['notification'],
+        maps[i]['payload'],
       );
-    }
+    });
+  }
 
-    Future<List<CommandArguments>> getCommands() async {
-      final Database db = await database;
-      final List<Map<String, dynamic>> maps = await db.query(tableName);
+  Future<void> updateCommand(CommandArguments commandArguments) async {
+    final db = await database;
 
-      // Convert the List<Map<String, dynamic> into a List<CommandArguments>.
-      return List.generate(maps.length, (i) {
-        return CommandArguments(
-          maps[i]['title'],
-          maps[i]['notification'],
-          maps[i]['payload'],
-        );
-      });
-    }
+    await db.update(
+      tableName,
+      commandArguments.toMap(),
+      where: "title = ?",
+      whereArgs: [commandArguments.title],
+    );
+  }
 
-    Future<void> updateCommand(CommandArguments commandArguments) async {
-      final db = await database;
+  Future<void> deleteCommand(String titel) async {
+    final db = await database;
 
-      await db.update(
-        tableName,
-        commandArguments.toMap(),
-        where: "title = ?",
-        whereArgs: [commandArguments.title],
-      );
-    }
-
-    Future<void> deleteCommand(String titel) async {
-      final db = await database;
-
-      await db.delete(
-        tableName,
-        where: "title = ?",
-        whereArgs: [titel],
-      );
-    }
+    await db.delete(
+      tableName,
+      where: "title = ?",
+      whereArgs: [titel],
+    );
+  }
 }
