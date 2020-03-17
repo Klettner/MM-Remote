@@ -33,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String _settings = 'BRIGHTNESS:200|ALERTDURATION:10|Monitor:ON|;';
   bool _stateInitialized = false;
   List<Widget> _customCommands = List<Widget>();
+  MirrorDatabase _mirrorDatabase;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     //Only after start of the App
     if (!_stateInitialized) {
+      _mirrorDatabase = new MirrorDatabase(title);
       _initializeSettings(title + ':');
     }
 
@@ -347,17 +349,7 @@ class _MyHomePageState extends State<MyHomePage> {
         } else {
           print('Monitor: OFF');
         }
-
-        final List<Widget> _customCommandsTemp = List<Widget>();
-        Card _customCommand = _createCommandCard("Test Command", "Test-notification", "Test-payload");
-        Card _customCommand2 = _createCommandCard("Test Command", "Test-notification", "Test-payload");
-        Card _customCommand3= _createCommandCard("Test Commandd", "Test-notification", "Test-payload");
-        _customCommandsTemp.add(_customCommand);
-        _customCommandsTemp.add(_customCommand2);
-        _customCommandsTemp.add(_customCommand3);
-
         setState(() {
-          _customCommands = _customCommandsTemp;
           _brightnessValue = int.parse(_extractValue(_tempBrightness));
           _alertDuration = int.parse(_extractValue(_tempAlertDuration));
           if (_extractValue(_tempMonitorToggle).compareTo('ON') == 0) {
@@ -367,6 +359,17 @@ class _MyHomePageState extends State<MyHomePage> {
           }
         });
       }
+    });
+    _mirrorDatabase.openDB(title.replaceAll(':', ''));
+    final List<Widget> _customCommandsTemp = List<Widget>();
+
+    _mirrorDatabase.getCommands().then((List<CommandArguments> values) {
+      for(CommandArguments cargs in values){
+        _customCommandsTemp.add(_createCommandCard(cargs.title, cargs.notification, cargs.payload));
+      }
+      setState(() {
+        _customCommands = _customCommandsTemp;
+      });
     });
   }
 
@@ -513,6 +516,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Card _createCommandCard(String title, String notification, String payload) {
+    _mirrorDatabase.insertCommand(new CommandArguments(title, notification, payload));
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
@@ -714,42 +718,42 @@ class CommandArguments {
 }
 
 class MirrorDatabase {
-  void main() async {
-    final database = openDatabase(
+  Future<Database> database;
+  String tableName;
 
-      join(await getDatabasesPath(), 'mirror.db'),
+  MirrorDatabase(this.tableName);
+
+  void openDB(String device) async {
+     this.database = openDatabase(
+      join(await getDatabasesPath(), device + '.db'),
 
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE commands(titel TEXT PRIMARY KEY, notify TEXT, payload TEXT)",
+          "CREATE TABLE $device(title TEXT PRIMARY KEY, notify TEXT, payload TEXT)",
         );
       },
       version: 1,
     );
-
+  }
 
     Future<void> insertCommand(CommandArguments commandArguments) async {
-      // Get a reference to the database.
       final Database db = await database;
 
       await db.insert(
-        'commands',
+        tableName,
         commandArguments.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }
 
-    Future<List<CommandArguments>> commands() async {
-      // Get a reference to the database.
+    Future<List<CommandArguments>> getCommands() async {
       final Database db = await database;
+      final List<Map<String, dynamic>> maps = await db.query(tableName);
 
-      // Query the table for all The Dogs.
-      final List<Map<String, dynamic>> maps = await db.query('commands');
-
-      // Convert the List<Map<String, dynamic> into a List<Dog>.
+      // Convert the List<Map<String, dynamic> into a List<CommandArguments>.
       return List.generate(maps.length, (i) {
         return CommandArguments(
-          maps[i]['titel'],
+          maps[i]['title'],
           maps[i]['notification'],
           maps[i]['payload'],
         );
@@ -757,32 +761,23 @@ class MirrorDatabase {
     }
 
     Future<void> updateCommand(CommandArguments commandArguments) async {
-      // Get a reference to the database.
       final db = await database;
 
-      // Update the given Dog.
       await db.update(
-        'commands',
+        tableName,
         commandArguments.toMap(),
-        // Ensure that the Dog has a matching id.
-        where: "titel = ?",
-        // Pass the Dog's id as a whereArg to prevent SQL injection.
+        where: "title = ?",
         whereArgs: [commandArguments.title],
       );
     }
 
     Future<void> deleteCommand(String titel) async {
-      // Get a reference to the database.
       final db = await database;
 
-      // Remove the Dog from the database.
       await db.delete(
-        'commands',
-        // Use a `where` clause to delete a specific dog.
-        where: "titel = ?",
-        // Pass the Dog's id as a whereArg to prevent SQL injection.
+        tableName,
+        where: "title = ?",
         whereArgs: [titel],
       );
     }
-  }
 }
