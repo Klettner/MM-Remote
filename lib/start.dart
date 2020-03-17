@@ -92,6 +92,7 @@ class _StartPageState extends State<StartPage> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
+        elevation: 10.0,
         color: Colors.blue,
         notchMargin: 5.0,
         shape: CircularNotchedRectangle(),

@@ -23,7 +23,7 @@ class _AddCommandPageState extends State<AddCommandPage> {
     return Scaffold(
       appBar: AppBar(
         brightness: Brightness.light,
-        elevation: 0.0,
+        elevation: 10.0,
         titleSpacing: 0.0,
         title: Text('Add Command'),
       ),
