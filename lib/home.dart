@@ -57,13 +57,8 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
-    var _deviceOrientation = MediaQuery
-        .of(context)
-        .orientation;
-    final ScreenArguments args = ModalRoute
-        .of(context)
-        .settings
-        .arguments;
+    var _deviceOrientation = MediaQuery.of(context).orientation;
+    final ScreenArguments args = ModalRoute.of(context).settings.arguments;
     this.ip = args.ip;
     this.port = args.port;
     this.title = args.title;
@@ -117,248 +112,279 @@ class _MyHomePageState extends State<MyHomePage>
 
     return Scaffold(
       appBar: appBar,
-      body: TabBarView(
-        controller: _tabController,
-        children: myTabs.map((Tab tab) {
-          if (tab.text.compareTo('HOME') == 0) {
-            return new Container(
-              color: Colors.grey[200],
-              child: Column(
-                children: <Widget>[
-                  Expanded(
-                    child: GridView.count(
-                      crossAxisCount:
-                      _deviceOrientation == Orientation.portrait ? 1 : 2,
-                      padding: _deviceOrientation == Orientation.portrait
-                          ? EdgeInsets.all(16.0)
-                          : EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
-                      childAspectRatio:
-                      _deviceOrientation == Orientation.portrait
-                          ? 8.0 / 3.0
-                          : 8.0 / 3.5,
-                      children: <Widget>[
-                        Card(
-                          clipBehavior: Clip.antiAlias,
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                new Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: new Container(
-                                    margin: new EdgeInsets.symmetric(
-                                        horizontal: 6.0),
-                                    child: new Text(
-                                      'BackgroundSlideShow:',
-                                      textScaleFactor: 1.3,
+      body: Builder(
+        builder: (context) => TabBarView(
+          controller: _tabController,
+          children: myTabs.map((Tab tab) {
+            if (tab.text.compareTo('HOME') == 0) {
+              return new Container(
+                color: Colors.grey[200],
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: GridView.count(
+                        crossAxisCount:
+                            _deviceOrientation == Orientation.portrait ? 1 : 2,
+                        padding: _deviceOrientation == Orientation.portrait
+                            ? EdgeInsets.all(16.0)
+                            : EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
+                        childAspectRatio:
+                            _deviceOrientation == Orientation.portrait
+                                ? 8.0 / 3.0
+                                : 8.0 / 3.5,
+                        children: <Widget>[
+                          Card(
+                            clipBehavior: Clip.antiAlias,
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  new Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: new Container(
+                                      margin: new EdgeInsets.symmetric(
+                                          horizontal: 6.0),
+                                      child: new Text(
+                                        'BackgroundSlideShow:',
+                                        textScaleFactor: 1.3,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                new Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    new SizedBox(
-                                      width: 5.0,
-                                    ),
-                                    new IconButton(
-                                        icon: Icon(Icons.stop,
-                                            semanticLabel: 'stop slideshow'),
-                                        tooltip: 'stop slideshow',
-                                        color: Colors.black54,
-                                        iconSize: 35.0,
-                                        onPressed: _backgroundSlideShowStop),
-                                    new IconButton(
-                                        icon: Icon(Icons.play_arrow,
-                                            semanticLabel: 'start slideshow'),
-                                        tooltip: 'start slideshow',
-                                        color: Colors.black54,
-                                        iconSize: 35.0,
-                                        onPressed: _backgroundSlideShowPlay),
-                                    new IconButton(
-                                        icon: Icon(Icons.fast_forward,
-                                            semanticLabel: 'next picture'),
-                                        tooltip: 'next picture',
-                                        color: Colors.black54,
-                                        iconSize: 35.0,
-                                        onPressed: _backgroundSlideShowNext),
-                                    new SizedBox(
-                                      width: 5.0,
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                  new Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      new SizedBox(
+                                        width: 5.0,
+                                      ),
+                                      new IconButton(
+                                          icon: Icon(Icons.stop,
+                                              semanticLabel: 'stop slideshow'),
+                                          tooltip: 'stop slideshow',
+                                          color: Colors.black54,
+                                          iconSize: 35.0,
+                                          onPressed: _backgroundSlideShowStop),
+                                      new IconButton(
+                                          icon: Icon(Icons.play_arrow,
+                                              semanticLabel: 'start slideshow'),
+                                          tooltip: 'start slideshow',
+                                          color: Colors.black54,
+                                          iconSize: 35.0,
+                                          onPressed: _backgroundSlideShowPlay),
+                                      new IconButton(
+                                          icon: Icon(Icons.fast_forward,
+                                              semanticLabel: 'next picture'),
+                                          tooltip: 'next picture',
+                                          color: Colors.black54,
+                                          iconSize: 35.0,
+                                          onPressed: _backgroundSlideShowNext),
+                                      new SizedBox(
+                                        width: 5.0,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        Card(
-                          clipBehavior: Clip.antiAlias,
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                new Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: new Container(
-                                    margin: new EdgeInsets.symmetric(
-                                        horizontal: 6.0),
-                                    child: new Text(
-                                      'BrightnessSlider:',
-                                      textScaleFactor: 1.3,
+                          Card(
+                            clipBehavior: Clip.antiAlias,
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  new Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: new Container(
+                                      margin: new EdgeInsets.symmetric(
+                                          horizontal: 6.0),
+                                      child: new Text(
+                                        'BrightnessSlider:',
+                                        textScaleFactor: 1.3,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                new Slider(
-                                  value: _brightnessValue.toDouble(),
-                                  min: 0.0,
-                                  max: 200.0,
-                                  divisions: 20,
-                                  activeColor: Colors.blue,
-                                  inactiveColor: Colors.black54,
-                                  label: 'changing Brightness',
-                                  semanticFormatterCallback: (double newValue) {
-                                    return '${newValue.round()}/200 brightness';
-                                  },
-                                  onChanged: (double newValue) {
+                                  new Slider(
+                                    value: _brightnessValue.toDouble(),
+                                    min: 0.0,
+                                    max: 200.0,
+                                    divisions: 20,
+                                    activeColor: Colors.blue,
+                                    inactiveColor: Colors.black54,
+                                    label: 'changing Brightness',
+                                    semanticFormatterCallback:
+                                        (double newValue) {
+                                      return '${newValue.round()}/200 brightness';
+                                    },
+                                    onChanged: (double newValue) {
+                                      setState(() {
+                                        _brightnessValue = newValue.round();
+                                        _setBrightness(_brightnessValue, true);
+                                      });
+                                    },
+                                    onChangeEnd: (double newValue) {
+                                      _persistBrightnessSetting(
+                                          newValue.round());
+                                    },
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    new Container(
+                      color: Colors.white,
+                      child: Column(
+                        children: <Widget>[
+                          new Divider(height: 1.0),
+                          new Row(
+                            children: <Widget>[
+                              new Flexible(
+                                child: new TextField(
+                                  controller: _textController,
+                                  onChanged: (String text) {
                                     setState(() {
-                                      _brightnessValue = newValue.round();
-                                      _setBrightness(_brightnessValue, true);
+                                      _isComposing = text.length > 0;
                                     });
                                   },
-                                  onChangeEnd: (double newValue) {
-                                    _persistBrightnessSetting(newValue.round());
-                                  },
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  new Container(
-                    color: Colors.white,
-                    child: Column(
-                      children: <Widget>[
-                        new Divider(height: 1.0),
-                        new Row(
-                          children: <Widget>[
-                            new Flexible(
-                              child: new TextField(
-                                controller: _textController,
-                                onChanged: (String text) {
-                                  setState(() {
-                                    _isComposing = text.length > 0;
-                                  });
-                                },
-                                decoration: new InputDecoration.collapsed(
-                                  hintText: "  " + lastRequest,
+                                  decoration: new InputDecoration.collapsed(
+                                    hintText: "  " + lastRequest,
+                                  ),
                                 ),
                               ),
-                            ),
-                            new Container(
-                              margin: new EdgeInsets.symmetric(horizontal: 4.0),
-                              child: new IconButton(
-                                icon: new Icon(Icons.send,
-                                    semanticLabel: 'send alert'),
-                                color: Colors.black54,
-                                disabledColor: Colors.black26,
-                                tooltip:
-                                'send an alert or send "/AlertDuration: int" to set the display-time of an alert',
-                                onPressed: _isComposing
-                                    ? () =>
-                                    _evaluateAlert(
-                                        _textController.text, context)
-                                    : null,
+                              new Container(
+                                margin:
+                                    new EdgeInsets.symmetric(horizontal: 4.0),
+                                child: new IconButton(
+                                  icon: new Icon(Icons.send,
+                                      semanticLabel: 'send alert'),
+                                  color: Colors.black54,
+                                  disabledColor: Colors.black26,
+                                  tooltip:
+                                      'send an alert or send "/AlertDuration: int" to set the display-time of an alert',
+                                  onPressed: _isComposing
+                                      ? () => _evaluateAlert(
+                                          _textController.text, context)
+                                      : null,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        //new Divider(height: 5.0),
-                      ],
+                            ],
+                          ),
+                          //new Divider(height: 5.0),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            return new Container(
-              color: Colors.grey[200],
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-              Expanded(
-              child: GridView.count(
-                crossAxisCount: _deviceOrientation == Orientation.portrait ? 1: 2,
-                padding: _deviceOrientation == Orientation.portrait
-                    ? EdgeInsets.all(16.0)
-                    : EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
-                childAspectRatio: _deviceOrientation == Orientation.portrait
-                    ? 8.0 / 2.0
-                    : 8.0 / 2.25,
-                children: _customCommands,
-              ),
-            ),
-          Align(
-          alignment: Alignment.lerp(Alignment.center, Alignment.centerRight, 0.85),
-          child: FloatingActionButton(
-          child: Icon(Icons.add,
-          color: Colors.blue,
-          size: 35,
-          ),
-          backgroundColor: Colors.white,
-          //padding: EdgeInsets.fromLTRB(20.0, 13.0, 20.0, 13.0),
-          elevation: 5.0,
-          onPressed: () {
-          _navigateAndCreateCustomCommand(context);
-          },
-          )
-          ),
-          SizedBox(height: 20),
-          ]
-          ,
-          )
-          ,
-          );
-        }
-        }).toList(),
+                  ],
+                ),
+              );
+            } else {
+              return new Container(
+                color: Colors.grey[200],
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Expanded(
+                      child: GridView.count(
+                        crossAxisCount:
+                            _deviceOrientation == Orientation.portrait ? 1 : 2,
+                        padding: _deviceOrientation == Orientation.portrait
+                            ? EdgeInsets.all(16.0)
+                            : EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
+                        childAspectRatio:
+                            _deviceOrientation == Orientation.portrait
+                                ? 8.0 / 2.0
+                                : 8.0 / 2.25,
+                        children: _customCommands,
+                      ),
+                    ),
+                    Align(
+                        alignment: Alignment.lerp(
+                            Alignment.center, Alignment.centerRight, 0.85),
+                        child: FloatingActionButton(
+                          child: Icon(
+                            Icons.add,
+                            color: Colors.blue,
+                            size: 35,
+                          ),
+                          backgroundColor: Colors.white,
+                          //padding: EdgeInsets.fromLTRB(20.0, 13.0, 20.0, 13.0),
+                          elevation: 5.0,
+                          onPressed: () {
+                            _navigateAndCreateCustomCommand(context);
+                          },
+                        )),
+                    SizedBox(height: 20),
+                  ],
+                ),
+              );
+            }
+          }).toList(),
+        ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        elevation: 10.0,
-        child: new Container(
-          height: 50.0,
-          color: Colors.blue,
-          child: new Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              new IconButton(
+      bottomNavigationBar: Builder(
+        builder: (context) => BottomAppBar(
+          elevation: 10.0,
+          child: new Container(
+            height: 50.0,
+            color: Colors.blue,
+            child: new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                new IconButton(
+                    padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+                    icon: new Icon(Icons.arrow_back,
+                        size: 35.0,
+                        color: Colors.white,
+                        semanticLabel: 'previous page'),
+                    tooltip: 'previous mirror-page',
+                    onPressed: () {
+                      _decrementPage(context);
+                    }),
+                new SizedBox(
+                  width: 50.0,
+                  height: 50.0,
+                ),
+                new IconButton(
                   padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-                  icon: new Icon(Icons.arrow_back,
+                  icon: new Icon(Icons.arrow_forward,
                       size: 35.0,
                       color: Colors.white,
-                      semanticLabel: 'previous page'),
-                  tooltip: 'previous mirror-page',
-                  onPressed: _decrementPage),
-              new SizedBox(
-                width: 50.0,
-                height: 50.0,
-              ),
-              new IconButton(
-                padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-                icon: new Icon(Icons.arrow_forward,
-                    size: 35.0,
-                    color: Colors.white,
-                    semanticLabel: 'next page'),
-                tooltip: 'next mirror-page',
-                onPressed: _incrementPage,
-              ),
-            ],
+                      semanticLabel: 'next page'),
+                  tooltip: 'next mirror-page',
+                  onPressed: () {
+                    _incrementPage(context);
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  void _showSnackbar(String message, BuildContext context) {
+    Scaffold.of(context).showSnackBar(SnackBar(
+      elevation: 5.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+      ),
+      duration: new Duration(milliseconds: 400),
+      backgroundColor: Colors.white,
+      content: Text(
+        message,
+        textScaleFactor: 1.2,
+        style: TextStyle(
+          color: Colors.blue,
+        ),
+      ),
+    ));
   }
 
   void _initializeSettings(String title) {
@@ -376,13 +402,13 @@ class _MyHomePageState extends State<MyHomePage>
 
         //create String for every setting
         String _tempBrightness =
-        _tempSettings.substring(0, _tempSettings.indexOf('|') + 1);
+            _tempSettings.substring(0, _tempSettings.indexOf('|') + 1);
         String _tempAlertDuration =
-        _tempSettings.replaceAll(_tempBrightness, '');
+            _tempSettings.replaceAll(_tempBrightness, '');
         _tempAlertDuration = _tempAlertDuration.substring(
             0, _tempAlertDuration.indexOf('|') + 1);
         String _tempMonitorToggle =
-        _tempSettings.replaceAll(_tempBrightness + _tempAlertDuration, '');
+            _tempSettings.replaceAll(_tempBrightness + _tempAlertDuration, '');
 
         //actualize settings
         _settings = title + _tempSettings;
@@ -463,7 +489,7 @@ class _MyHomePageState extends State<MyHomePage>
     String _tempSettings = _unifySettingAndDeleteDeviceName(_settings);
 
     String _tempBrightness =
-    _tempSettings.substring(0, _tempSettings.indexOf('|') + 1);
+        _tempSettings.substring(0, _tempSettings.indexOf('|') + 1);
     String _tempAlertDuration = _tempSettings.replaceAll(_tempBrightness, '');
     _tempAlertDuration = _replaceValue(_tempAlertDuration, '$newValue');
 
@@ -475,12 +501,12 @@ class _MyHomePageState extends State<MyHomePage>
     String _tempSettings = _unifySettingAndDeleteDeviceName(_settings);
 
     String _tempBrightness =
-    _tempSettings.substring(0, _tempSettings.indexOf('|') + 1);
+        _tempSettings.substring(0, _tempSettings.indexOf('|') + 1);
     String _tempAlertDuration = _tempSettings.replaceAll(_tempBrightness, '');
     _tempAlertDuration =
         _tempAlertDuration.substring(0, _tempAlertDuration.indexOf('|') + 1);
     String _tempMonitorToggle =
-    _tempSettings.replaceAll(_tempBrightness + _tempAlertDuration, '');
+        _tempSettings.replaceAll(_tempBrightness + _tempAlertDuration, '');
     print('_tempBrightness: ' + _tempBrightness);
     print('_tempalertDuration: ' + _tempAlertDuration);
     print('_tempMonitorToggle: ' + _tempMonitorToggle);
@@ -521,12 +547,12 @@ class _MyHomePageState extends State<MyHomePage>
     print(_temptext);
     //Check if Command was send
     if (_temptext
-        .substring(0, _temptext.indexOf(':') + 1)
-        .compareTo('/ALERTDURATION:') ==
+            .substring(0, _temptext.indexOf(':') + 1)
+            .compareTo('/ALERTDURATION:') ==
         0) {
       _setAlertDuration(_temptext);
     } else {
-        _sendAlert(text);
+      _sendAlert(text);
     }
   }
 
@@ -550,7 +576,7 @@ class _MyHomePageState extends State<MyHomePage>
     CommandArguments _commandArguments = result;
 
     Card _newCard = _createCommandCard(_commandArguments.title,
-        _commandArguments.notification, _commandArguments.payload);
+        _commandArguments.notification, _commandArguments.payload, context);
     final List<Widget> _customCommandsTemp = List<Widget>();
     _customCommandsTemp.addAll(_customCommands);
     _customCommandsTemp.add(_newCard);
@@ -560,7 +586,8 @@ class _MyHomePageState extends State<MyHomePage>
     });
   }
 
-  Card _createCommandCard(String title, String notification, String payload) {
+  Card _createCommandCard(
+      String title, String notification, String payload, BuildContext context) {
     //_mirrorDatabase
     //  .insertCommand(new CommandArguments(title, notification, payload));
     return Card(
@@ -590,7 +617,7 @@ class _MyHomePageState extends State<MyHomePage>
                   ],
                 ),
                 onPressed: () {
-                  _sendCustomCommand(title, notification, payload);
+                  _sendCustomCommand(title, notification, payload, context);
                 },
               ),
             ),
@@ -600,7 +627,8 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 
-  void _sendCustomCommand(String title, String notification, String payload) {
+  void _sendCustomCommand(
+      String title, String notification, String payload, BuildContext context) {
     if (payload.trim().compareTo('') == 0) {
       http.get("http://" +
           ip +
@@ -618,6 +646,7 @@ class _MyHomePageState extends State<MyHomePage>
           "&payload=" +
           payload);
     }
+    _showSnackbar(title + ' sended', context);
     setState(() {
       lastRequest = title + " sended";
     });
@@ -636,25 +665,27 @@ class _MyHomePageState extends State<MyHomePage>
     });
   }
 
-  void _incrementPage() {
+  void _incrementPage(BuildContext context) {
     http.get("http://" +
         ip +
         ":" +
         port +
         "/remote?action=NOTIFICATION&notification=PAGE_INCREMENT");
     print("Page Incremented");
+    _showSnackbar('Page Incremented', context);
     setState(() {
       lastRequest = "Page Incremented";
     });
   }
 
-  void _decrementPage() {
+  void _decrementPage(BuildContext context) {
     http.get("http://" +
         ip +
         ":" +
         port +
         "/remote?action=NOTIFICATION&notification=PAGE_DECREMENT");
     print("Page Decremented");
+    _showSnackbar('Page Decremented', context);
     setState(() {
       lastRequest = "Page Decremented";
     });
