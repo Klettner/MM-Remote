@@ -35,7 +35,7 @@ class _MyHomePageState extends State<MyHomePage>
   String ip;
   String port;
   String title;
-  Color _monitorToggleColor = Colors.white;
+  Color _monitorToggleColor = Colors.blue;
   int _brightnessValue = 200;
   int _alertDuration = 10;
   String _settings = 'BRIGHTNESS:200|ALERTDURATION:10|Monitor:ON|;';
@@ -102,9 +102,8 @@ class _MyHomePageState extends State<MyHomePage>
               ),
             ),
             ListTile(
-              //TODO: create Toggle Icon
               leading: Icon( Icons.tv,
-                color: Colors.black54,
+                color: _monitorToggleColor,
                 semanticLabel: 'toggleMonitor'),
               title: Text('Toggle monitor on/off'),
               onTap: (){
@@ -441,7 +440,7 @@ class _MyHomePageState extends State<MyHomePage>
         print('_settings: ' + _settings);
         print('_brightnessValue: $_brightnessValue');
         print('_alertDuration: $_alertDuration');
-        if (_monitorToggleColor == Colors.white) {
+        if (_monitorToggleColor == Colors.blue) {
           print('Monitor: ON');
         } else {
           print('Monitor: OFF');
@@ -450,9 +449,9 @@ class _MyHomePageState extends State<MyHomePage>
           _brightnessValue = int.parse(_extractValue(_tempBrightness));
           _alertDuration = int.parse(_extractValue(_tempAlertDuration));
           if (_extractValue(_tempMonitorToggle).compareTo('ON') == 0) {
-            _monitorToggleColor = Colors.white;
+            _monitorToggleColor = Colors.blue;
           } else {
-            _monitorToggleColor = Colors.black45;
+            _monitorToggleColor = Colors.black54;
           }
         });
       }
@@ -716,7 +715,7 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   void _toggleMonitor() {
-    if (_monitorToggleColor == Colors.white) {
+    if (_monitorToggleColor == Colors.blue) {
       _toggleMonitorOff(true);
     } else {
       _toggleMonitorOn(true);
@@ -727,7 +726,7 @@ class _MyHomePageState extends State<MyHomePage>
     http.get("http://" + ip + ":" + port + "/remote?action=MONITORON");
     print("MonitorOn");
     setState(() {
-      _monitorToggleColor = Colors.white;
+      _monitorToggleColor = Colors.blue;
 
       if (stateChange) {
         lastRequest = "Monitor On";
@@ -740,7 +739,7 @@ class _MyHomePageState extends State<MyHomePage>
     http.get("http://" + ip + ":" + port + "/remote?action=MONITOROFF");
     print("MonitorOff");
     setState(() {
-      _monitorToggleColor = Colors.black45;
+      _monitorToggleColor = Colors.black54;
       if (stateChange) {
         lastRequest = "Monitor Off";
       }
