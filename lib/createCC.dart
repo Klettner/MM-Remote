@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'home.dart';
+import 'package:mmremotecontrol/commandArguments.dart';
 
 class AddCommandPage extends StatefulWidget {
   static const routeName = '/addCommand';

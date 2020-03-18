@@ -8,8 +8,7 @@ import 'start.dart';
 import 'dart:io';
 import 'createCC.dart';
 import 'dart:async';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:mmremotecontrol/commandArguments.dart';
 
 class MyHomePage extends StatefulWidget {
   static const routeName = '/homePage';
@@ -41,7 +40,6 @@ class _MyHomePageState extends State<MyHomePage>
   String _settings = 'BRIGHTNESS:200|ALERTDURATION:10|Monitor:ON|;';
   bool _stateInitialized = false;
   List<Widget> _customCommands = List<Widget>();
-  MirrorDatabase _mirrorDatabase;
 
   @override
   void initState() {
@@ -65,7 +63,6 @@ class _MyHomePageState extends State<MyHomePage>
 
     //Only after start of the App
     if (!_stateInitialized) {
-      _mirrorDatabase = new MirrorDatabase(title);
       _initializeSettings(title + ':');
     }
 
@@ -454,20 +451,6 @@ class _MyHomePageState extends State<MyHomePage>
         });
       }
     });
-    /*
-    _mirrorDatabase.openDB(title.replaceAll(':', ''));
-    final List<Widget> _customCommandsTemp = List<Widget>();
-
-    _mirrorDatabase.getCommands().then((List<CommandArguments> values) {
-      for (CommandArguments cargs in values) {
-        _customCommandsTemp.add(
-            _createCommandCard(cargs.title, cargs.notification, cargs.payload));
-      }
-      setState(() {
-        _customCommands = _customCommandsTemp;
-      });
-    });
-    */
   }
 
   String _extractValue(String setting) {
@@ -609,8 +592,6 @@ class _MyHomePageState extends State<MyHomePage>
 
   Card _createCommandCard(
       String title, String notification, String payload, BuildContext context) {
-    //_mirrorDatabase
-    //  .insertCommand(new CommandArguments(title, notification, payload));
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
@@ -854,87 +835,4 @@ class _MyHomePageState extends State<MyHomePage>
   }
 }
 
-class CommandArguments {
-  final String title;
-  final String notification;
-  final String payload;
 
-  CommandArguments(this.title, this.notification, this.payload);
-
-  Map<String, dynamic> toMap() {
-    return {
-      'title': title,
-      'notification': notification,
-      'payload': payload,
-    };
-  }
-
-  @override
-  String toString() {
-    return 'Command{title: $title, notification: $notification, payload: $payload}';
-  }
-}
-
-class MirrorDatabase {
-  Future<Database> database;
-  String tableName;
-
-  MirrorDatabase(this.tableName);
-
-  void openDB(String device) async {
-    this.database = openDatabase(
-      join(await getDatabasesPath(), device + '.db'),
-      onCreate: (db, version) {
-        return db.execute(
-          "CREATE TABLE $device(title TEXT PRIMARY KEY, notify TEXT, payload TEXT)",
-        );
-      },
-      version: 1,
-    );
-  }
-
-  Future<void> insertCommand(CommandArguments commandArguments) async {
-    final Database db = await database;
-
-    await db.insert(
-      tableName,
-      commandArguments.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  Future<List<CommandArguments>> getCommands() async {
-    final Database db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(tableName);
-
-    // Convert the List<Map<String, dynamic> into a List<CommandArguments>.
-    return List.generate(maps.length, (i) {
-      return CommandArguments(
-        maps[i]['title'],
-        maps[i]['notification'],
-        maps[i]['payload'],
-      );
-    });
-  }
-
-  Future<void> updateCommand(CommandArguments commandArguments) async {
-    final db = await database;
-
-    await db.update(
-      tableName,
-      commandArguments.toMap(),
-      where: "title = ?",
-      whereArgs: [commandArguments.title],
-    );
-  }
-
-  Future<void> deleteCommand(String titel) async {
-    final db = await database;
-
-    await db.delete(
-      tableName,
-      where: "title = ?",
-      whereArgs: [titel],
-    );
-  }
-}
