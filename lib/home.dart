@@ -668,7 +668,7 @@ void _persistCommand(String commandName, String notification, String payload){
 
   void _deleteCommand(String commandName){
     var dbHelper = DBHelper();
-    dbHelper.deleteCommand(commandName);
+    dbHelper.deleteCommand(deviceName, commandName);
 
     final List<Widget> _customCommandsTemp = List<Widget>();
     fetchCommandsFromDatabase(deviceName).then((List<CommandArguments> commands) {

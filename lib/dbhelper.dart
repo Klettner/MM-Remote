@@ -52,10 +52,10 @@ class DBHelper {
     });
   }
 
-  void deleteCommand(String commandName) async{
+  void deleteCommand(String deviceName, String commandName) async{
     //TODO: mind deviceName
     var dbClient = await db;
-    dbClient.delete('Commands', where: "commandName = ?", whereArgs: [commandName]);
+    dbClient.delete('Commands', where: "deviceName = ? AND commandName = ?", whereArgs: [deviceName, commandName]);
     print("Deleted " + commandName);
   }
 
