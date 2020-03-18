@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:mmremotecontrol/app.dart';
 import 'home.dart';
 import 'addDevice.dart';
+import 'package:mmremotecontrol/models/deviceArguments.dart';
 
 class StartPage extends StatefulWidget {
   static const routeName = '/startPage';
@@ -26,10 +27,10 @@ class _StartPageState extends State<StartPage> {
     widget.storage.readCards().then((String value) {
       _cards = value;
       print(_cards);
-      List<ScreenArguments> _screenargslist = _divideStorageString(_cards);
+      List<DeviceArguments> _deviceargslist = _divideStorageString(_cards);
       final List<Widget> _widgetsTemp = List<Widget>();
 
-      for (ScreenArguments args in _screenargslist) {
+      for (DeviceArguments args in _deviceargslist) {
         Card _newCard = _createCards(args.deviceName, args.ip, args.port);
         _widgetsTemp.add(_newCard);
       }
@@ -40,8 +41,8 @@ class _StartPageState extends State<StartPage> {
     });
   }
 
-  List<ScreenArguments> _divideStorageString(String cards) {
-    List<ScreenArguments> _result = List<ScreenArguments>();
+  List<DeviceArguments> _divideStorageString(String cards) {
+    List<DeviceArguments> _result = List<DeviceArguments>();
     int _l = 0;
     while (_l < cards.length) {
       int _r = cards.indexOf('|', _l);
@@ -58,7 +59,7 @@ class _StartPageState extends State<StartPage> {
       print('port: ' + port);
       print(_l);
       print(_r);
-      ScreenArguments arg = new ScreenArguments(deviceName, ip, port);
+      DeviceArguments arg = new DeviceArguments(deviceName, ip, port);
       _result.add(arg);
     }
     return _result;
@@ -136,9 +137,9 @@ class _StartPageState extends State<StartPage> {
       context,
       MaterialPageRoute(builder: (context) => AddDevicePage()),
     );
-    ScreenArguments _screenArguments = result;
+    DeviceArguments _deviceArguments = result;
     _changeCards(
-        _screenArguments.deviceName, _screenArguments.ip, _screenArguments.port);
+        _deviceArguments.deviceName, _deviceArguments.ip, _deviceArguments.port);
   }
 
   Future<File> _changeCards(String deviceName, String ip, String port) {
@@ -247,7 +248,7 @@ class _StartPageState extends State<StartPage> {
                   Navigator.pushNamed(
                     context,
                     MyHomePage.routeName,
-                    arguments: ScreenArguments(
+                    arguments: DeviceArguments(
                       deviceName,
                       ip,
                       port,
@@ -261,12 +262,4 @@ class _StartPageState extends State<StartPage> {
       ),
     );
   }
-}
-
-class ScreenArguments {
-  final String deviceName;
-  final String ip;
-  final String port;
-
-  ScreenArguments(this.deviceName, this.ip, this.port);
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'start.dart';
+import 'package:mmremotecontrol/models/deviceArguments.dart';
 
 class AddDevicePage extends StatefulWidget {
   static const routeName = '/addDevice';
@@ -128,7 +128,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
     if(_noIllegalCharacters(title, ip, port)) {
       Navigator.pop(
         context,
-        ScreenArguments(
+        DeviceArguments(
           title.trim(),
           ip.trim(),
           port.trim(),

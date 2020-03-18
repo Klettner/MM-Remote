@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mmremotecontrol/app.dart';
 import 'package:mmremotecontrol/createCC.dart';
-import 'package:mmremotecontrol/start.dart';
-import 'start.dart';
 import 'dart:io';
 import 'createCC.dart';
 import 'dart:async';
-import 'package:mmremotecontrol/commandArguments.dart';
+import 'package:mmremotecontrol/models/commandArguments.dart';
+import 'package:mmremotecontrol/models/deviceArguments.dart';
 import 'package:mmremotecontrol/dbhelper.dart';
 
 Future<List<CommandArguments>> fetchCommandsFromDatabase(String deviceName) async {
@@ -63,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   Widget build(BuildContext context) {
     var _deviceOrientation = MediaQuery.of(context).orientation;
-    final ScreenArguments args = ModalRoute.of(context).settings.arguments;
+    final DeviceArguments args = ModalRoute.of(context).settings.arguments;
     this.ip = args.ip;
     this.port = args.port;
     this.deviceName = args.deviceName;
