@@ -6,6 +6,13 @@ import 'package:mmremotecontrol/app.dart';
 import 'home.dart';
 import 'addDevice.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
+import 'package:mmremotecontrol/dbhelper.dart';
+
+Future<List<DeviceArguments>> fetchDevicesFromDatabase() async {
+  var dbHelper = DBHelper();
+  Future<List<DeviceArguments>> devices = dbHelper.getDevices();
+  return devices;
+}
 
 class StartPage extends StatefulWidget {
   static const routeName = '/startPage';
@@ -24,17 +31,31 @@ class _StartPageState extends State<StartPage> {
   @override
   void initState() {
     super.initState();
+    /*
     widget.storage.readCards().then((String value) {
       _cards = value;
       print(_cards);
-      List<DeviceArguments> _deviceargslist = _divideStorageString(_cards);
+      List<DeviceArguments> _deviceArgsList = _divideStorageString(_cards);
+      
       final List<Widget> _widgetsTemp = List<Widget>();
 
-      for (DeviceArguments args in _deviceargslist) {
-        Card _newCard = _createCards(args.deviceName, args.ip, args.port);
+      for (DeviceArguments args in _deviceArgsList) {
+        Card _newCard = _createCards(args.deviceName, args.ip, args.port, false);
         _widgetsTemp.add(_newCard);
       }
 
+      setState(() {
+        _widgets = _widgetsTemp;
+      });
+    });
+    */
+    final List<Widget> _widgetsTemp = List<Widget>();
+    fetchDevicesFromDatabase().then((List<DeviceArguments> devices) {
+      for (DeviceArguments device in devices) {
+        Card _newCard =
+            _createCards(device.deviceName, device.ip, device.port, false);
+        _widgetsTemp.add(_newCard);
+      }
       setState(() {
         _widgets = _widgetsTemp;
       });
@@ -82,11 +103,14 @@ class _StartPageState extends State<StartPage> {
           children: <Widget>[
             Expanded(
               child: GridView.count(
-                    crossAxisCount:  _deviceOrientation == Orientation.portrait ? 1 : 2,
-                    padding: EdgeInsets.all(16.0),
-                    childAspectRatio: _deviceOrientation == Orientation.portrait ? 8.0 / 3.0 : 8.0 / 4.0,
-                    children: _widgets,
-                  ),
+                crossAxisCount:
+                    _deviceOrientation == Orientation.portrait ? 1 : 2,
+                padding: EdgeInsets.all(16.0),
+                childAspectRatio: _deviceOrientation == Orientation.portrait
+                    ? 8.0 / 3.0
+                    : 8.0 / 4.0,
+                children: _widgets,
+              ),
             ),
             new SizedBox(height: 15.0),
           ],
@@ -101,18 +125,18 @@ class _StartPageState extends State<StartPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             new SizedBox(width: 5.0, height: 50),
-               new IconButton(
-                icon: Icon(
-                  Icons.delete,
-                  size: 35.0,
-                  color: Colors.white,
-                  semanticLabel: 'delete last',
-                ),
-                tooltip: 'Delete last device',
-                onPressed: () {
-                  _deleteLastCardDialog(context);
-                },
+            new IconButton(
+              icon: Icon(
+                Icons.delete,
+                size: 35.0,
+                color: Colors.white,
+                semanticLabel: 'delete last',
               ),
+              tooltip: 'Delete last device',
+              onPressed: () {
+                _deleteLastCardDialog(context);
+              },
+            ),
           ],
         ),
       ),
@@ -138,22 +162,21 @@ class _StartPageState extends State<StartPage> {
       MaterialPageRoute(builder: (context) => AddDevicePage()),
     );
     DeviceArguments _deviceArguments = result;
-    _changeCards(
-        _deviceArguments.deviceName, _deviceArguments.ip, _deviceArguments.port);
+    _changeCards(_deviceArguments.deviceName, _deviceArguments.ip,
+        _deviceArguments.port);
   }
 
   Future<File> _changeCards(String deviceName, String ip, String port) {
-    Card _newCard = _createCards(deviceName, ip, port);
+    Card _newCard = _createCards(deviceName, ip, port, true);
     final List<Widget> _widgetsTemp = List<Widget>();
-
     _widgetsTemp.addAll(_widgets);
     _widgetsTemp.add(_newCard);
 
     setState(() {
-      _cards = _cards + deviceName + '|' + ip + '|' + port + ';';
+     // _cards = _cards + deviceName + '|' + ip + '|' + port + ';';
       _widgets = _widgetsTemp;
     });
-    return widget.storage.writeCards(_cards);
+    return null; // widget.storage.writeCards(_cards);
   }
 
   Future<File> _deleteLastCard() {
@@ -209,7 +232,10 @@ class _StartPageState extends State<StartPage> {
     );
   }
 
-  Card _createCards(String deviceName, String ip, String port) {
+  Card _createCards(String deviceName, String ip, String port, bool persist) {
+    if (persist) {
+      _persistDevice(deviceName, ip, port);
+    }
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
@@ -261,5 +287,11 @@ class _StartPageState extends State<StartPage> {
         ),
       ),
     );
+  }
+
+  void _persistDevice(String deviceName, String ipAdress, String port) {
+    var device = DeviceArguments(deviceName, ipAdress, port);
+    var dbHelper = DBHelper();
+    dbHelper.saveDevice(device);
   }
 }

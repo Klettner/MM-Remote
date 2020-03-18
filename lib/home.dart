@@ -412,6 +412,7 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   void _initializeSettings(String deviceName) {
+    print('initializing...');
     String _deviceNameWithColon = deviceName + ':';
     _stateInitialized = true;
     _settings = _deviceNameWithColon + _settings;
@@ -456,18 +457,17 @@ class _MyHomePageState extends State<MyHomePage>
             _monitorToggleColor = Colors.black54;
           }
         });
-
-        final List<Widget> _customCommandsTemp = List<Widget>();
-        fetchCommandsFromDatabase(deviceName).then((List<CommandArguments> commands) {
-          for(CommandArguments command in commands){
-            Card _newCard = _createCommandCard(command.commandName, command.notification, command.payload, context, false);
-            _customCommandsTemp.add(_newCard);
-          }
-        });
-        setState(() {
-          _customCommands = _customCommandsTemp;
-        });
       }
+    });
+    final List<Widget> _customCommandsTemp = List<Widget>();
+    fetchCommandsFromDatabase(deviceName).then((List<CommandArguments> commands) {
+      for(CommandArguments command in commands){
+        Card _newCard = _createCommandCard(command.commandName, command.notification, command.payload, context, false);
+        _customCommandsTemp.add(_newCard);
+      }
+    });
+    setState(() {
+      _customCommands = _customCommandsTemp;
     });
   }
 

@@ -17,7 +17,7 @@ class DBHelper {
 
   initDb() async {
     io.Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "mirror2.db");
+    String path = join(documentsDirectory.path, "mirror4.db");
     var theDb = await openDatabase(path, version: 1, onCreate: _onCreate);
     return theDb;
   }
@@ -28,7 +28,7 @@ class DBHelper {
         "CREATE TABLE Commands(id INTEGER PRIMARY KEY,deviceName TEXT, commandName TEXT, notification TEXT, payload TEXT)");
     print("Created Commands tables");
     await db.execute(
-        "CREATE TABLE Devices(id INTEGER PRIMARY KEY,deviceName TEXT, ipAdress TEXT, port INTEGER)");
+        "CREATE TABLE Devices(id INTEGER PRIMARY KEY,deviceName TEXT, ipAdress TEXT, port TEXT)");
     print("Created Cards tables");
   }
 
@@ -54,6 +54,7 @@ class DBHelper {
               '\'' +
               ')');
     });
+    print('command Saved');
   }
 
   void deleteCommand(String deviceName, String commandName) async{
@@ -63,6 +64,7 @@ class DBHelper {
   }
 
   Future<List<CommandArguments>> getCommands(String deviceName) async {
+    print('getting persistent Commands');
     var dbClient = await db;
     List<Map> list = await dbClient.query('Commands', where: "deviceName = ?", whereArgs: [deviceName]);
     List<CommandArguments> commands = new List();
