@@ -24,7 +24,7 @@ class DBHelper {
   void _onCreate(Database db, int version) async {
     // When creating the db, create the table
     await db.execute(
-        "CREATE TABLE Commands(id INTEGER PRIMARY KEY, title TEXT, notification TEXT, payload TEXT)");
+        "CREATE TABLE Commands(id INTEGER PRIMARY KEY, commandName TEXT, notification TEXT, payload TEXT)");
     print("Created tables");
   }
 
@@ -32,9 +32,9 @@ class DBHelper {
     var dbClient = await db;
     await dbClient.transaction((txn) async {
       return await txn.rawInsert(
-          'INSERT INTO Commands(title, notification, payload) VALUES(' +
+          'INSERT INTO Commands(commandName, notification, payload) VALUES(' +
               '\'' +
-              customCommand.title +
+              customCommand.commandName +
               '\'' +
               ',' +
               '\'' +
@@ -53,7 +53,7 @@ class DBHelper {
     List<Map> list = await dbClient.rawQuery('SELECT * FROM Commands');
     List<CommandArguments> commands = new List();
     for (int i = 0; i < list.length; i++) {
-      commands.add(new CommandArguments(list[i]["title"], list[i]["notification"], list[i]["payload"]));
+      commands.add(new CommandArguments(list[i]["commandName"], list[i]["notification"], list[i]["payload"]));
     }
     print(commands.length);
     return commands;

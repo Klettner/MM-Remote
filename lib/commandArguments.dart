@@ -1,12 +1,12 @@
 class CommandArguments {
-  String title;
+  String commandName;
   String notification;
   String payload;
 
-  CommandArguments(this.title, this.notification,this.payload);
+  CommandArguments(this.commandName, this.notification,this.payload);
 
   CommandArguments.fromMap(Map map) {
-    title = map[title];
+    commandName = map[commandName];
     notification = map[notification];
     payload = map[payload];
   }

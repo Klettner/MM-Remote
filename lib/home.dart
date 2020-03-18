@@ -33,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage>
   final TextEditingController _textController = new TextEditingController();
   String ip;
   String port;
-  String title;
+  String deviceName;
   Color _monitorToggleColor = Colors.blue;
   int _brightnessValue = 200;
   int _alertDuration = 10;
@@ -59,11 +59,11 @@ class _MyHomePageState extends State<MyHomePage>
     final ScreenArguments args = ModalRoute.of(context).settings.arguments;
     this.ip = args.ip;
     this.port = args.port;
-    this.title = args.title;
+    this.deviceName = args.deviceName;
 
     //Only after start of the App
     if (!_stateInitialized) {
-      _initializeSettings(title + ':');
+      _initializeSettings(deviceName + ':');
     }
 
     var appBar = AppBar(
@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage>
       elevation: 10.0,
       titleSpacing: 0.0,
       title: Text(
-        args.title,
+        args.deviceName,
       ),
       bottom: TabBar(
         controller: _tabController,
@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage>
                 color: Colors.blue,
               ),
               child: Text(
-                title,
+                deviceName,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -405,14 +405,14 @@ class _MyHomePageState extends State<MyHomePage>
     ));
   }
 
-  void _initializeSettings(String title) {
+  void _initializeSettings(String deviceName) {
     _stateInitialized = true;
-    _settings = title + _settings;
+    _settings = deviceName + _settings;
     // widget.settingsStorage.writeSettings('');
     widget.settingsStorage.readSettings().then((String value) {
-      if (value.compareTo('') != 0 && value.contains(title)) {
+      if (value.compareTo('') != 0 && value.contains(deviceName)) {
         //choose settings of relevant device
-        _settings = value.substring(value.indexOf(title));
+        _settings = value.substring(value.indexOf(deviceName));
         _settings = _settings.substring(0, _settings.indexOf(';') + 1);
 
         //delete device name
@@ -429,7 +429,7 @@ class _MyHomePageState extends State<MyHomePage>
             _tempSettings.replaceAll(_tempBrightness + _tempAlertDuration, '');
 
         //actualize settings
-        _settings = title + _tempSettings;
+        _settings = deviceName + _tempSettings;
 
         print('homePage: initialState: ');
         print('_settings: ' + _settings);
@@ -461,13 +461,13 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   Future<File> _writeSetting(String setting) {
-    _settings = title + ':' + setting;
+    _settings = deviceName + ':' + setting;
 
     widget.settingsStorage.readSettings().then((String value) {
-      if (value.compareTo('') != 0 && value.contains(title + ':')) {
+      if (value.compareTo('') != 0 && value.contains(deviceName + ':')) {
         return widget.settingsStorage.writeSettings(value.replaceRange(
-            value.indexOf(title + ':'),
-            value.indexOf(title + ':') + _settings.indexOf(';') + 1,
+            value.indexOf(deviceName + ':'),
+            value.indexOf(deviceName + ':') + _settings.indexOf(';') + 1,
             _settings));
       } else {
         return widget.settingsStorage.writeSettings(value + _settings);
@@ -579,7 +579,7 @@ class _MyHomePageState extends State<MyHomePage>
     );
     CommandArguments _commandArguments = result;
 
-    Card _newCard = _createCommandCard(_commandArguments.title,
+    Card _newCard = _createCommandCard(_commandArguments.commandName,
         _commandArguments.notification, _commandArguments.payload, context);
     final List<Widget> _customCommandsTemp = List<Widget>();
     _customCommandsTemp.addAll(_customCommands);
@@ -591,7 +591,7 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   Card _createCommandCard(
-      String title, String notification, String payload, BuildContext context) {
+      String commandName, String notification, String payload, BuildContext context) {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
@@ -607,7 +607,7 @@ class _MyHomePageState extends State<MyHomePage>
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      title,
+                      commandName,
                       softWrap: true,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
@@ -619,7 +619,7 @@ class _MyHomePageState extends State<MyHomePage>
                   ],
                 ),
                 onPressed: () {
-                  _sendCustomCommand(title, notification, payload, context);
+                  _sendCustomCommand(commandName, notification, payload, context);
                 },
               ),
             ),
@@ -630,7 +630,7 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   void _sendCustomCommand(
-      String title, String notification, String payload, BuildContext context) {
+      String commandName, String notification, String payload, BuildContext context) {
     if (payload.trim().compareTo('') == 0) {
       http.get("http://" +
           ip +
@@ -648,9 +648,9 @@ class _MyHomePageState extends State<MyHomePage>
           "&payload=" +
           payload);
     }
-    _showSnackbar(title + ' sended', context);
+    _showSnackbar(commandName + ' sended', context);
     setState(() {
-      lastRequest = title + " sended";
+      lastRequest = commandName + " sended";
     });
   }
 

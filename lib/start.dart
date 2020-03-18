@@ -30,7 +30,7 @@ class _StartPageState extends State<StartPage> {
       final List<Widget> _widgetsTemp = List<Widget>();
 
       for (ScreenArguments args in _screenargslist) {
-        Card _newCard = _createCards(args.title, args.ip, args.port);
+        Card _newCard = _createCards(args.deviceName, args.ip, args.port);
         _widgetsTemp.add(_newCard);
       }
 
@@ -45,7 +45,7 @@ class _StartPageState extends State<StartPage> {
     int _l = 0;
     while (_l < cards.length) {
       int _r = cards.indexOf('|', _l);
-      String title = cards.substring(_l, _r);
+      String deviceName = cards.substring(_l, _r);
       _l = _r + 1;
       _r = cards.indexOf('|', _l);
       String ip = cards.substring(_l, _r);
@@ -53,12 +53,12 @@ class _StartPageState extends State<StartPage> {
       _r = cards.indexOf(';', _l);
       String port = cards.substring(_l, _r);
       _l = _r + 1;
-      print('title: ' + title);
+      print('deviceName: ' + deviceName);
       print('ip: ' + ip);
       print('port: ' + port);
       print(_l);
       print(_r);
-      ScreenArguments arg = new ScreenArguments(title, ip, port);
+      ScreenArguments arg = new ScreenArguments(deviceName, ip, port);
       _result.add(arg);
     }
     return _result;
@@ -138,18 +138,18 @@ class _StartPageState extends State<StartPage> {
     );
     ScreenArguments _screenArguments = result;
     _changeCards(
-        _screenArguments.title, _screenArguments.ip, _screenArguments.port);
+        _screenArguments.deviceName, _screenArguments.ip, _screenArguments.port);
   }
 
-  Future<File> _changeCards(String title, String ip, String port) {
-    Card _newCard = _createCards(title, ip, port);
+  Future<File> _changeCards(String deviceName, String ip, String port) {
+    Card _newCard = _createCards(deviceName, ip, port);
     final List<Widget> _widgetsTemp = List<Widget>();
 
     _widgetsTemp.addAll(_widgets);
     _widgetsTemp.add(_newCard);
 
     setState(() {
-      _cards = _cards + title + '|' + ip + '|' + port + ';';
+      _cards = _cards + deviceName + '|' + ip + '|' + port + ';';
       _widgets = _widgetsTemp;
     });
     return widget.storage.writeCards(_cards);
@@ -208,7 +208,7 @@ class _StartPageState extends State<StartPage> {
     );
   }
 
-  Card _createCards(String title, String ip, String port) {
+  Card _createCards(String deviceName, String ip, String port) {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
@@ -228,7 +228,7 @@ class _StartPageState extends State<StartPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          title,
+                          deviceName,
                           textScaleFactor: 1.1,
                           style: TextStyle(
                             color: Colors.blue,
@@ -248,7 +248,7 @@ class _StartPageState extends State<StartPage> {
                     context,
                     MyHomePage.routeName,
                     arguments: ScreenArguments(
-                      title,
+                      deviceName,
                       ip,
                       port,
                     ),
@@ -264,9 +264,9 @@ class _StartPageState extends State<StartPage> {
 }
 
 class ScreenArguments {
-  final String title;
+  final String deviceName;
   final String ip;
   final String port;
 
-  ScreenArguments(this.title, this.ip, this.port);
+  ScreenArguments(this.deviceName, this.ip, this.port);
 }
