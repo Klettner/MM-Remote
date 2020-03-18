@@ -9,6 +9,13 @@ import 'dart:io';
 import 'createCC.dart';
 import 'dart:async';
 import 'package:mmremotecontrol/commandArguments.dart';
+import 'package:mmremotecontrol/dbhelper.dart';
+
+Future<List<CommandArguments>> fetchCommandsFromDatabase() async {
+  var dbHelper = DBHelper();
+  Future<List<CommandArguments>> commands = dbHelper.getCommands();
+  return commands;
+}
 
 class MyHomePage extends StatefulWidget {
   static const routeName = '/homePage';
@@ -449,6 +456,17 @@ class _MyHomePageState extends State<MyHomePage>
             _monitorToggleColor = Colors.black54;
           }
         });
+
+        final List<Widget> _customCommandsTemp = List<Widget>();
+        fetchCommandsFromDatabase().then((List<CommandArguments> commands) {
+          for(CommandArguments command in commands){
+            Card _newCard = _createCommandCard(command.commandName, command.notification, command.payload, context, false);
+            _customCommandsTemp.add(_newCard);
+          }
+        });
+        setState(() {
+          _customCommands = _customCommandsTemp;
+        });
       }
     });
   }
@@ -474,6 +492,12 @@ class _MyHomePageState extends State<MyHomePage>
       }
     });
   }
+
+void _persistCommand(String commandName, String notification, String payload){
+  var command = CommandArguments(commandName,notification,payload);
+  var dbHelper = DBHelper();
+  dbHelper.saveCommand(command);
+}
 
   String _unifySettingAndDeleteDeviceName(String setting) {
     String _tempSettings = _settings.toUpperCase().trim().replaceAll(' ', '');
@@ -580,7 +604,7 @@ class _MyHomePageState extends State<MyHomePage>
     CommandArguments _commandArguments = result;
 
     Card _newCard = _createCommandCard(_commandArguments.commandName,
-        _commandArguments.notification, _commandArguments.payload, context);
+        _commandArguments.notification, _commandArguments.payload, context, true);
     final List<Widget> _customCommandsTemp = List<Widget>();
     _customCommandsTemp.addAll(_customCommands);
     _customCommandsTemp.add(_newCard);
@@ -591,7 +615,10 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   Card _createCommandCard(
-      String commandName, String notification, String payload, BuildContext context) {
+      String commandName, String notification, String payload, BuildContext context, bool persist) {
+    if(persist) {
+      _persistCommand(commandName, notification, payload);
+    }
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
