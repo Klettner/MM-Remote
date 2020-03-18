@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mmremotecontrol/app.dart';
 import 'package:mmremotecontrol/createCC.dart';
+import 'package:mmremotecontrol/models/settingArguments.dart';
 import 'dart:io';
 import 'createCC.dart';
 import 'dart:async';
@@ -10,10 +11,17 @@ import 'package:mmremotecontrol/models/commandArguments.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
 import 'package:mmremotecontrol/dbhelper.dart';
 
-Future<List<CommandArguments>> fetchCommandsFromDatabase(String deviceName) async {
+Future<List<CommandArguments>> fetchCommandsFromDatabase(
+    String deviceName) async {
   var dbHelper = DBHelper();
   Future<List<CommandArguments>> commands = dbHelper.getCommands(deviceName);
   return commands;
+}
+
+Future<SettingArguments> fetchSettingsFromDatabase(String deviceName) async {
+  var dbHelper = DBHelper();
+  Future<SettingArguments> setting = dbHelper.getSettings(deviceName);
+  return setting;
 }
 
 class MyHomePage extends StatefulWidget {
@@ -91,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage>
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
-          children:  <Widget>[
+          children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.blue,
@@ -105,25 +113,25 @@ class _MyHomePageState extends State<MyHomePage>
               ),
             ),
             ListTile(
-              leading: Icon( Icons.tv,
-                color: _monitorToggleColor,
-                semanticLabel: 'toggleMonitor'),
+              leading: Icon(Icons.tv,
+                  color: _monitorToggleColor, semanticLabel: 'toggleMonitor'),
               title: Text('Toggle monitor on/off'),
-              onTap: (){
+              onTap: () {
                 _toggleMonitor();
               },
             ),
             ListTile(
-              leading: Icon(Icons.refresh,
-                semanticLabel: 'reboot'),
+              leading: Icon(Icons.refresh, semanticLabel: 'reboot'),
               title: Text('Reboot Mirror'),
               onTap: () {
                 _rebootPiDialog(context);
               },
             ),
             ListTile(
-              leading: Icon(Icons.power_settings_new,
-                semanticLabel: 'shutdown',),
+              leading: Icon(
+                Icons.power_settings_new,
+                semanticLabel: 'shutdown',
+              ),
               title: Text('Shutdown Mirror'),
               onTap: () {
                 _shutdownPiDialog(context);
@@ -413,8 +421,26 @@ class _MyHomePageState extends State<MyHomePage>
 
   void _initializeSettings(String deviceName) {
     print('initializing...');
-    String _deviceNameWithColon = deviceName + ':';
     _stateInitialized = true;
+
+    fetchSettingsFromDatabase(deviceName).then((SettingArguments tempSettings) {
+      if(tempSettings != null) {
+        int _tempBrightnessValue = int.parse(tempSettings.brightness);
+        int _tempAlertDuration = int.parse(tempSettings.alertDuration);
+        bool _tempMonitorColor = tempSettings.monitorStatus.compareTo('ON') == 0;
+        setState(() {
+          _brightnessValue = _tempBrightnessValue;
+          _alertDuration = _tempAlertDuration;
+          if (_tempMonitorColor) {
+            _monitorToggleColor = Colors.blue;
+          } else {
+            _monitorToggleColor = Colors.black54;
+          }
+        });
+      }
+    });
+    /*
+    String _deviceNameWithColon = deviceName + ':';
     _settings = _deviceNameWithColon + _settings;
     // widget.settingsStorage.writeSettings('');
     widget.settingsStorage.readSettings().then((String value) {
@@ -459,10 +485,13 @@ class _MyHomePageState extends State<MyHomePage>
         });
       }
     });
+    */
     final List<Widget> _customCommandsTemp = List<Widget>();
-    fetchCommandsFromDatabase(deviceName).then((List<CommandArguments> commands) {
-      for(CommandArguments command in commands){
-        Card _newCard = _createCommandCard(command.commandName, command.notification, command.payload, context, false);
+    fetchCommandsFromDatabase(deviceName)
+        .then((List<CommandArguments> commands) {
+      for (CommandArguments command in commands) {
+        Card _newCard = _createCommandCard(command.commandName,
+            command.notification, command.payload, context, false);
         _customCommandsTemp.add(_newCard);
       }
     });
@@ -493,11 +522,13 @@ class _MyHomePageState extends State<MyHomePage>
     });
   }
 
-void _persistCommand(String commandName, String notification, String payload){
-  var command = CommandArguments(deviceName, commandName,notification,payload);
-  var dbHelper = DBHelper();
-  dbHelper.saveCommand(command);
-}
+  void _persistCommand(
+      String commandName, String notification, String payload) {
+    var command =
+        CommandArguments(deviceName, commandName, notification, payload);
+    var dbHelper = DBHelper();
+    dbHelper.saveCommand(command);
+  }
 
   String _unifySettingAndDeleteDeviceName(String setting) {
     String _tempSettings = _settings.toUpperCase().trim().replaceAll(' ', '');
@@ -506,49 +537,27 @@ void _persistCommand(String commandName, String notification, String payload){
   }
 
   void _persistBrightnessSetting(int newValue) {
-    String _tempSettings = _unifySettingAndDeleteDeviceName(_settings);
-
-    _tempSettings = _replaceValue(_tempSettings, '$newValue');
-
-    _writeSetting(_tempSettings);
+    var setting = SettingArguments(
+        deviceName, '$newValue', '$_alertDuration', '$_monitorToggleColor');
+    var dbHelper = DBHelper();
+    dbHelper.deleteDevice(deviceName);
+    dbHelper.saveSetting(setting);
   }
 
   void _persistAlertDurationSetting(int newValue) {
-    String _tempSettings = _unifySettingAndDeleteDeviceName(_settings);
-
-    String _tempBrightness =
-        _tempSettings.substring(0, _tempSettings.indexOf('|') + 1);
-    String _tempAlertDuration = _tempSettings.replaceAll(_tempBrightness, '');
-    _tempAlertDuration = _replaceValue(_tempAlertDuration, '$newValue');
-
-    _tempSettings = _tempBrightness + _tempAlertDuration;
-    _writeSetting(_tempSettings);
+    var setting = SettingArguments(
+        deviceName, '$_brightnessValue', '$newValue', '$_monitorToggleColor');
+    var dbHelper = DBHelper();
+    dbHelper.deleteDevice(deviceName);
+    dbHelper.saveSetting(setting);
   }
 
-  void _persistMonitorSetting(String newValue) {
-    String _tempSettings = _unifySettingAndDeleteDeviceName(_settings);
-
-    String _tempBrightness =
-        _tempSettings.substring(0, _tempSettings.indexOf('|') + 1);
-    String _tempAlertDuration = _tempSettings.replaceAll(_tempBrightness, '');
-    _tempAlertDuration =
-        _tempAlertDuration.substring(0, _tempAlertDuration.indexOf('|') + 1);
-    String _tempMonitorToggle =
-        _tempSettings.replaceAll(_tempBrightness + _tempAlertDuration, '');
-    print('_tempBrightness: ' + _tempBrightness);
-    print('_tempalertDuration: ' + _tempAlertDuration);
-    print('_tempMonitorToggle: ' + _tempMonitorToggle);
-    _tempMonitorToggle = _replaceValue(_tempMonitorToggle, newValue);
-
-    _tempSettings = _tempBrightness + _tempAlertDuration + _tempMonitorToggle;
-    _writeSetting(_tempSettings);
-  }
-
-  String _replaceValue(String setting, String newValue) {
-    print('replacementSetting: ' + setting);
-    print('repalcementValue: ' + newValue);
-    return setting.replaceRange(
-        setting.indexOf(':') + 1, setting.indexOf('|'), newValue);
+  void _persistMonitorSetting(String status) {
+    var setting = SettingArguments(
+        deviceName, '$_brightnessValue', '$_alertDuration', status);
+    var dbHelper = DBHelper();
+    dbHelper.deleteDevice(deviceName);
+    dbHelper.saveSetting(setting);
   }
 
   void _setBrightness(int value, bool message) {
@@ -603,8 +612,12 @@ void _persistCommand(String commandName, String notification, String payload){
     );
     CommandArguments _commandArguments = result;
 
-    Card _newCard = _createCommandCard(_commandArguments.commandName,
-        _commandArguments.notification, _commandArguments.payload, context, true);
+    Card _newCard = _createCommandCard(
+        _commandArguments.commandName,
+        _commandArguments.notification,
+        _commandArguments.payload,
+        context,
+        true);
     final List<Widget> _customCommandsTemp = List<Widget>();
     _customCommandsTemp.addAll(_customCommands);
     _customCommandsTemp.add(_newCard);
@@ -614,9 +627,9 @@ void _persistCommand(String commandName, String notification, String payload){
     });
   }
 
-  Card _createCommandCard(
-      String commandName, String notification, String payload, BuildContext context, bool persist) {
-    if(persist) {
+  Card _createCommandCard(String commandName, String notification,
+      String payload, BuildContext context, bool persist) {
+    if (persist) {
       _persistCommand(commandName, notification, payload);
     }
     return Card(
@@ -646,16 +659,16 @@ void _persistCommand(String commandName, String notification, String payload){
                   ],
                 ),
                 onPressed: () {
-                  _sendCustomCommand(commandName, notification, payload, context);
+                  _sendCustomCommand(
+                      commandName, notification, payload, context);
                 },
               ),
             ),
-            IconButton (
-              icon: Icon(Icons.delete,
-              size: 24.0),
+            IconButton(
+              icon: Icon(Icons.delete, size: 24.0),
               color: Colors.black54,
               tooltip: 'Delete command',
-              onPressed: (){
+              onPressed: () {
                 _deleteCommand(commandName);
               },
             )
@@ -665,14 +678,16 @@ void _persistCommand(String commandName, String notification, String payload){
     );
   }
 
-  void _deleteCommand(String commandName){
+  void _deleteCommand(String commandName) {
     var dbHelper = DBHelper();
     dbHelper.deleteCommand(deviceName, commandName);
 
     final List<Widget> _customCommandsTemp = List<Widget>();
-    fetchCommandsFromDatabase(deviceName).then((List<CommandArguments> commands) {
-      for(CommandArguments command in commands){
-        Card _newCard = _createCommandCard(command.commandName, command.notification, command.payload, context, false);
+    fetchCommandsFromDatabase(deviceName)
+        .then((List<CommandArguments> commands) {
+      for (CommandArguments command in commands) {
+        Card _newCard = _createCommandCard(command.commandName,
+            command.notification, command.payload, context, false);
         _customCommandsTemp.add(_newCard);
       }
       setState(() {
@@ -681,8 +696,8 @@ void _persistCommand(String commandName, String notification, String payload){
     });
   }
 
-  void _sendCustomCommand(
-      String commandName, String notification, String payload, BuildContext context) {
+  void _sendCustomCommand(String commandName, String notification,
+      String payload, BuildContext context) {
     if (payload.trim().compareTo('') == 0) {
       http.get("http://" +
           ip +
@@ -886,5 +901,3 @@ void _persistCommand(String commandName, String notification, String payload){
     });
   }
 }
-
-

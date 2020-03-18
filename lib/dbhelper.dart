@@ -18,7 +18,7 @@ class DBHelper {
 
   initDb() async {
     io.Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "mirror4.db");
+    String path = join(documentsDirectory.path, "mirror5.db");
     var theDb = await openDatabase(path, version: 1, onCreate: _onCreate);
     return theDb;
   }
@@ -155,15 +155,18 @@ class DBHelper {
     print("Deleted Settings for" + deviceName);
   }
 
-  Future<List<SettingArguments>> getSettings(String deviceName) async {
+  Future<SettingArguments> getSettings(String deviceName) async {
+    print('getting settings');
     var dbClient = await db;
     List<Map> list = await dbClient
         .query('Settings', where: "deviceName = ?", whereArgs: [deviceName]);
-    List<SettingArguments> settings = new List();
-    for (int i = 0; i < list.length; i++) {
-      settings.add(new SettingArguments(
-          list[i]["deviceName"], list[i]["brightness"], list[i]["alertDuration"], list[i]["monitorStatus"]));
+    SettingArguments setting;
+    //there should only be one device per Name
+    if(list.length >= 1) {
+      setting = new SettingArguments(
+          list[0]["deviceName"], list[0]["brightness"],
+          list[0]["alertDuration"], list[0]["monitorStatus"]);
     }
-    return settings;
+    return setting;
   }
 }
