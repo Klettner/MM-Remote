@@ -5,6 +5,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:mmremotecontrol/models/commandArguments.dart';
+import 'package:mmremotecontrol/models/settingArguments.dart';
 
 class DBHelper {
   static Database _db;
@@ -30,6 +31,9 @@ class DBHelper {
     await db.execute(
         "CREATE TABLE Devices(id INTEGER PRIMARY KEY,deviceName TEXT, ipAdress TEXT, port TEXT)");
     print("Created Cards tables");
+    await db.execute(
+        "CREATE TABLE Settings(id INTEGER PRIMARY KEY,deviceName TEXT, brightness TEXT, alertDuration TEXT, monitorStatus TEXT)");
+    print("Created Settings tables");
   }
 
   void saveCommand(CommandArguments customCommand) async {
@@ -57,19 +61,23 @@ class DBHelper {
     print('command Saved');
   }
 
-  void deleteCommand(String deviceName, String commandName) async{
+  void deleteCommand(String deviceName, String commandName) async {
     var dbClient = await db;
-    dbClient.delete('Commands', where: "deviceName = ? AND commandName = ?", whereArgs: [deviceName, commandName]);
+    dbClient.delete('Commands',
+        where: "deviceName = ? AND commandName = ?",
+        whereArgs: [deviceName, commandName]);
     print("Deleted " + commandName);
   }
 
   Future<List<CommandArguments>> getCommands(String deviceName) async {
     print('getting persistent Commands');
     var dbClient = await db;
-    List<Map> list = await dbClient.query('Commands', where: "deviceName = ?", whereArgs: [deviceName]);
+    List<Map> list = await dbClient
+        .query('Commands', where: "deviceName = ?", whereArgs: [deviceName]);
     List<CommandArguments> commands = new List();
     for (int i = 0; i < list.length; i++) {
-      commands.add(new CommandArguments(list[i]["deviceName"], list[i]["commandName"], list[i]["notification"], list[i]["payload"]));
+      commands.add(new CommandArguments(list[i]["deviceName"],
+          list[i]["commandName"], list[i]["notification"], list[i]["payload"]));
     }
     return commands;
   }
@@ -94,10 +102,14 @@ class DBHelper {
     });
   }
 
-  void deleteDevice(String deviceName) async{
+  void deleteDevice(String deviceName) async {
     var dbClient = await db;
-    dbClient.delete('Devices', where: "deviceName = ?", whereArgs: [deviceName]);
-    dbClient.delete('Commands', where: "deviceName = ?", whereArgs: [deviceName]);
+    dbClient
+        .delete('Devices', where: "deviceName = ?", whereArgs: [deviceName]);
+    dbClient
+        .delete('Commands', where: "deviceName = ?", whereArgs: [deviceName]);
+    dbClient
+        .delete('Settings', where: "deviceName = ?", whereArgs: [deviceName]);
     print("Deleted " + deviceName);
   }
 
@@ -106,9 +118,52 @@ class DBHelper {
     List<Map> list = await dbClient.rawQuery('SELECT * FROM Devices');
     List<DeviceArguments> devices = new List();
     for (int i = 0; i < list.length; i++) {
-      devices.add(new DeviceArguments(list[i]["deviceName"], list[i]["ipAdress"], list[i]["port"]));
+      devices.add(new DeviceArguments(
+          list[i]["deviceName"], list[i]["ipAdress"], list[i]["port"]));
     }
-    print(devices.length);
     return devices;
+  }
+
+  void saveSetting(SettingArguments settingArguments) async {
+    var dbClient = await db;
+    await dbClient.transaction((txn) async {
+      return await txn.rawInsert(
+          'INSERT INTO Settings(deviceName, brightness, alertDuration, monitorStatus) VALUES(' +
+              '\'' +
+              settingArguments.deviceName +
+              '\'' +
+              ',' +
+              '\'' +
+              settingArguments.brightness +
+              '\'' +
+              ',' +
+              '\'' +
+              settingArguments.alertDuration +
+              '\'' +
+              ',' +
+              '\'' +
+              settingArguments.monitorStatus +
+              '\'' +
+              ')');
+    });
+  }
+
+  void deleteSettings(String deviceName) async {
+    var dbClient = await db;
+    dbClient
+        .delete('Settings', where: "deviceName = ?", whereArgs: [deviceName]);
+    print("Deleted Settings for" + deviceName);
+  }
+
+  Future<List<SettingArguments>> getSettings(String deviceName) async {
+    var dbClient = await db;
+    List<Map> list = await dbClient
+        .query('Settings', where: "deviceName = ?", whereArgs: [deviceName]);
+    List<SettingArguments> settings = new List();
+    for (int i = 0; i < list.length; i++) {
+      settings.add(new SettingArguments(
+          list[i]["deviceName"], list[i]["brightness"], list[i]["alertDuration"], list[i]["monitorStatus"]));
+    }
+    return settings;
   }
 }
