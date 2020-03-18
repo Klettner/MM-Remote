@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:mmremotecontrol/app.dart';
 import 'package:mmremotecontrol/createCC.dart';
 import 'package:mmremotecontrol/models/settingArguments.dart';
 import 'createCC.dart';
@@ -463,7 +462,7 @@ class _MyHomePageState extends State<MyHomePage>
     var setting = SettingArguments(
         deviceName, '$newValue', '$_alertDuration', '$_monitorToggleColor');
     var dbHelper = DBHelper();
-    dbHelper.deleteDevice(deviceName);
+    dbHelper.deleteSettings(deviceName);
     dbHelper.saveSetting(setting);
   }
 
@@ -471,7 +470,7 @@ class _MyHomePageState extends State<MyHomePage>
     var setting = SettingArguments(
         deviceName, '$_brightnessValue', '$newValue', '$_monitorToggleColor');
     var dbHelper = DBHelper();
-    dbHelper.deleteDevice(deviceName);
+    dbHelper.deleteSettings(deviceName);
     dbHelper.saveSetting(setting);
   }
 
@@ -479,7 +478,7 @@ class _MyHomePageState extends State<MyHomePage>
     var setting = SettingArguments(
         deviceName, '$_brightnessValue', '$_alertDuration', status);
     var dbHelper = DBHelper();
-    dbHelper.deleteDevice(deviceName);
+    dbHelper.deleteSettings(deviceName);
     dbHelper.saveSetting(setting);
   }
 
