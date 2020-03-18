@@ -16,7 +16,7 @@ class DBHelper {
 
   initDb() async {
     io.Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "mirror.db");
+    String path = join(documentsDirectory.path, "mirror2.db");
     var theDb = await openDatabase(path, version: 1, onCreate: _onCreate);
     return theDb;
   }
@@ -24,7 +24,7 @@ class DBHelper {
   void _onCreate(Database db, int version) async {
     // When creating the db, create the table
     await db.execute(
-        "CREATE TABLE Commands(id INTEGER PRIMARY KEY, commandName TEXT, notification TEXT, payload TEXT)");
+        "CREATE TABLE Commands(id INTEGER PRIMARY KEY,deviceName TEXT, commandName TEXT, notification TEXT, payload TEXT)");
     print("Created tables");
   }
 
@@ -32,7 +32,11 @@ class DBHelper {
     var dbClient = await db;
     await dbClient.transaction((txn) async {
       return await txn.rawInsert(
-          'INSERT INTO Commands(commandName, notification, payload) VALUES(' +
+          'INSERT INTO Commands(deviceName, commandName, notification, payload) VALUES(' +
+              '\'' +
+              customCommand.deviceName +
+              '\'' +
+              ',' +
               '\'' +
               customCommand.commandName +
               '\'' +
@@ -49,17 +53,18 @@ class DBHelper {
   }
 
   void deleteCommand(String commandName) async{
+    //TODO: mind deviceName
     var dbClient = await db;
     dbClient.delete('Commands', where: "commandName = ?", whereArgs: [commandName]);
     print("Deleted " + commandName);
   }
 
-  Future<List<CommandArguments>> getCommands() async {
+  Future<List<CommandArguments>> getCommands(String deviceName) async {
     var dbClient = await db;
-    List<Map> list = await dbClient.rawQuery('SELECT * FROM Commands');
+    List<Map> list = await dbClient.query('Commands', where: "deviceName = ?", whereArgs: [deviceName]);
     List<CommandArguments> commands = new List();
     for (int i = 0; i < list.length; i++) {
-      commands.add(new CommandArguments(list[i]["commandName"], list[i]["notification"], list[i]["payload"]));
+      commands.add(new CommandArguments(list[i]["deviceName"], list[i]["commandName"], list[i]["notification"], list[i]["payload"]));
     }
     print(commands.length);
     return commands;

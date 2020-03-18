@@ -11,9 +11,9 @@ import 'dart:async';
 import 'package:mmremotecontrol/commandArguments.dart';
 import 'package:mmremotecontrol/dbhelper.dart';
 
-Future<List<CommandArguments>> fetchCommandsFromDatabase() async {
+Future<List<CommandArguments>> fetchCommandsFromDatabase(String deviceName) async {
   var dbHelper = DBHelper();
-  Future<List<CommandArguments>> commands = dbHelper.getCommands();
+  Future<List<CommandArguments>> commands = dbHelper.getCommands(deviceName);
   return commands;
 }
 
@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage>
 
     //Only after start of the App
     if (!_stateInitialized) {
-      _initializeSettings(deviceName + ':');
+      _initializeSettings(deviceName);
     }
 
     var appBar = AppBar(
@@ -413,13 +413,14 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   void _initializeSettings(String deviceName) {
+    String _deviceNameWithColon = deviceName + ':';
     _stateInitialized = true;
-    _settings = deviceName + _settings;
+    _settings = _deviceNameWithColon + _settings;
     // widget.settingsStorage.writeSettings('');
     widget.settingsStorage.readSettings().then((String value) {
-      if (value.compareTo('') != 0 && value.contains(deviceName)) {
+      if (value.compareTo('') != 0 && value.contains(_deviceNameWithColon)) {
         //choose settings of relevant device
-        _settings = value.substring(value.indexOf(deviceName));
+        _settings = value.substring(value.indexOf(_deviceNameWithColon));
         _settings = _settings.substring(0, _settings.indexOf(';') + 1);
 
         //delete device name
@@ -436,7 +437,7 @@ class _MyHomePageState extends State<MyHomePage>
             _tempSettings.replaceAll(_tempBrightness + _tempAlertDuration, '');
 
         //actualize settings
-        _settings = deviceName + _tempSettings;
+        _settings = _deviceNameWithColon + _tempSettings;
 
         print('homePage: initialState: ');
         print('_settings: ' + _settings);
@@ -458,7 +459,7 @@ class _MyHomePageState extends State<MyHomePage>
         });
 
         final List<Widget> _customCommandsTemp = List<Widget>();
-        fetchCommandsFromDatabase().then((List<CommandArguments> commands) {
+        fetchCommandsFromDatabase(deviceName).then((List<CommandArguments> commands) {
           for(CommandArguments command in commands){
             Card _newCard = _createCommandCard(command.commandName, command.notification, command.payload, context, false);
             _customCommandsTemp.add(_newCard);
@@ -494,7 +495,7 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
 void _persistCommand(String commandName, String notification, String payload){
-  var command = CommandArguments(commandName,notification,payload);
+  var command = CommandArguments(deviceName, commandName,notification,payload);
   var dbHelper = DBHelper();
   dbHelper.saveCommand(command);
 }
@@ -652,7 +653,7 @@ void _persistCommand(String commandName, String notification, String payload){
             ),
             IconButton (
               icon: Icon(Icons.delete,
-              size: 30.0),
+              size: 24.0),
               color: Colors.black54,
               tooltip: 'Delete command',
               onPressed: (){
@@ -670,7 +671,7 @@ void _persistCommand(String commandName, String notification, String payload){
     dbHelper.deleteCommand(commandName);
 
     final List<Widget> _customCommandsTemp = List<Widget>();
-    fetchCommandsFromDatabase().then((List<CommandArguments> commands) {
+    fetchCommandsFromDatabase(deviceName).then((List<CommandArguments> commands) {
       for(CommandArguments command in commands){
         Card _newCard = _createCommandCard(command.commandName, command.notification, command.payload, context, false);
         _customCommandsTemp.add(_newCard);

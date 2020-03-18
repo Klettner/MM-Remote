@@ -108,7 +108,7 @@ class _AddCommandPageState extends State<AddCommandPage> {
     );
   }
 
-  void _handleSubmittedNext(String title, String notification, String payload) {
+  void _handleSubmittedNext(String commandName, String notification, String payload) {
     _titleController.clear();
     _notificationController.clear();
     _payloadController.clear();
@@ -116,11 +116,12 @@ class _AddCommandPageState extends State<AddCommandPage> {
       _isComposingTitle = false;
       _isComposingNotification = false;
     });
-    if(_noIllegalCharacters(title, notification, payload)) {
+    if(_noIllegalCharacters(commandName, notification, payload)) {
       Navigator.pop(
         context,
         CommandArguments(
-          title.trim(),
+          '',
+          commandName.trim(),
           notification.trim(),
           payload.trim(),
         ),
@@ -128,8 +129,8 @@ class _AddCommandPageState extends State<AddCommandPage> {
     }
   }
 
-  bool _noIllegalCharacters(String title, String _notification, String payload) {
-    if (title.contains('|') || title.contains(';')) {
+  bool _noIllegalCharacters(String commandName, String _notification, String payload) {
+    if (commandName.contains('|') || commandName.contains(';')) {
       _titleField = 'Device name should not contain | or ;';
       return false;
     } else {
@@ -141,7 +142,7 @@ class _AddCommandPageState extends State<AddCommandPage> {
           _payloadField = 'Payload should not contain | or ;';
           return false;
         } else {
-          if(title.length > 13) {
+          if(commandName.length > 13) {
             _titleField = 'Name should not be longer than 13 characters';
             return false;
           }
