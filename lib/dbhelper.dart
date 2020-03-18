@@ -48,6 +48,12 @@ class DBHelper {
     });
   }
 
+  void deleteCommand(String commandName) async{
+    var dbClient = await db;
+    dbClient.delete('Commands', where: "commandName = ?", whereArgs: [commandName]);
+    print("Deleted " + commandName);
+  }
+
   Future<List<CommandArguments>> getCommands() async {
     var dbClient = await db;
     List<Map> list = await dbClient.rawQuery('SELECT * FROM Commands');

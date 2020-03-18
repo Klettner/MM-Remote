@@ -624,7 +624,7 @@ void _persistCommand(String commandName, String notification, String payload){
       child: Padding(
         padding: EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 4.0),
         child: new Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Flexible(
@@ -650,10 +650,35 @@ void _persistCommand(String commandName, String notification, String payload){
                 },
               ),
             ),
+            IconButton (
+              icon: Icon(Icons.delete,
+              size: 30.0),
+              color: Colors.black54,
+              tooltip: 'Delete command',
+              onPressed: (){
+                _deleteCommand(commandName);
+              },
+            )
           ],
         ),
       ),
     );
+  }
+
+  void _deleteCommand(String commandName){
+    var dbHelper = DBHelper();
+    dbHelper.deleteCommand(commandName);
+
+    final List<Widget> _customCommandsTemp = List<Widget>();
+    fetchCommandsFromDatabase().then((List<CommandArguments> commands) {
+      for(CommandArguments command in commands){
+        Card _newCard = _createCommandCard(command.commandName, command.notification, command.payload, context, false);
+        _customCommandsTemp.add(_newCard);
+      }
+      setState(() {
+        _customCommands = _customCommandsTemp;
+      });
+    });
   }
 
   void _sendCustomCommand(
