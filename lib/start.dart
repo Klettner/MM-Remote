@@ -109,7 +109,7 @@ class _StartPageState extends State<StartPage> {
                 ),
                 tooltip: 'Delete last device',
                 onPressed: () {
-                  _deleteLastCard();
+                  _deleteLastCardDialog(context);
                 },
               ),
           ],
@@ -179,6 +179,33 @@ class _StartPageState extends State<StartPage> {
       _widgets = _widgetsTemp;
     });
     return widget.storage.writeCards(_cards);
+  }
+
+  Future<void> _deleteLastCardDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Do you want to delete the last device?'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Delete'),
+              onPressed: () {
+                _deleteLastCard();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Card _createCards(String title, String ip, String port) {

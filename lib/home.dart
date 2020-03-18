@@ -108,7 +108,6 @@ class _MyHomePageState extends State<MyHomePage>
               title: Text('Toggle monitor on/off'),
               onTap: (){
                 _toggleMonitor();
-                Navigator.of(context).pop();
               },
             ),
             ListTile(
@@ -116,8 +115,7 @@ class _MyHomePageState extends State<MyHomePage>
                 semanticLabel: 'reboot'),
               title: Text('Reboot Mirror'),
               onTap: () {
-                _rebootPi();
-                Navigator.of(context).pop();
+                _rebootPiDialog(context);
               },
             ),
             ListTile(
@@ -125,8 +123,8 @@ class _MyHomePageState extends State<MyHomePage>
                 semanticLabel: 'shutdown',),
               title: Text('Shutdown Mirror'),
               onTap: () {
-                _shutdownPi();
-                Navigator.of(context).pop();
+                _shutdownPiDialog(context);
+                //Navigator.of(context).pop();
               },
             ),
           ],
@@ -755,12 +753,68 @@ class _MyHomePageState extends State<MyHomePage>
     });
   }
 
+  Future<void> _rebootPiDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Do you want to reboot the mirror?'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Reboot'),
+              onPressed: () {
+                _rebootPi();
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _shutdownPi() {
     http.get("http://" + ip + ":" + port + "/remote?action=SHUTDOWN");
     print("Shutting down mirror");
     setState(() {
       lastRequest = "Shutting down mirror";
     });
+  }
+
+  Future<void> _shutdownPiDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Do you want to shutdown the mirror?'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Shutdown'),
+              onPressed: () {
+                _shutdownPi();
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _backgroundSlideShowNext() {

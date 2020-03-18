@@ -92,7 +92,7 @@ class _AddCommandPageState extends State<AddCommandPage> {
                   child: Text('CREATE'),
                   elevation: 8.0,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
                   ),
                   onPressed:
                   (_isComposingTitle && _isComposingNotification)
