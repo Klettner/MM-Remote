@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:mmremotecontrol/app.dart';
 import 'package:mmremotecontrol/createCC.dart';
 import 'package:mmremotecontrol/models/settingArguments.dart';
-import 'dart:io';
 import 'createCC.dart';
 import 'dart:async';
 import 'package:mmremotecontrol/models/commandArguments.dart';
@@ -26,9 +25,8 @@ Future<SettingArguments> fetchSettingsFromDatabase(String deviceName) async {
 
 class MyHomePage extends StatefulWidget {
   static const routeName = '/homePage';
-  final SettingsStorage settingsStorage;
 
-  MyHomePage({Key key, @required this.settingsStorage}) : super(key: key);
+  MyHomePage({Key key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -51,7 +49,6 @@ class _MyHomePageState extends State<MyHomePage>
   Color _monitorToggleColor = Colors.blue;
   int _brightnessValue = 200;
   int _alertDuration = 10;
-  String _settings = 'BRIGHTNESS:200|ALERTDURATION:10|Monitor:ON|;';
   bool _stateInitialized = false;
   List<Widget> _customCommands = List<Widget>();
 
@@ -439,53 +436,7 @@ class _MyHomePageState extends State<MyHomePage>
         });
       }
     });
-    /*
-    String _deviceNameWithColon = deviceName + ':';
-    _settings = _deviceNameWithColon + _settings;
-    // widget.settingsStorage.writeSettings('');
-    widget.settingsStorage.readSettings().then((String value) {
-      if (value.compareTo('') != 0 && value.contains(_deviceNameWithColon)) {
-        //choose settings of relevant device
-        _settings = value.substring(value.indexOf(_deviceNameWithColon));
-        _settings = _settings.substring(0, _settings.indexOf(';') + 1);
 
-        //delete device name
-        String _tempSettings = _settings.substring(_settings.indexOf(':') + 1);
-
-        //create String for every setting
-        String _tempBrightness =
-            _tempSettings.substring(0, _tempSettings.indexOf('|') + 1);
-        String _tempAlertDuration =
-            _tempSettings.replaceAll(_tempBrightness, '');
-        _tempAlertDuration = _tempAlertDuration.substring(
-            0, _tempAlertDuration.indexOf('|') + 1);
-        String _tempMonitorToggle =
-            _tempSettings.replaceAll(_tempBrightness + _tempAlertDuration, '');
-
-        //actualize settings
-        _settings = _deviceNameWithColon + _tempSettings;
-
-        print('homePage: initialState: ');
-        print('_settings: ' + _settings);
-        print('_brightnessValue: $_brightnessValue');
-        print('_alertDuration: $_alertDuration');
-        if (_monitorToggleColor == Colors.blue) {
-          print('Monitor: ON');
-        } else {
-          print('Monitor: OFF');
-        }
-        setState(() {
-          _brightnessValue = int.parse(_extractValue(_tempBrightness));
-          _alertDuration = int.parse(_extractValue(_tempAlertDuration));
-          if (_extractValue(_tempMonitorToggle).compareTo('ON') == 0) {
-            _monitorToggleColor = Colors.blue;
-          } else {
-            _monitorToggleColor = Colors.black54;
-          }
-        });
-      }
-    });
-    */
     final List<Widget> _customCommandsTemp = List<Widget>();
     fetchCommandsFromDatabase(deviceName)
         .then((List<CommandArguments> commands) {
@@ -500,40 +451,12 @@ class _MyHomePageState extends State<MyHomePage>
     });
   }
 
-  String _extractValue(String setting) {
-    print('initial setting: ' + setting);
-    setting = setting.substring(setting.indexOf(':') + 1, setting.indexOf('|'));
-    print('resulting setting: ' + setting);
-    return setting;
-  }
-
-  Future<File> _writeSetting(String setting) {
-    _settings = deviceName + ':' + setting;
-
-    widget.settingsStorage.readSettings().then((String value) {
-      if (value.compareTo('') != 0 && value.contains(deviceName + ':')) {
-        return widget.settingsStorage.writeSettings(value.replaceRange(
-            value.indexOf(deviceName + ':'),
-            value.indexOf(deviceName + ':') + _settings.indexOf(';') + 1,
-            _settings));
-      } else {
-        return widget.settingsStorage.writeSettings(value + _settings);
-      }
-    });
-  }
-
   void _persistCommand(
       String commandName, String notification, String payload) {
     var command =
         CommandArguments(deviceName, commandName, notification, payload);
     var dbHelper = DBHelper();
     dbHelper.saveCommand(command);
-  }
-
-  String _unifySettingAndDeleteDeviceName(String setting) {
-    String _tempSettings = _settings.toUpperCase().trim().replaceAll(' ', '');
-    _tempSettings = _tempSettings.substring(_tempSettings.indexOf(':') + 1);
-    return _tempSettings;
   }
 
   void _persistBrightnessSetting(int newValue) {

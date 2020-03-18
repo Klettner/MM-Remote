@@ -22,45 +22,10 @@ class _MirrorAppState extends State<MirrorApp> {
           ),
           home: StartPage(),
           routes: {
-            MyHomePage.routeName: (context) => MyHomePage(settingsStorage: SettingsStorage()),
+            MyHomePage.routeName: (context) => MyHomePage(),
             AddDevicePage.routeName: (context) => AddDevicePage(),
             StartPage.routeName: (context) => StartPage(),
           },
         );
   }
 }
-
-class SettingsStorage {
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-
-    return directory.path;
-  }
-
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/settings.txt');
-  }
-
-  Future<String> readSettings() async {
-    try {
-      final file = await _localFile;
-
-      // Read the file
-      String contents = await file.readAsString();
-
-      return contents;
-    } catch (e) {
-      // If encountering an error, return 0
-      return '';
-    }
-  }
-
-  Future<File> writeSettings(String settings) async {
-    final file = await _localFile;
-
-    // Write the file
-    return file.writeAsString('$settings');
-  }
-}
-
