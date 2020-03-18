@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mmremotecontrol/app.dart';
 import 'home.dart';
 import 'addDevice.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
@@ -16,9 +13,8 @@ Future<List<DeviceArguments>> fetchDevicesFromDatabase() async {
 
 class StartPage extends StatefulWidget {
   static const routeName = '/startPage';
-  final CardsStorage storage;
 
-  StartPage({Key key, @required this.storage}) : super(key: key);
+  StartPage({Key key}) : super(key: key);
 
   @override
   _StartPageState createState() => _StartPageState();

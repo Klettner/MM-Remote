@@ -20,47 +20,13 @@ class _MirrorAppState extends State<MirrorApp> {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: StartPage(storage: CardsStorage()),
+          home: StartPage(),
           routes: {
             MyHomePage.routeName: (context) => MyHomePage(settingsStorage: SettingsStorage()),
             AddDevicePage.routeName: (context) => AddDevicePage(),
-            StartPage.routeName: (context) => StartPage(storage: CardsStorage()),
+            StartPage.routeName: (context) => StartPage(),
           },
         );
-  }
-}
-
-class CardsStorage {
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-
-    return directory.path;
-  }
-
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/cards.txt');
-  }
-
-  Future<String> readCards() async {
-    try {
-      final file = await _localFile;
-
-      // Read the file
-      String contents = await file.readAsString();
-
-      return contents;
-    } catch (e) {
-      // If encountering an error, return 0
-      return '';
-    }
-  }
-
-  Future<File> writeCards(String cards) async {
-    final file = await _localFile;
-
-    // Write the file
-    return file.writeAsString('$cards');
   }
 }
 
