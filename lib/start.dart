@@ -25,65 +25,22 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
-  List<Widget> _widgets = List<Widget>();
-  String _cards;
+  List<Widget> _devices = List<Widget>();
 
   @override
   void initState() {
     super.initState();
-    /*
-    widget.storage.readCards().then((String value) {
-      _cards = value;
-      print(_cards);
-      List<DeviceArguments> _deviceArgsList = _divideStorageString(_cards);
-      
-      final List<Widget> _widgetsTemp = List<Widget>();
-
-      for (DeviceArguments args in _deviceArgsList) {
-        Card _newCard = _createCards(args.deviceName, args.ip, args.port, false);
-        _widgetsTemp.add(_newCard);
-      }
-
-      setState(() {
-        _widgets = _widgetsTemp;
-      });
-    });
-    */
-    final List<Widget> _widgetsTemp = List<Widget>();
+    final List<Widget> _devicesTemp = List<Widget>();
     fetchDevicesFromDatabase().then((List<DeviceArguments> devices) {
       for (DeviceArguments device in devices) {
         Card _newCard =
             _createCards(device.deviceName, device.ip, device.port, false);
-        _widgetsTemp.add(_newCard);
+        _devicesTemp.add(_newCard);
       }
       setState(() {
-        _widgets = _widgetsTemp;
+        _devices = _devicesTemp;
       });
     });
-  }
-
-  List<DeviceArguments> _divideStorageString(String cards) {
-    List<DeviceArguments> _result = List<DeviceArguments>();
-    int _l = 0;
-    while (_l < cards.length) {
-      int _r = cards.indexOf('|', _l);
-      String deviceName = cards.substring(_l, _r);
-      _l = _r + 1;
-      _r = cards.indexOf('|', _l);
-      String ip = cards.substring(_l, _r);
-      _l = _r + 1;
-      _r = cards.indexOf(';', _l);
-      String port = cards.substring(_l, _r);
-      _l = _r + 1;
-      print('deviceName: ' + deviceName);
-      print('ip: ' + ip);
-      print('port: ' + port);
-      print(_l);
-      print(_r);
-      DeviceArguments arg = new DeviceArguments(deviceName, ip, port);
-      _result.add(arg);
-    }
-    return _result;
   }
 
   @override
@@ -109,7 +66,7 @@ class _StartPageState extends State<StartPage> {
                 childAspectRatio: _deviceOrientation == Orientation.portrait
                     ? 8.0 / 3.0
                     : 8.0 / 4.0,
-                children: _widgets,
+                children: _devices,
               ),
             ),
             new SizedBox(height: 15.0),
@@ -121,24 +78,7 @@ class _StartPageState extends State<StartPage> {
         color: Colors.blue,
         notchMargin: 5.0,
         shape: CircularNotchedRectangle(),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            new SizedBox(width: 5.0, height: 50),
-            new IconButton(
-              icon: Icon(
-                Icons.delete,
-                size: 35.0,
-                color: Colors.white,
-                semanticLabel: 'delete last',
-              ),
-              tooltip: 'Delete last device',
-              onPressed: () {
-                _deleteLastCardDialog(context);
-              },
-            ),
-          ],
-        ),
+        child: new SizedBox(height: 50),
       ),
       floatingActionButton: new FloatingActionButton(
         backgroundColor: Colors.blue,
@@ -166,52 +106,24 @@ class _StartPageState extends State<StartPage> {
         _deviceArguments.port);
   }
 
-  Future<File> _changeCards(String deviceName, String ip, String port) {
+  void _changeCards(String deviceName, String ip, String port) {
     Card _newCard = _createCards(deviceName, ip, port, true);
-    final List<Widget> _widgetsTemp = List<Widget>();
-    _widgetsTemp.addAll(_widgets);
-    _widgetsTemp.add(_newCard);
+    final List<Widget> _devicesTemp = List<Widget>();
+    _devicesTemp.addAll(_devices);
+    _devicesTemp.add(_newCard);
 
     setState(() {
-     // _cards = _cards + deviceName + '|' + ip + '|' + port + ';';
-      _widgets = _widgetsTemp;
+      _devices = _devicesTemp;
     });
-    return null; // widget.storage.writeCards(_cards);
   }
 
-  Future<File> _deleteLastCard() {
-    final List<Widget> _widgetsTemp = List<Widget>();
-    _widgetsTemp.addAll(_widgets);
-
-    if (_widgetsTemp.isNotEmpty) {
-      _widgetsTemp.removeLast();
-    }
-
-    setState(() {
-      //delete last semicolon
-      if (_cards.length > 0) {
-        _cards = _cards.substring(0, _cards.length - 1);
-        //delete everything after last semicolon (last card)
-        if (_cards.contains(';')) {
-          _cards = _cards.substring(0, _cards.lastIndexOf(';') + 1);
-        }
-        //if no semicolon present => there was only on card
-        else {
-          _cards = '';
-        }
-      }
-      _widgets = _widgetsTemp;
-    });
-    return widget.storage.writeCards(_cards);
-  }
-
-  Future<void> _deleteLastCardDialog(BuildContext context) async {
+  Future<void> _deleteCardDialog(BuildContext context, String deviceName) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Do you want to delete the last device?'),
+          title: Text('Do you want to delete this device?'),
           actions: <Widget>[
             FlatButton(
               child: Text('Cancel'),
@@ -222,7 +134,7 @@ class _StartPageState extends State<StartPage> {
             FlatButton(
               child: Text('Delete'),
               onPressed: () {
-                _deleteLastCard();
+                _deleteDevice(deviceName);
                 Navigator.of(context).pop();
               },
             ),
@@ -230,6 +142,23 @@ class _StartPageState extends State<StartPage> {
         );
       },
     );
+  }
+
+  void _deleteDevice(String deviceName){
+    var dbHelper = DBHelper();
+    dbHelper.deleteDevice(deviceName);
+
+    final List<Widget> _devicesTemp = List<Widget>();
+    fetchDevicesFromDatabase().then((List<DeviceArguments> devices) {
+      for (DeviceArguments device in devices) {
+        Card _newCard =
+        _createCards(device.deviceName, device.ip, device.port, false);
+        _devicesTemp.add(_newCard);
+      }
+      setState(() {
+        _devices = _devicesTemp;
+      });
+    });
   }
 
   Card _createCards(String deviceName, String ip, String port, bool persist) {
@@ -282,6 +211,18 @@ class _StartPageState extends State<StartPage> {
                   );
                 },
               ),
+            ),
+            new IconButton(
+              icon: Icon(
+                Icons.delete,
+                size: 30.0,
+                color: Colors.black54,
+                semanticLabel: 'delete device',
+              ),
+              tooltip: 'Delete device',
+              onPressed: () {
+                _deleteCardDialog(context, deviceName);
+              },
             ),
           ],
         ),

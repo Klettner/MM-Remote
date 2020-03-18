@@ -125,34 +125,14 @@ class _AddDevicePageState extends State<AddDevicePage> {
       _isComposingIp = false;
       _isComposingPort = false;
     });
-    if(_noIllegalCharacters(title, ip, port)) {
-      Navigator.pop(
-        context,
-        DeviceArguments(
-          title.trim(),
-          ip.trim(),
-          port.trim(),
-        ),
-      );
-    }
-  }
-
-  bool _noIllegalCharacters(String title, String ip, String port) {
-    if (title.contains('|') || title.contains(';')) {
-      _titleField = 'Device name should not contain | or ;';
-      return false;
-    } else {
-      if (ip.contains('|') || ip.contains(';')) {
-        _ipField = 'IP-Adress should not contain | or ;';
-        return false;
-      } else {
-        if (port.contains('|') || port.contains(';')) {
-          _portField = 'Port should not contain | or ;';
-          return false;
-        }
-      }
-    }
-    return true;
+    Navigator.pop(
+      context,
+      DeviceArguments(
+        title.trim(),
+        ip.trim(),
+        port.trim(),
+      ),
+    );
   }
 }
 
