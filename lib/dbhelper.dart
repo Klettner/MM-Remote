@@ -125,6 +125,7 @@ class DBHelper {
   }
 
   void saveSetting(SettingArguments settingArguments) async {
+    print('saving settings');
     var dbClient = await db;
     await dbClient.transaction((txn) async {
       return await txn.rawInsert(
@@ -152,7 +153,7 @@ class DBHelper {
     var dbClient = await db;
     dbClient
         .delete('Settings', where: "deviceName = ?", whereArgs: [deviceName]);
-    print("Deleted Settings for" + deviceName);
+    print("Deleted Settings of " + deviceName);
   }
 
   Future<SettingArguments> getSettings(String deviceName) async {

@@ -69,7 +69,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     borderRadius: BorderRadius.all(Radius.circular(20.0)),
                   ),
                   onPressed: (_isComposingAlertDuration)
-                      ? () => _setAlertDuration(int.parse(_alertDurationController.text))
+                      ? () => _setAlertDuration(_alertDurationController.text)
                       : null,
                 )
               ],
@@ -81,7 +81,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _setAlertDuration(
-      int alertDuration) {
+      String alertDuration) {
     _alertDurationController.clear();
     setState(() {
       _isComposingAlertDuration = false;

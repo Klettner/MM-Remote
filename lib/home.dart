@@ -560,15 +560,17 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   _navigateToSettingsPage() async {
-    final result = await Navigator.push(
+    String result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => SettingsPage()),
     );
-    _alertDuration = result;
-    _persistAlertDurationSetting(_alertDuration);
-    setState(() {
-      lastRequest = 'Alert duration set to $_alertDuration';
-    });
+    if(result != null) {
+      _alertDuration = int.parse(result);
+      _persistAlertDurationSetting(_alertDuration);
+      setState(() {
+        lastRequest = 'Alert duration set to $_alertDuration';
+      });
+    }
   }
 
   Card _createCommandCard(String commandName, String notification,
