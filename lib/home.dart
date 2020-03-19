@@ -8,6 +8,7 @@ import 'dart:async';
 import 'package:mmremotecontrol/models/commandArguments.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
 import 'package:mmremotecontrol/dbhelper.dart';
+import 'package:mmremotecontrol/settings.dart';
 
 Future<List<CommandArguments>> fetchCommandsFromDatabase(
     String deviceName) async {
@@ -117,7 +118,8 @@ class _MyHomePageState extends State<MyHomePage>
               },
             ),
             ListTile(
-              leading: Icon(Icons.refresh, semanticLabel: 'reboot'),
+              leading: Icon(Icons.refresh, semanticLabel: 'reboot',
+              color: Colors.black45),
               title: Text('Reboot Mirror'),
               onTap: () {
                 _rebootPiDialog(context);
@@ -127,11 +129,19 @@ class _MyHomePageState extends State<MyHomePage>
               leading: Icon(
                 Icons.power_settings_new,
                 semanticLabel: 'shutdown',
+                color: Colors.black45,
               ),
               title: Text('Shutdown Mirror'),
               onTap: () {
                 _shutdownPiDialog(context);
-                //Navigator.of(context).pop();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings, semanticLabel: 'settings',
+              color: Colors.black45,),
+              title: Text('Settings'),
+              onTap: () {
+                _navigateToSettingsPage();
               },
             ),
           ],
@@ -546,6 +556,18 @@ class _MyHomePageState extends State<MyHomePage>
 
     setState(() {
       _customCommands = _customCommandsTemp;
+    });
+  }
+
+  _navigateToSettingsPage() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SettingsPage()),
+    );
+    _alertDuration = result;
+    _persistAlertDurationSetting(_alertDuration);
+    setState(() {
+      lastRequest = 'Alert duration set to $_alertDuration';
     });
   }
 

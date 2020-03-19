@@ -14,7 +14,7 @@ class _AddCommandPageState extends State<AddCommandPage> {
   final _payloadController = TextEditingController();
   bool _isComposingTitle = false;
   bool _isComposingNotification = false;
-  String _titleField = 'Name (max. 13 characters)';
+  String _titleField = 'Command-Name ';
   String _notificationField = 'Notification of mirror module';
   String _payloadField = 'Payload (optional)';
 
@@ -89,15 +89,18 @@ class _AddCommandPageState extends State<AddCommandPage> {
                   },
                 ),
                 RaisedButton(
-                  child: Text('CREATE'),
+                  child: Text('CREATE',
+                  style: TextStyle(
+                    color: Colors.white
+                  ),),
                   elevation: 8.0,
+                  color: Colors.blue,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(20.0)),
                   ),
-                  onPressed:
-                  (_isComposingTitle && _isComposingNotification)
+                  onPressed: (_isComposingTitle && _isComposingNotification)
                       ? () => _handleSubmittedNext(_titleController.text,
-                      _notificationController.text, _payloadController.text)
+                          _notificationController.text, _payloadController.text)
                       : null,
                 )
               ],
@@ -108,7 +111,8 @@ class _AddCommandPageState extends State<AddCommandPage> {
     );
   }
 
-  void _handleSubmittedNext(String commandName, String notification, String payload) {
+  void _handleSubmittedNext(
+      String commandName, String notification, String payload) {
     _titleController.clear();
     _notificationController.clear();
     _payloadController.clear();
@@ -116,7 +120,7 @@ class _AddCommandPageState extends State<AddCommandPage> {
       _isComposingTitle = false;
       _isComposingNotification = false;
     });
-    if(_noIllegalCharacters(commandName, notification, payload)) {
+    if (_checkCommandNameLenght(commandName)) {
       Navigator.pop(
         context,
         CommandArguments(
@@ -129,25 +133,10 @@ class _AddCommandPageState extends State<AddCommandPage> {
     }
   }
 
-  bool _noIllegalCharacters(String commandName, String _notification, String payload) {
-    if (commandName.contains('|') || commandName.contains(';')) {
-      _titleField = 'Device name should not contain | or ;';
+  bool _checkCommandNameLenght(String commandName) {
+    if (commandName.length > 20) {
+      _titleField = 'Name should not be longer than 20 characters';
       return false;
-    } else {
-      if (_notification.contains('|') || _notification.contains(';')) {
-        _notificationField = 'Notification should not contain | or ;';
-        return false;
-      } else {
-        if (payload.contains('|') || payload.contains(';')) {
-          _payloadField = 'Payload should not contain | or ;';
-          return false;
-        } else {
-          if(commandName.length > 13) {
-            _titleField = 'Name should not be longer than 13 characters';
-            return false;
-          }
-        }
-      }
     }
     return true;
   }

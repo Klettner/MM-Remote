@@ -97,8 +97,12 @@ class _AddDevicePageState extends State<AddDevicePage> {
                   },
                 ),
                 RaisedButton(
-                  child: Text('CREATE'),
+                  child: Text('CREATE',
+                  style: TextStyle(
+                    color: Colors.white
+                  ),),
                   elevation: 8.0,
+                  color: Colors.blue,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(15.0)),
                   ),
