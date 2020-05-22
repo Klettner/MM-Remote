@@ -34,6 +34,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final List<Tab> myTabs = <Tab>[
     Tab(text: 'HOME'),
     Tab(text: 'CUSTOM-COMMANDS'),
@@ -92,6 +93,7 @@ class _MyHomePageState extends State<MyHomePage>
     );
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: appBar,
       drawer: Drawer(
         child: ListView(
@@ -108,6 +110,15 @@ class _MyHomePageState extends State<MyHomePage>
                   fontSize: 24,
                 ),
               ),
+            ),
+            ListTile(
+              leading: Icon(Icons.devices,
+                  color:Colors.black45),
+              title: Text('Choose Device'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
             ),
             ListTile(
               leading: Icon(Icons.tv,
@@ -409,7 +420,7 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   void _showSnackbar(String message, BuildContext context) {
-    Scaffold.of(context).showSnackBar(SnackBar(
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
       elevation: 5.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
