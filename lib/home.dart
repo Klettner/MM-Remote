@@ -282,6 +282,7 @@ class _MyHomePageState extends State<MyHomePage>
                             children: <Widget>[
                               new Flexible(
                                 child: new TextField(
+                                  enableSuggestions: false,
                                   controller: _textController,
                                   onChanged: (String text) {
                                     setState(() {
@@ -369,7 +370,7 @@ class _MyHomePageState extends State<MyHomePage>
         builder: (context) => BottomAppBar(
           elevation: 10.0,
           child: new Container(
-            height: 50.0,
+            height: _deviceOrientation == Orientation.portrait ? 50.0 : 40.0,
             color: Colors.blue,
             child: new Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,

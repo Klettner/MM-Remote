@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 
 class SettingsPage extends StatefulWidget {
-  static const routeName = '/addCommand';
+  static const routeName = '/settings';
 
   @override
   _SettingsPageState createState() => _SettingsPageState();
