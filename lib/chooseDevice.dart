@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'home.dart';
-import 'createDevice.dart';
+import 'currentDevice.dart';
+import 'addDevice.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
-import 'package:mmremotecontrol/dbhelper.dart';
+import 'package:mmremotecontrol/database.dart';
 
 Future<List<DeviceArguments>> fetchDevicesFromDatabase() async {
-  var dbHelper = DBHelper();
+  var dbHelper = SqLite();
   Future<List<DeviceArguments>> devices = dbHelper.getDevices();
   return devices;
 }
@@ -47,11 +47,8 @@ class _StartPageState extends State<StartPage> {
       appBar: AppBar(
         brightness: Brightness.light,
         elevation: 10.0,
-        titleSpacing: 0.0,
-        title: Padding(
-          child: Text('Choose Device'),
-          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-        )
+        titleSpacing: 20.0,
+        title:  Text('Choose Device'),
       ),
       backgroundColor: Colors.grey[200],
       body: new SafeArea(
@@ -145,7 +142,7 @@ class _StartPageState extends State<StartPage> {
   }
 
   void _deleteDevice(String deviceName){
-    var dbHelper = DBHelper();
+    var dbHelper = SqLite();
     dbHelper.deleteDevice(deviceName);
 
     final List<Widget> _devicesTemp = List<Widget>();
@@ -202,7 +199,7 @@ class _StartPageState extends State<StartPage> {
                 onPressed: () {
                   Navigator.pushNamed(
                     context,
-                    MyHomePage.routeName,
+                    CurrentDevicePage.routeName,
                     arguments: DeviceArguments(
                       deviceName,
                       ip,
@@ -232,7 +229,7 @@ class _StartPageState extends State<StartPage> {
 
   void _persistDevice(String deviceName, String ipAdress, String port) {
     var device = DeviceArguments(deviceName, ipAdress, port);
-    var dbHelper = DBHelper();
+    var dbHelper = SqLite();
     dbHelper.saveDevice(device);
   }
 }

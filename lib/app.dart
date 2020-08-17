@@ -1,6 +1,6 @@
-import 'home.dart';
+import 'currentDevice.dart';
 import 'chooseDevice.dart';
-import 'createDevice.dart';
+import 'addDevice.dart';
 import 'package:flutter/material.dart';
 
 class MirrorApp extends StatefulWidget {
@@ -19,7 +19,7 @@ class _MirrorAppState extends State<MirrorApp> {
           ),
           home: StartPage(),
           routes: {
-            MyHomePage.routeName: (context) => MyHomePage(),
+            CurrentDevicePage.routeName: (context) => CurrentDevicePage(),
             AddDevicePage.routeName: (context) => AddDevicePage(),
             StartPage.routeName: (context) => StartPage(),
           },
