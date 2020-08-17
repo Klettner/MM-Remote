@@ -17,7 +17,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
   bool _isComposingIp = false;
   bool _isComposingPort = false;
   String _titleField = 'Device name';
-  String _ipField = 'IP-Adress';
+  String _ipField = 'IP-Address';
   String _portField = 'Port';
 
   @override
@@ -108,7 +108,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
                   ),
                   onPressed:
                       (_isComposingTitle && _isComposingIp && _isComposingPort)
-                          ? () => _handleSubmittedNext(_titleController.text,
+                          ? () => _handleSubmitted(_titleController.text,
                               _ipController.text, _portController.text)
                           : null,
                 )
@@ -120,7 +120,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
     );
   }
 
-  void _handleSubmittedNext(String title, String ip, String port) {
+  void _handleSubmitted(String title, String ip, String port) {
     _titleController.clear();
     _ipController.clear();
     _portController.clear();

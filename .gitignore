@@ -33,5 +33,9 @@
 # Web related
 lib/generated_plugin_registrant.dart
 
+#project related
+client_id.json
+web/
+
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages

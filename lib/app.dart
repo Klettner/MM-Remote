@@ -1,6 +1,6 @@
 import 'home.dart';
-import 'start.dart';
-import 'addDevice.dart';
+import 'chooseDevice.dart';
+import 'createDevice.dart';
 import 'package:flutter/material.dart';
 
 class MirrorApp extends StatefulWidget {

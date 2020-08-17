@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'home.dart';
-import 'addDevice.dart';
+import 'createDevice.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
 import 'package:mmremotecontrol/dbhelper.dart';
 
@@ -29,9 +29,9 @@ class _StartPageState extends State<StartPage> {
     final List<Widget> _devicesTemp = List<Widget>();
     fetchDevicesFromDatabase().then((List<DeviceArguments> devices) {
       for (DeviceArguments device in devices) {
-        Card _newCard =
-            _createCards(device.deviceName, device.ip, device.port, false);
-        _devicesTemp.add(_newCard);
+        Card _newDevice =
+            _createDevice(device.deviceName, device.ip, device.port, false);
+        _devicesTemp.add(_newDevice);
       }
       setState(() {
         _devices = _devicesTemp;
@@ -48,7 +48,10 @@ class _StartPageState extends State<StartPage> {
         brightness: Brightness.light,
         elevation: 10.0,
         titleSpacing: 0.0,
-        title: Text('     Choose Device'),
+        title: Padding(
+          child: Text('Choose Device'),
+          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+        )
       ),
       backgroundColor: Colors.grey[200],
       body: new SafeArea(
@@ -81,39 +84,40 @@ class _StartPageState extends State<StartPage> {
         child: new Icon(
           Icons.add,
           size: 30.0,
-          semanticLabel: 'add Device',
+          semanticLabel: 'Add Device',
         ),
         tooltip: 'Add new device',
         onPressed: () {
-          _navigateAndCreateNewCard(context);
+          _navigateAndCreateDevice(context);
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 
-  _navigateAndCreateNewCard(BuildContext context) async {
+  _navigateAndCreateDevice(BuildContext context) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => AddDevicePage()),
     );
     DeviceArguments _deviceArguments = result;
-    _changeCards(_deviceArguments.deviceName, _deviceArguments.ip,
-        _deviceArguments.port);
+
+    Card _newDevice = _createDevice(_deviceArguments.deviceName, _deviceArguments.ip,
+        _deviceArguments.port, true);
+    _initializeDevice(_newDevice);
   }
 
-  void _changeCards(String deviceName, String ip, String port) {
-    Card _newCard = _createCards(deviceName, ip, port, true);
+  void _initializeDevice(Card _newDevice) {
     final List<Widget> _devicesTemp = List<Widget>();
     _devicesTemp.addAll(_devices);
-    _devicesTemp.add(_newCard);
+    _devicesTemp.add(_newDevice);
 
     setState(() {
       _devices = _devicesTemp;
     });
   }
 
-  Future<void> _deleteCardDialog(BuildContext context, String deviceName) async {
+  Future<void> _deleteDeviceDialog(BuildContext context, String deviceName) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -147,9 +151,9 @@ class _StartPageState extends State<StartPage> {
     final List<Widget> _devicesTemp = List<Widget>();
     fetchDevicesFromDatabase().then((List<DeviceArguments> devices) {
       for (DeviceArguments device in devices) {
-        Card _newCard =
-        _createCards(device.deviceName, device.ip, device.port, false);
-        _devicesTemp.add(_newCard);
+        Card _newDevice =
+        _createDevice(device.deviceName, device.ip, device.port, false);
+        _devicesTemp.add(_newDevice);
       }
       setState(() {
         _devices = _devicesTemp;
@@ -157,7 +161,7 @@ class _StartPageState extends State<StartPage> {
     });
   }
 
-  Card _createCards(String deviceName, String ip, String port, bool persist) {
+  Card _createDevice(String deviceName, String ip, String port, bool persist) {
     if (persist) {
       _persistDevice(deviceName, ip, port);
     }
@@ -213,11 +217,11 @@ class _StartPageState extends State<StartPage> {
                 Icons.delete,
                 size: 30.0,
                 color: Colors.black54,
-                semanticLabel: 'delete device',
+                semanticLabel: 'Delete device',
               ),
               tooltip: 'Delete device',
               onPressed: () {
-                _deleteCardDialog(context, deviceName);
+                _deleteDeviceDialog(context, deviceName);
               },
             ),
           ],
