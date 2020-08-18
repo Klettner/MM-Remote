@@ -1,7 +1,8 @@
 ## MM-Remote 
 
-This is an App to control your **Magic Mirror** via smartphone.  
-You can save and control multiple Magic Mirrors with the app.
+MM-Remote is an Android app to control your **MagicMirror** via smartphone.  
+  
+![](assets/MMRemote.png)
   
 ### Features ###
   * Change the brightness  
