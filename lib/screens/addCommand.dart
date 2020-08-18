@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mmremotecontrol/models/commandArguments.dart';
+import 'package:mmremotecontrol/shared/colors.dart';
 
 class AddCommandPage extends StatefulWidget {
   static const routeName = '/addCommand';
@@ -33,7 +34,7 @@ class _AddCommandPageState extends State<AddCommandPage> {
           children: <Widget>[
             SizedBox(height: 75),
             AccentColorOverride(
-              color: Colors.blue,
+              color: primaryColor,
               child: TextField(
                 controller: _titleController,
                 decoration: InputDecoration(
@@ -48,7 +49,7 @@ class _AddCommandPageState extends State<AddCommandPage> {
             ),
             SizedBox(height: 12.0),
             AccentColorOverride(
-              color: Colors.blue,
+              color: primaryColor,
               child: TextField(
                 controller: _notificationController,
                 decoration: InputDecoration(
@@ -63,7 +64,7 @@ class _AddCommandPageState extends State<AddCommandPage> {
             ),
             SizedBox(height: 12.0),
             AccentColorOverride(
-              color: Colors.blue,
+              color: primaryColor,
               child: TextField(
                 controller: _payloadController,
                 decoration: InputDecoration(
@@ -91,10 +92,10 @@ class _AddCommandPageState extends State<AddCommandPage> {
                 RaisedButton(
                   child: Text('CREATE',
                   style: TextStyle(
-                    color: Colors.white
+                    color: secondaryColor
                   ),),
                   elevation: 8.0,
-                  color: Colors.blue,
+                  color: primaryColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(20.0)),
                   ),

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'package:mmremotecontrol/shared/colors.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
 
 class AddDevicePage extends StatefulWidget {
@@ -35,7 +37,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
           children: <Widget>[
             SizedBox(height: 75),
             AccentColorOverride(
-              color: Colors.blue,
+              color: primaryColor,
               child: TextField(
                 controller: _titleController,
                 decoration: InputDecoration(
@@ -50,7 +52,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
             ),
             SizedBox(height: 12.0),
             AccentColorOverride(
-              color: Colors.blue,
+              color: primaryColor,
               child: TextField(
                 controller: _ipController,
                 decoration: InputDecoration(
@@ -65,7 +67,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
             ),
             SizedBox(height: 12.0),
             AccentColorOverride(
-              color: Colors.blue,
+              color: primaryColor,
               child: TextField(
                 controller: _portController,
                 decoration: InputDecoration(
@@ -99,10 +101,10 @@ class _AddDevicePageState extends State<AddDevicePage> {
                 RaisedButton(
                   child: Text('CREATE',
                   style: TextStyle(
-                    color: Colors.white
+                    color: secondaryColor
                   ),),
                   elevation: 8.0,
-                  color: Colors.blue,
+                  color: primaryColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(15.0)),
                   ),

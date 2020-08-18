@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mmremotecontrol/shared/colors.dart';
 
 
 class SettingsPage extends StatefulWidget {
@@ -28,7 +29,7 @@ class _SettingsPageState extends State<SettingsPage> {
           children: <Widget>[
             SizedBox(height: 75),
             AccentColorOverride(
-              color: Colors.blue,
+              color: primaryColor,
               child: TextField(
                 keyboardType: TextInputType.number,
                 controller: _alertDurationController,
@@ -60,11 +61,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 RaisedButton(
                   child: Text('Apply',
                   style: TextStyle(
-                    color: Colors.white
+                    color: secondaryColor
                   ),
                   ),
                   elevation: 8.0,
-                  color: Colors.blue,
+                  color: primaryColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(20.0)),
                   ),

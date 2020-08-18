@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'currentDevice.dart';
 import 'addDevice.dart';
+import 'package:mmremotecontrol/shared/colors.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
 import 'package:mmremotecontrol/services/database.dart';
 
@@ -50,7 +52,7 @@ class _StartPageState extends State<StartPage> {
         titleSpacing: 20.0,
         title:  Text('Choose Device'),
       ),
-      backgroundColor: Colors.grey[200],
+      backgroundColor: backgroundColor,
       body: new SafeArea(
         child: Column(
           children: <Widget>[
@@ -71,13 +73,13 @@ class _StartPageState extends State<StartPage> {
       ),
       bottomNavigationBar: BottomAppBar(
         elevation: 10.0,
-        color: Colors.blue,
+        color: primaryColor,
         notchMargin: 5.0,
         shape: CircularNotchedRectangle(),
         child: new SizedBox(height: 50),
       ),
       floatingActionButton: new FloatingActionButton(
-        backgroundColor: Colors.blue,
+        backgroundColor: primaryColor,
         child: new Icon(
           Icons.add,
           size: 30.0,
@@ -184,7 +186,7 @@ class _StartPageState extends State<StartPage> {
                           deviceName,
                           textScaleFactor: 1.1,
                           style: TextStyle(
-                            color: Colors.blue,
+                            color: primaryColor,
                           ),
                         ),
                         SizedBox(height: 12.0),
@@ -213,7 +215,7 @@ class _StartPageState extends State<StartPage> {
               icon: Icon(
                 Icons.delete,
                 size: 30.0,
-                color: Colors.black54,
+                color: tertiaryColorDark,
                 semanticLabel: 'Delete device',
               ),
               tooltip: 'Delete device',

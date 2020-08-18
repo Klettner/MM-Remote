@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'package:mmremotecontrol/shared/colors.dart';
 import 'package:mmremotecontrol/services/httpRest.dart';
 import 'package:mmremotecontrol/screens/addCommand.dart';
 import 'package:mmremotecontrol/models/settingArguments.dart';
@@ -46,7 +47,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   String ip;
   String port;
   String deviceName;
-  Color _monitorToggleColor = Colors.blue;
+  Color _monitorToggleColor = primaryColor;
   int _brightnessValue = 200;
   int _alertDuration = 10;
   bool _stateInitialized = false;
@@ -102,19 +103,19 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: primaryColor,
               ),
               child: Text(
                 deviceName,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: secondaryColor,
                   fontSize: 24,
                 ),
               ),
             ),
             ListTile(
               leading: Icon(Icons.devices,
-                  color:Colors.black45),
+                  color:tertiaryColorMedium),
               title: Text('Choose Device'),
               onTap: () {
                 Navigator.pop(context);
@@ -131,7 +132,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
             ),
             ListTile(
               leading: Icon(Icons.refresh, semanticLabel: 'reboot',
-              color: Colors.black45),
+              color: tertiaryColorMedium),
               title: Text('Reboot Mirror'),
               onTap: () {
                 _rebootPiDialog(context);
@@ -141,7 +142,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
               leading: Icon(
                 Icons.power_settings_new,
                 semanticLabel: 'shutdown',
-                color: Colors.black45,
+                color: tertiaryColorMedium,
               ),
               title: Text('Shutdown Mirror'),
               onTap: () {
@@ -150,7 +151,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
             ),
             ListTile(
               leading: Icon(Icons.settings, semanticLabel: 'settings',
-              color: Colors.black45,),
+              color: tertiaryColorMedium),
               title: Text('Settings'),
               onTap: () {
                 _navigateToSettingsPage();
@@ -165,7 +166,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
           children: myTabs.map((Tab tab) {
             if (tab.text.compareTo('HOME') == 0) {
               return new Container(
-                color: Colors.grey[200],
+                color: backgroundColor,
                 child: Column(
                   children: <Widget>[
                     Expanded(
@@ -210,21 +211,21 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                                           icon: Icon(Icons.stop,
                                               semanticLabel: 'stop slideshow'),
                                           tooltip: 'Stop slideshow',
-                                          color: Colors.black54,
+                                          color: tertiaryColorDark,
                                           iconSize: 35.0,
                                           onPressed: _backgroundSlideShowStop),
                                       new IconButton(
                                           icon: Icon(Icons.play_arrow,
                                               semanticLabel: 'start slideshow'),
                                           tooltip: 'Start slideshow',
-                                          color: Colors.black54,
+                                          color: tertiaryColorDark,
                                           iconSize: 35.0,
                                           onPressed: _backgroundSlideShowPlay),
                                       new IconButton(
                                           icon: Icon(Icons.fast_forward,
                                               semanticLabel: 'next picture'),
                                           tooltip: 'Next picture',
-                                          color: Colors.black54,
+                                          color: tertiaryColorDark,
                                           iconSize: 35.0,
                                           onPressed: _backgroundSlideShowNext),
                                       new SizedBox(
@@ -260,8 +261,8 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                                     min: 0.0,
                                     max: 200.0,
                                     divisions: 20,
-                                    activeColor: Colors.blue,
-                                    inactiveColor: Colors.black54,
+                                    activeColor: primaryColor,
+                                    inactiveColor: tertiaryColorDark,
                                     label: 'changing brightness',
                                     semanticFormatterCallback:
                                         (double newValue) {
@@ -286,7 +287,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                       ),
                     ),
                     new Container(
-                      color: Colors.white,
+                    color: secondaryColor,
                       child: Column(
                         children: <Widget>[
                           new Divider(height: 1.0),
@@ -312,8 +313,8 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                                 child: new IconButton(
                                   icon: new Icon(Icons.send,
                                       semanticLabel: 'send alert'),
-                                  color: Colors.black54,
-                                  disabledColor: Colors.black26,
+                                  color: tertiaryColorDark,
+                                  disabledColor: tertiaryColorLight,
                                   tooltip:
                                       'Send an alert or send "/AlertDuration: int" to set the display-time of an alert',
                                   onPressed: _isComposing
@@ -333,7 +334,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
               );
             } else {
               return new Container(
-                color: Colors.grey[200],
+                color: backgroundColor,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -359,10 +360,10 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                           child: FloatingActionButton(
                             child: Icon(
                               Icons.add,
-                              color: Colors.blue,
+                              color: primaryColor,
                               size: 35,
                             ),
-                            backgroundColor: Colors.white,
+                            backgroundColor: secondaryColor,
                             //padding: EdgeInsets.fromLTRB(20.0, 13.0, 20.0, 13.0),
                             elevation: 5.0,
                             onPressed: () {
@@ -383,7 +384,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
           elevation: 10.0,
           child: new Container(
             height: _deviceOrientation == Orientation.portrait ? 50.0 : 40.0,
-            color: Colors.blue,
+            color: primaryColor,
             child: new Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
@@ -391,7 +392,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                     icon: new Icon(Icons.arrow_back,
                         size: 35.0,
-                        color: Colors.white,
+                        color: secondaryColor,
                         semanticLabel: 'previous page'),
                     tooltip: 'Previous mirror-page',
                     onPressed: () {
@@ -405,7 +406,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                   padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                   icon: new Icon(Icons.arrow_forward,
                       size: 35.0,
-                      color: Colors.white,
+                      color: secondaryColor,
                       semanticLabel: 'next page'),
                   tooltip: 'Next mirror-page',
                   onPressed: () {
@@ -427,12 +428,12 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
       ),
       duration: new Duration(milliseconds: 400),
-      backgroundColor: Colors.white,
+      backgroundColor: secondaryColor,
       content: Text(
         message,
         textScaleFactor: 1.2,
         style: TextStyle(
-          color: Colors.blue,
+          color: primaryColor,
         ),
       ),
     ));
@@ -450,9 +451,9 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
           _brightnessValue = _tempBrightnessValue;
           _alertDuration = _tempAlertDuration;
           if (_tempMonitorColor) {
-            _monitorToggleColor = Colors.blue;
+            _monitorToggleColor = primaryColor;
           } else {
-            _monitorToggleColor = Colors.black54;
+            _monitorToggleColor = tertiaryColorDark;
           }
         });
       }
@@ -599,7 +600,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                       maxLines: 2,
                       textScaleFactor: 1.1,
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: primaryColor,
                       ),
                     ),
                   ],
@@ -612,7 +613,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
             ),
             IconButton(
               icon: Icon(Icons.delete, size: 24.0),
-              color: Colors.black54,
+              color: tertiaryColorDark,
               tooltip: 'Delete command',
               onPressed: () {
                 _deleteCommand(commandName);
@@ -650,7 +651,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _toggleMonitor() {
-    if (_monitorToggleColor == Colors.blue) {
+    if (_monitorToggleColor == primaryColor) {
       _toggleMonitorOff(true);
     } else {
       _toggleMonitorOn(true);
@@ -742,7 +743,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   void _toggleMonitorOn(bool stateChange) {
     _httpRest.toggleMonitorOn();
     setState(() {
-      _monitorToggleColor = Colors.blue;
+      _monitorToggleColor = primaryColor;
 
       if (stateChange) {
         lastRequest = "Monitor On";
@@ -754,7 +755,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   void _toggleMonitorOff(bool stateChange) {
     _httpRest.toggleMonitorOff();
     setState(() {
-      _monitorToggleColor = Colors.black54;
+      _monitorToggleColor = tertiaryColorDark;
       if (stateChange) {
         lastRequest = "Monitor Off";
       }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'screens/currentDevice.dart';
 import 'screens/chooseDevice.dart';
 import 'screens/addDevice.dart';
+import 'package:mmremotecontrol/shared/colors.dart';
 
 void main() => runApp(MirrorApp());
 
@@ -12,7 +13,7 @@ class MirrorApp extends StatelessWidget {
     return MaterialApp(
       title: 'MM-Remote',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: primaryColor,
       ),
       home: StartPage(),
       routes: {
