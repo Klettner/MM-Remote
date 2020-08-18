@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:mmremotecontrol/addCommand.dart';
+import 'package:mmremotecontrol/screens/addCommand.dart';
 import 'package:mmremotecontrol/models/settingArguments.dart';
 import 'package:mmremotecontrol/models/commandArguments.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
-import 'package:mmremotecontrol/database.dart';
-import 'package:mmremotecontrol/settings.dart';
+import 'package:mmremotecontrol/services/database.dart';
+import 'package:mmremotecontrol/screens/settings.dart';
 
 Future<List<CommandArguments>> fetchCommandsFromDatabase(
     String deviceName) async {
@@ -673,9 +673,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
           payload);
     }
     _showSnackbar(commandName + ' sended', context);
-    setState(() {
-      lastRequest = commandName + " sended";
-    });
+    _updateLastRequest(commandName + " sended");
   }
 
   void _sendAlert(String text) {
@@ -686,9 +684,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         "/remote?action=SHOW_ALERT&message=&title=" +
         text +
         "&timer=$_alertDuration&type=alert");
-    setState(() {
-      lastRequest = "Sending alert";
-    });
+    _updateLastRequest("Sending alert");
   }
 
   void _incrementPage(BuildContext context) {
@@ -699,9 +695,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         "/remote?action=NOTIFICATION&notification=PAGE_INCREMENT");
     print("Page Incremented");
     _showSnackbar('Page Incremented', context);
-    setState(() {
-      lastRequest = "Page Incremented";
-    });
+    _updateLastRequest("Page Incremented");
   }
 
   void _decrementPage(BuildContext context) {
@@ -712,9 +706,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         "/remote?action=NOTIFICATION&notification=PAGE_DECREMENT");
     print("Page Decremented");
     _showSnackbar('Page Decremented', context);
-    setState(() {
-      lastRequest = "Page Decremented";
-    });
+    _updateLastRequest("Page Decremented");
   }
 
   void _toggleMonitor() {
@@ -753,9 +745,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   void _rebootPi() {
     http.get("http://" + ip + ":" + port + "/remote?action=REBOOT");
     print("Rebooting mirror");
-    setState(() {
-      lastRequest = "Rebooting mirror";
-    });
+    _updateLastRequest("Rebooting mirror");
   }
 
   Future<void> _rebootPiDialog(BuildContext context) async {
@@ -789,9 +779,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   void _shutdownPi() {
     http.get("http://" + ip + ":" + port + "/remote?action=SHUTDOWN");
     print("Shutting down mirror");
-    setState(() {
-      lastRequest = "Shutting down mirror";
-    });
+    _updateLastRequest("Shutting down mirror");
   }
 
   Future<void> _shutdownPiDialog(BuildContext context) async {
@@ -829,9 +817,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         port +
         "/remote?action=NOTIFICATION&notification=BACKGROUNDSLIDESHOW_NEXT");
     print("Next picture");
-    setState(() {
-      lastRequest = "Next picture";
-    });
+    _updateLastRequest("Next picture");
   }
 
   void _backgroundSlideShowStop() {
@@ -841,9 +827,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         port +
         "/remote?action=NOTIFICATION&notification=BACKGROUNDSLIDESHOW_STOP");
     print("Stopped SlideShow");
-    setState(() {
-      lastRequest = "Stopped SlideShow";
-    });
+    _updateLastRequest("Stopped SlideShow");
   }
 
   void _backgroundSlideShowPlay() {
@@ -853,8 +837,12 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         port +
         "/remote?action=NOTIFICATION&notification=BACKGROUNDSLIDESHOW_PLAY");
     print("Started SlideShow");
+    _updateLastRequest("Started SlideShow");
+  }
+
+  void _updateLastRequest(String requestMessage) {
     setState(() {
-      lastRequest = "Started SlideShow";
+      lastRequest = requestMessage;
     });
   }
 }

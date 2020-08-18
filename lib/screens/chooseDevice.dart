@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'currentDevice.dart';
 import 'addDevice.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
-import 'package:mmremotecontrol/database.dart';
+import 'package:mmremotecontrol/services/database.dart';
 
 Future<List<DeviceArguments>> fetchDevicesFromDatabase() async {
   var dbHelper = SqLite();
