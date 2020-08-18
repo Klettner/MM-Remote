@@ -6,7 +6,7 @@ class HttpRest {
 
   HttpRest(this.ip, this.port);
 
-  void _sendCustomCommand(String commandName, String notification,
+  void sendCustomCommand(String commandName, String notification,
       String payload) {
     if (payload.trim().compareTo('') == 0) {
       http.get("http://" +
@@ -27,7 +27,16 @@ class HttpRest {
     }
   }
 
-  void _sendAlert(String text, int _alertDuration) {
+  void setBrightnes(int value){
+    http.get("http://" +
+        ip +
+        ":" +
+        port +
+        "/remote?action=BRIGHTNESS&value=" +
+        '$value');
+  }
+
+  void sendAlert(String text, int _alertDuration) {
     http.get("http://" +
         ip +
         ":" +
@@ -37,68 +46,59 @@ class HttpRest {
         "&timer=$_alertDuration&type=alert");
   }
 
-  void _incrementPage() {
+  void incrementPage() {
     http.get("http://" +
         ip +
         ":" +
         port +
         "/remote?action=NOTIFICATION&notification=PAGE_INCREMENT");
-    print("Page Incremented");
   }
 
-  void _decrementPage() {
+  void decrementPage() {
     http.get("http://" +
         ip +
         ":" +
         port +
         "/remote?action=NOTIFICATION&notification=PAGE_DECREMENT");
-    print("Page Decremented");
   }
 
-  void _toggleMonitorOn(bool stateChange) {
+  void toggleMonitorOn() {
     http.get("http://" + ip + ":" + port + "/remote?action=MONITORON");
-    print("MonitorOn");
  }
 
-  void _toggleMonitorOff(bool stateChange) {
+  void toggleMonitorOff() {
     http.get("http://" + ip + ":" + port + "/remote?action=MONITOROFF");
-    print("MonitorOff");
  }
 
-  void _rebootPi() {
+  void rebootPi() {
     http.get("http://" + ip + ":" + port + "/remote?action=REBOOT");
-    print("Rebooting mirror");
   }
 
-  void _shutdownPi() {
+  void shutdownPi() {
     http.get("http://" + ip + ":" + port + "/remote?action=SHUTDOWN");
-    print("Shutting down mirror");
   }
 
-  void _backgroundSlideShowNext() {
+  void backgroundSlideShowNext() {
     http.get("http://" +
         ip +
         ":" +
         port +
         "/remote?action=NOTIFICATION&notification=BACKGROUNDSLIDESHOW_NEXT");
-    print("Next picture");
   }
 
-  void _backgroundSlideShowStop() {
+  void backgroundSlideShowStop() {
     http.get("http://" +
         ip +
         ":" +
         port +
         "/remote?action=NOTIFICATION&notification=BACKGROUNDSLIDESHOW_STOP");
-    print("Stopped SlideShow");
   }
 
-  void _backgroundSlideShowPlay() {
+  void backgroundSlideShowPlay() {
     http.get("http://" +
         ip +
         ":" +
         port +
         "/remote?action=NOTIFICATION&notification=BACKGROUNDSLIDESHOW_PLAY");
-    print("Started SlideShow");
   }
 }

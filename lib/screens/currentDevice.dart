@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
+import 'package:mmremotecontrol/services/httpRest.dart';
 import 'package:mmremotecontrol/screens/addCommand.dart';
 import 'package:mmremotecontrol/models/settingArguments.dart';
 import 'package:mmremotecontrol/models/commandArguments.dart';
@@ -51,6 +51,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   int _alertDuration = 10;
   bool _stateInitialized = false;
   List<Widget> _customCommands = List<Widget>();
+  HttpRest _httpRest;
 
   @override
   void initState() {
@@ -75,6 +76,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     //Only after start of the App
     if (!_stateInitialized) {
       _initializeSettings(deviceName);
+      _httpRest = new HttpRest(ip, port);
     }
 
     var appBar = AppBar(
@@ -437,7 +439,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _initializeSettings(String deviceName) {
-    print('initializing...');
     _stateInitialized = true;
 
     fetchSettingsFromDatabase(deviceName).then((SettingArguments tempSettings) {
@@ -504,18 +505,10 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _setBrightness(int value, bool message) {
-    http.get("http://" +
-        ip +
-        ":" +
-        port +
-        "/remote?action=BRIGHTNESS&value=" +
-        '$value');
-    print("Brightness changed to " + '$value');
+    _httpRest.setBrightnes(value);
     if (message) {
-      setState(() {
-        lastRequest = "Brightness changed to " + '$value';
-      });
-    }
+      _updateLastRequest("Brightness changed to" + '$value');
+   }
   }
 
   void _evaluateAlert(String text, BuildContext context) {
@@ -542,9 +535,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     if (int.tryParse(_amount) != null) {
       _alertDuration = int.tryParse(_amount);
       _persistAlertDurationSetting(_alertDuration);
-      setState(() {
-        lastRequest = 'Alert duration set to ' + _amount;
-      });
+      _updateLastRequest('Alert duration set to ' + _amount);
     }
   }
 
@@ -578,9 +569,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     if(result != null) {
       _alertDuration = int.parse(result);
       _persistAlertDurationSetting(_alertDuration);
-      setState(() {
-        lastRequest = 'Alert duration set to $_alertDuration';
-      });
+      _updateLastRequest('Alert duration set to $_alertDuration');
     }
   }
 
@@ -655,58 +644,9 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
   void _sendCustomCommand(String commandName, String notification,
       String payload, BuildContext context) {
-    if (payload.trim().compareTo('') == 0) {
-      http.get("http://" +
-          ip +
-          ":" +
-          port +
-          "/remote?action=NOTIFICATION&notification=" +
-          notification);
-    } else {
-      http.get("http://" +
-          ip +
-          ":" +
-          port +
-          "/remote?action=NOTIFICATION&notification=" +
-          notification +
-          "&payload=" +
-          payload);
-    }
-    _showSnackbar(commandName + ' sended', context);
+    _httpRest.sendCustomCommand(commandName, notification, payload);
+   _showSnackbar(commandName + ' sended', context);
     _updateLastRequest(commandName + " sended");
-  }
-
-  void _sendAlert(String text) {
-    http.get("http://" +
-        ip +
-        ":" +
-        port +
-        "/remote?action=SHOW_ALERT&message=&title=" +
-        text +
-        "&timer=$_alertDuration&type=alert");
-    _updateLastRequest("Sending alert");
-  }
-
-  void _incrementPage(BuildContext context) {
-    http.get("http://" +
-        ip +
-        ":" +
-        port +
-        "/remote?action=NOTIFICATION&notification=PAGE_INCREMENT");
-    print("Page Incremented");
-    _showSnackbar('Page Incremented', context);
-    _updateLastRequest("Page Incremented");
-  }
-
-  void _decrementPage(BuildContext context) {
-    http.get("http://" +
-        ip +
-        ":" +
-        port +
-        "/remote?action=NOTIFICATION&notification=PAGE_DECREMENT");
-    print("Page Decremented");
-    _showSnackbar('Page Decremented', context);
-    _updateLastRequest("Page Decremented");
   }
 
   void _toggleMonitor() {
@@ -715,37 +655,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     } else {
       _toggleMonitorOn(true);
     }
-  }
-
-  void _toggleMonitorOn(bool stateChange) {
-    http.get("http://" + ip + ":" + port + "/remote?action=MONITORON");
-    print("MonitorOn");
-    setState(() {
-      _monitorToggleColor = Colors.blue;
-
-      if (stateChange) {
-        lastRequest = "Monitor On";
-      }
-    });
-    _persistMonitorSetting('ON');
-  }
-
-  void _toggleMonitorOff(bool stateChange) {
-    http.get("http://" + ip + ":" + port + "/remote?action=MONITOROFF");
-    print("MonitorOff");
-    setState(() {
-      _monitorToggleColor = Colors.black54;
-      if (stateChange) {
-        lastRequest = "Monitor Off";
-      }
-    });
-    _persistMonitorSetting('OFF');
-  }
-
-  void _rebootPi() {
-    http.get("http://" + ip + ":" + port + "/remote?action=REBOOT");
-    print("Rebooting mirror");
-    _updateLastRequest("Rebooting mirror");
   }
 
   Future<void> _rebootPiDialog(BuildContext context) async {
@@ -774,12 +683,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         );
       },
     );
-  }
-
-  void _shutdownPi() {
-    http.get("http://" + ip + ":" + port + "/remote?action=SHUTDOWN");
-    print("Shutting down mirror");
-    _updateLastRequest("Shutting down mirror");
   }
 
   Future<void> _shutdownPiDialog(BuildContext context) async {
@@ -811,32 +714,17 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _backgroundSlideShowNext() {
-    http.get("http://" +
-        ip +
-        ":" +
-        port +
-        "/remote?action=NOTIFICATION&notification=BACKGROUNDSLIDESHOW_NEXT");
-    print("Next picture");
-    _updateLastRequest("Next picture");
+    _httpRest.backgroundSlideShowNext();
+   _updateLastRequest("Next picture");
   }
 
   void _backgroundSlideShowStop() {
-    http.get("http://" +
-        ip +
-        ":" +
-        port +
-        "/remote?action=NOTIFICATION&notification=BACKGROUNDSLIDESHOW_STOP");
-    print("Stopped SlideShow");
-    _updateLastRequest("Stopped SlideShow");
+    _httpRest.backgroundSlideShowStop();
+   _updateLastRequest("Stopped SlideShow");
   }
 
   void _backgroundSlideShowPlay() {
-    http.get("http://" +
-        ip +
-        ":" +
-        port +
-        "/remote?action=NOTIFICATION&notification=BACKGROUNDSLIDESHOW_PLAY");
-    print("Started SlideShow");
+    _httpRest.backgroundSlideShowPlay();
     _updateLastRequest("Started SlideShow");
   }
 
@@ -844,5 +732,55 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     setState(() {
       lastRequest = requestMessage;
     });
+  }
+
+  void _shutdownPi() {
+    _httpRest.shutdownPi();
+    _updateLastRequest("Shutting down mirror");
+  }
+
+  void _toggleMonitorOn(bool stateChange) {
+    _httpRest.toggleMonitorOn();
+    setState(() {
+      _monitorToggleColor = Colors.blue;
+
+      if (stateChange) {
+        lastRequest = "Monitor On";
+      }
+    });
+    _persistMonitorSetting('ON');
+  }
+
+  void _toggleMonitorOff(bool stateChange) {
+    _httpRest.toggleMonitorOff();
+    setState(() {
+      _monitorToggleColor = Colors.black54;
+      if (stateChange) {
+        lastRequest = "Monitor Off";
+      }
+    });
+    _persistMonitorSetting('OFF');
+  }
+
+  void _rebootPi() {
+    _httpRest.rebootPi();
+    _updateLastRequest("Rebooting mirror");
+  }
+
+  void _sendAlert(String text) {
+    _httpRest.sendAlert(text, _alertDuration);
+    _updateLastRequest("Sending alert");
+  }
+
+  void _incrementPage(BuildContext context) {
+    _httpRest.incrementPage();
+    _showSnackbar('Page Incremented', context);
+    _updateLastRequest("Page Incremented");
+  }
+
+  void _decrementPage(BuildContext context) {
+    _httpRest.decrementPage();
+    _showSnackbar('Page Decremented', context);
+    _updateLastRequest("Page Decremented");
   }
 }
