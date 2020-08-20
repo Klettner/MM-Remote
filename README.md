@@ -1,5 +1,6 @@
 ## MM-Remote 
 ![Build and Release apk](https://github.com/Klettner/MM-Remote/workflows/Build%20and%20Release%20apk/badge.svg?branch=master)  
+[![GitHub release](https://img.shields.io/github/tag/Naereen/StrapDown.js.svg)](https://GitHub.com/Naeeen/StrapDown.js/release/)
   
 MM-Remote is an Android app to control your **MagicMirror** via smartphone.  
   
