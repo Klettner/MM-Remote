@@ -35,7 +35,7 @@ After starting the MM-Remote app, tab on the `+` on the bottom-right to add you 
   - Add it's IP-address to the next field (e.g. something like 192.168.0.0). You can get the IP-address by typing `ipconfig` in the console of the raspberry pi. In the output after *inet addr:* you will find the ip-adress. 
   - Put the port in the last field (e.g. 8080) and click on create.
 
-Now you should be able to remote controle your mirror. But keep in mind, if you don't use all the modules mentioned under dependencies, some of the buttons might not work (e.g. changing the displayed pages of your mirror via the left and right arrows on the bottom only works if you are using the MMM-Pages module). But you can always create you own commands in the **CUSTOM-COMMANDS** tab.  
+Now you should be able to remote control your mirror. But keep in mind, if you don't use all the modules mentioned under dependencies, some of the buttons might not work (e.g. changing the displayed pages of your mirror via the left and right arrows on the bottom only works if you are using the MMM-Pages module). But you can always create you own commands in the **CUSTOM-COMMANDS** tab.  
    
 &nbsp;
 ## Trouble shooting ##  
