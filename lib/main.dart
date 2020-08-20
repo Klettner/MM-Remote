@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mmremotecontrol/screens/help.dart';
 
 import 'screens/currentDevice.dart';
 import 'screens/chooseDevice.dart';
@@ -20,6 +21,7 @@ class MirrorApp extends StatelessWidget {
         CurrentDevicePage.routeName: (context) => CurrentDevicePage(),
         AddDevicePage.routeName: (context) => AddDevicePage(),
         StartPage.routeName: (context) => StartPage(),
+        HelpPage.routeName: (context) => HelpPage(),
       },
     );
   }

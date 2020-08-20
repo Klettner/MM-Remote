@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mmremotecontrol/screens/help.dart';
 
 import 'package:mmremotecontrol/shared/colors.dart';
 import 'package:mmremotecontrol/services/httpRest.dart';
@@ -98,65 +99,94 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       key: _scaffoldKey,
       appBar: appBar,
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
+        child: Column(
           children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: primaryColor,
+            Expanded(
+              // ListView contains a group of widgets that scroll inside the drawer
+              child: ListView(
+                children: <Widget>[
+                  DrawerHeader(
+                    decoration: BoxDecoration(
+                      color: primaryColor,
+                    ),
+                    child: Text(
+                      deviceName,
+                      style: TextStyle(
+                        color: secondaryColor,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.devices,
+                        color:tertiaryColorMedium),
+                    title: Text('Choose Device'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.tv,
+                        color: _monitorToggleColor, semanticLabel: 'toggleMonitor'),
+                    title: Text('Toggle monitor on/off'),
+                    onTap: () {
+                      _toggleMonitor();
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.refresh, semanticLabel: 'reboot',
+                        color: tertiaryColorMedium),
+                    title: Text('Reboot Mirror'),
+                    onTap: () {
+                      _rebootPiDialog(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(
+                      Icons.power_settings_new,
+                      semanticLabel: 'shutdown',
+                      color: tertiaryColorMedium,
+                    ),
+                    title: Text('Shutdown Mirror'),
+                    onTap: () {
+                      _shutdownPiDialog(context);
+                    },
+                  ),
+                  ],
               ),
-              child: Text(
-                deviceName,
-                style: TextStyle(
-                  color: secondaryColor,
-                  fontSize: 24,
-                ),
-              ),
             ),
-            ListTile(
-              leading: Icon(Icons.devices,
-                  color:tertiaryColorMedium),
-              title: Text('Choose Device'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.tv,
-                  color: _monitorToggleColor, semanticLabel: 'toggleMonitor'),
-              title: Text('Toggle monitor on/off'),
-              onTap: () {
-                _toggleMonitor();
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.refresh, semanticLabel: 'reboot',
-              color: tertiaryColorMedium),
-              title: Text('Reboot Mirror'),
-              onTap: () {
-                _rebootPiDialog(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.power_settings_new,
-                semanticLabel: 'shutdown',
-                color: tertiaryColorMedium,
-              ),
-              title: Text('Shutdown Mirror'),
-              onTap: () {
-                _shutdownPiDialog(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings, semanticLabel: 'settings',
-              color: tertiaryColorMedium),
-              title: Text('Settings'),
-              onTap: () {
-                _navigateToSettingsPage();
-              },
-            ),
+            Container(
+              // This align moves its children to the bottom
+                child: Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: Container(
+                        child: Column(
+                          children: <Widget>[
+                            Divider(),
+                            ListTile(
+                              leading: Icon(Icons.settings, semanticLabel: 'settings',
+                                  color: tertiaryColorMedium),
+                              title: Text('Settings'),
+                              onTap: () {
+                                _navigateToSettingsPage();
+                              },
+                            ),
+                            ListTile(
+                              leading: Icon(
+                                Icons.help,
+                                color: tertiaryColorMedium,
+                              ),
+                              title: Text('Help & About (online)'),
+                              onTap: () {
+                                Navigator.pushNamed(context, HelpPage.routeName);
+                              },
+                            )
+                          ],
+                        )
+                    )
+                )
+            )
           ],
         ),
       ),
