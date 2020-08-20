@@ -49,5 +49,5 @@ You can also clone the repository and compile the code by yourself instead of do
 &nbsp;
 ## Final words ##  
 This is the first app I have coded, therefore I would be happy about some feedback.  
-If you have any ideas for improvments, bugs or feature requests feel free to write an issue.  
-If you want to contribute yourself, you can of course make a pull request.
+If you have any ideas for improvements, bugs or feature requests feel free to write an issue.  
+If you want to contribute yourself, please create a pull request.
