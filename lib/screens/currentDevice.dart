@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mmremotecontrol/screens/help.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart' as pPath;
 
+import 'package:mmremotecontrol/screens/help.dart';
 import 'package:mmremotecontrol/shared/colors.dart';
 import 'package:mmremotecontrol/services/httpRest.dart';
 import 'package:mmremotecontrol/screens/addCommand.dart';
@@ -45,6 +51,9 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   String lastRequest = "Send alert";
   bool _isComposing = false;
   final TextEditingController _textController = new TextEditingController();
+  File _image;
+  final picker = ImagePicker();
+  SharedPreferences prefs;
   String ip;
   String port;
   String deviceName;
@@ -79,6 +88,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     if (!_stateInitialized) {
       _initializeSettings(deviceName);
       _httpRest = new HttpRest(ip, port);
+      getImage();
     }
 
     var appBar = AppBar(
@@ -107,14 +117,36 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 children: <Widget>[
                   DrawerHeader(
                     decoration: BoxDecoration(
+                      image: (_image == null) ? null : DecorationImage(
+                        image:FileImage(_image),
+                        fit: BoxFit.cover,
+                      ),
                       color: primaryColor,
                     ),
-                    child: Text(
-                      deviceName,
-                      style: TextStyle(
-                        color: secondaryColor,
-                        fontSize: 20,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          deviceName,
+                          style: TextStyle(
+                            color: secondaryColor,
+                            fontSize: 20,
+                          ),
+                        ),
+                        Align(
+                          alignment: FractionalOffset.bottomRight,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              _pickImage();
+                            },
+                          ),
+                        )
+                      ],
                     ),
                   ),
                   ListTile(
@@ -449,6 +481,37 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         ),
       ),
     );
+  }
+
+  Future _pickImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    // Check if a image was picked
+    if(pickedFile == null){
+      return;
+    }
+
+    setState(() {
+      _image = File(pickedFile.path);
+    });
+
+    final appDir = await pPath.getApplicationDocumentsDirectory();
+    final String imagePath = appDir.path;
+    final fileName = path.basename(pickedFile.path);
+    final File localImage = await _image.copy('$imagePath/$fileName');
+
+    //persist image path
+    prefs = await SharedPreferences.getInstance();
+    prefs.setString(deviceName + 'Image', localImage.path);
+  }
+
+  Future getImage() async {
+    prefs = await SharedPreferences.getInstance();
+    if(prefs.getString(deviceName + 'Image') != null){
+      setState(() {
+        _image = File(prefs.getString(deviceName + 'Image'));
+      });
+    }
   }
 
   void _showSnackbar(String message, BuildContext context) {
