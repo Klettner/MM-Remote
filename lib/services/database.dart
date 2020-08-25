@@ -1,14 +1,17 @@
 import 'dart:async';
 import 'dart:io' as io;
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:logger/logger.dart';
+
+import 'package:sqflite/sqflite.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
 import 'package:mmremotecontrol/models/commandArguments.dart';
 import 'package:mmremotecontrol/models/settingArguments.dart';
 
 class SqLite{
   static Database _db;
+  var loggerNoStack = Logger(printer: PrettyPrinter(methodCount: 0));
 
   Future<Database> get db async {
     if (_db != null) return _db;
@@ -27,13 +30,13 @@ class SqLite{
     // When creating the db, create the tables
     await db.execute(
         "CREATE TABLE Commands(id INTEGER PRIMARY KEY,deviceName TEXT, commandName TEXT, notification TEXT, payload TEXT)");
-    print("Created Commands table");
+    loggerNoStack.i("Created Commands table");
     await db.execute(
         "CREATE TABLE Devices(id INTEGER PRIMARY KEY,deviceName TEXT, ipAddress TEXT, port TEXT)");
-    print("Created Devices table");
+    loggerNoStack.i("Created Devices table");
     await db.execute(
         "CREATE TABLE Settings(id INTEGER PRIMARY KEY,deviceName TEXT, brightness TEXT, alertDuration TEXT, monitorStatus TEXT)");
-    print("Created Settings table");
+    loggerNoStack.i("Created Settings table");
   }
 
   void saveCommand(CommandArguments customCommand) async {
@@ -58,7 +61,7 @@ class SqLite{
               '\'' +
               ')');
     });
-    print('command Saved');
+    loggerNoStack.i('command Saved');
   }
 
   void deleteCommand(String deviceName, String commandName) async {
@@ -66,11 +69,11 @@ class SqLite{
     dbClient.delete('Commands',
         where: "deviceName = ? AND commandName = ?",
         whereArgs: [deviceName, commandName]);
-    print("Deleted " + commandName);
+    loggerNoStack.i("Deleted " + commandName);
   }
 
   Future<List<CommandArguments>> getCommands(String deviceName) async {
-    print('getting persistent Commands');
+    loggerNoStack.i('getting persistent Commands');
     var dbClient = await db;
     List<Map> list = await dbClient
         .query('Commands', where: "deviceName = ?", whereArgs: [deviceName]);
@@ -110,7 +113,7 @@ class SqLite{
         .delete('Commands', where: "deviceName = ?", whereArgs: [deviceName]);
     dbClient
         .delete('Settings', where: "deviceName = ?", whereArgs: [deviceName]);
-    print("Deleted " + deviceName);
+    loggerNoStack.i("Deleted " + deviceName);
   }
 
   Future<List<DeviceArguments>> getDevices() async {
@@ -125,7 +128,7 @@ class SqLite{
   }
 
   void saveSetting(SettingArguments settingArguments) async {
-    print('saving settings');
+    loggerNoStack.i('saving settings');
     var dbClient = await db;
     await dbClient.transaction((txn) async {
       return await txn.rawInsert(
@@ -153,11 +156,11 @@ class SqLite{
     var dbClient = await db;
     dbClient
         .delete('Settings', where: "deviceName = ?", whereArgs: [deviceName]);
-    print("Deleted Settings of " + deviceName);
+    loggerNoStack.i("Deleted Settings of " + deviceName);
   }
 
   Future<SettingArguments> getSettings(String deviceName) async {
-    print('getting settings');
+    loggerNoStack.i('getting settings');
     var dbClient = await db;
     List<Map> list = await dbClient
         .query('Settings', where: "deviceName = ?", whereArgs: [deviceName]);

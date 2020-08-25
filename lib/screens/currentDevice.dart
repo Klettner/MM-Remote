@@ -548,7 +548,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       _isComposing = false;
     });
     String _temptext = text.toUpperCase().trim().replaceAll(' ', '');
-    print(_temptext);
     //Check if Command was send
     if (_temptext
             .substring(0, _temptext.indexOf(':') + 1)
