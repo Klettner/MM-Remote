@@ -18,11 +18,12 @@ MM-Remote is an Android app to control your **MagicMirror** via smartphone.
   * Create your own custom commands  
   
 ### Dependencies ###
-  * MMM-BackgroundSlideshow
-  * MMM-Pages and MMM-Navigation
-  * MMM-Tools
-  
-It is also possible to use the App without all the dependencies, but this will limit its functionality.  
+  * [MMM-BackgroundSlideshow](https://github.com/darickc/MMM-BackgroundSlideshow)
+  * [MMM-Pages](https://github.com/edward-shen/MMM-pages)
+  * [MMM-Remote-Control](https://github.com/Jopyth/MMM-Remote-Control)
+ 
+The communication between app and MagicMirror relies on [MMM-Remote-Control](https://github.com/Jopyth/MMM-Remote-Control), **the app won't work without it!**  
+The app will still work without the other dependencies, but this will limit its functionality.  
   
 &nbsp;
 ## Set-up (easy) ##
