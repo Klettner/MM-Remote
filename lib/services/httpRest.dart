@@ -6,7 +6,7 @@ class HttpRest {
 
   HttpRest(this.ip, this.port);
 
-  void sendCustomCommand(String commandName, String notification,
+  void sendCustomCommand(String notification,
       String payload) {
     if (payload.trim().compareTo('') == 0) {
       http.get("http://" +

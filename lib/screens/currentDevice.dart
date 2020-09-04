@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -601,7 +600,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   void _setBrightness(int value, bool message) {
     _httpRest.setBrightnes(value);
     if (message) {
-      _updateLastRequest("Brightness changed to" + '$value');
+      updateLastRequest("Brightness changed to" + '$value');
    }
   }
 
@@ -628,7 +627,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     if (int.tryParse(_amount) != null) {
       _alertDuration = int.tryParse(_amount);
       _persistAlertDurationSetting(_alertDuration);
-      _updateLastRequest('Alert duration set to ' + _amount);
+      updateLastRequest('Alert duration set to ' + _amount);
     }
   }
 
@@ -662,7 +661,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     if(result != null) {
       _alertDuration = int.parse(result);
       _persistAlertDurationSetting(_alertDuration);
-      _updateLastRequest('Alert duration set to $_alertDuration');
+      updateLastRequest('Alert duration set to $_alertDuration');
     }
   }
 
@@ -739,7 +738,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       String payload, BuildContext context) {
     _httpRest.sendCustomCommand(commandName, notification, payload);
    _showSnackbar(commandName + ' sended', context);
-    _updateLastRequest(commandName + " sended");
+    updateLastRequest(commandName + " sended");
   }
 
   void _toggleMonitor() {
@@ -808,20 +807,20 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
   void _backgroundSlideShowNext() {
     _httpRest.backgroundSlideShowNext();
-   _updateLastRequest("Next picture");
+   updateLastRequest("Next picture");
   }
 
   void _backgroundSlideShowStop() {
     _httpRest.backgroundSlideShowStop();
-   _updateLastRequest("Stopped SlideShow");
+   updateLastRequest("Stopped SlideShow");
   }
 
   void _backgroundSlideShowPlay() {
     _httpRest.backgroundSlideShowPlay();
-    _updateLastRequest("Started SlideShow");
+    updateLastRequest("Started SlideShow");
   }
 
-  void _updateLastRequest(String requestMessage) {
+  void updateLastRequest(String requestMessage) {
     setState(() {
       lastRequest = requestMessage;
     });
@@ -829,7 +828,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
   void _shutdownPi() {
     _httpRest.shutdownPi();
-    _updateLastRequest("Shutting down mirror");
+    updateLastRequest("Shutting down mirror");
   }
 
   void _toggleMonitorOn(bool stateChange) {
@@ -857,23 +856,23 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
   void _rebootPi() {
     _httpRest.rebootPi();
-    _updateLastRequest("Rebooting mirror");
+    updateLastRequest("Rebooting mirror");
   }
 
   void _sendAlert(String text) {
     _httpRest.sendAlert(text, _alertDuration);
-    _updateLastRequest("Sending alert");
+    updateLastRequest("Sending alert");
   }
 
   void _incrementPage(BuildContext context) {
     _httpRest.incrementPage();
     _showSnackbar('Page Incremented', context);
-    _updateLastRequest("Page Incremented");
+    updateLastRequest("Page Incremented");
   }
 
   void _decrementPage(BuildContext context) {
     _httpRest.decrementPage();
     _showSnackbar('Page Decremented', context);
-    _updateLastRequest("Page Decremented");
+    updateLastRequest("Page Decremented");
   }
 }
