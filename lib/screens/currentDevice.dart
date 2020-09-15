@@ -144,7 +144,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 margin: new EdgeInsets.symmetric(
                     horizontal: 6.0),
                 child: new Text(
-                  'BackgroundSlideShow:',
+                  'Photo slideshow',
                   textScaleFactor: 1.3,
                 ),
               ),
@@ -203,7 +203,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 margin: new EdgeInsets.symmetric(
                     horizontal: 6.0),
                 child: new Text(
-                  'BrightnessSlider:',
+                  'Monitor brightness',
                   textScaleFactor: 1.3,
                 ),
               ),
@@ -328,7 +328,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 ListTile(
                   leading: Icon(Icons.devices,
                       color:tertiaryColorMedium),
-                  title: Text('Choose Device'),
+                  title: Text('Choose device'),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.pop(context);
@@ -345,7 +345,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 ListTile(
                   leading: Icon(Icons.refresh, semanticLabel: 'reboot',
                       color: tertiaryColorMedium),
-                  title: Text('Reboot Mirror'),
+                  title: Text('Reboot mirror'),
                   onTap: () {
                     _rebootPiDialog(context);
                   },
@@ -356,7 +356,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     semanticLabel: 'shutdown',
                     color: tertiaryColorMedium,
                   ),
-                  title: Text('Shutdown Mirror'),
+                  title: Text('Shutdown mirror'),
                   onTap: () {
                     _shutdownPiDialog(context);
                   },
