@@ -736,7 +736,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
   void _sendCustomCommand(String commandName, String notification,
       String payload, BuildContext context) {
-    _httpRest.sendCustomCommand(commandName, notification, payload);
+    _httpRest.sendCustomCommand(notification, payload);
    _showSnackbar(commandName + ' sended', context);
     updateLastRequest(commandName + " sended");
   }
@@ -806,17 +806,17 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _backgroundSlideShowNext() {
-    _httpRest.backgroundSlideShowNext();
+    _httpRest.sendCustomCommand("BACKGROUNDSLIDESHOW_NEXT", "");
    updateLastRequest("Next picture");
   }
 
   void _backgroundSlideShowStop() {
-    _httpRest.backgroundSlideShowStop();
+    _httpRest.sendCustomCommand("BACKGROUNDSLIDESHOW_STOP", "");
    updateLastRequest("Stopped SlideShow");
   }
 
   void _backgroundSlideShowPlay() {
-    _httpRest.backgroundSlideShowPlay();
+    _httpRest.sendCustomCommand("BACKGROUNDSLIDESHOW_PLAY", "");
     updateLastRequest("Started SlideShow");
   }
 
@@ -827,12 +827,12 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _shutdownPi() {
-    _httpRest.shutdownPi();
+    _httpRest.sendAction("SHUTDOWN");
     updateLastRequest("Shutting down mirror");
   }
 
   void _toggleMonitorOn(bool stateChange) {
-    _httpRest.toggleMonitorOn();
+    _httpRest.sendAction("MONITORON");
     setState(() {
       _monitorToggleColor = primaryColor;
 
@@ -844,7 +844,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _toggleMonitorOff(bool stateChange) {
-    _httpRest.toggleMonitorOff();
+    _httpRest.sendAction("MONITOROFF");
     setState(() {
       _monitorToggleColor = tertiaryColorDark;
       if (stateChange) {
@@ -855,7 +855,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _rebootPi() {
-    _httpRest.rebootPi();
+    _httpRest.sendAction("REBOOT");
     updateLastRequest("Rebooting mirror");
   }
 
@@ -865,13 +865,13 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _incrementPage(BuildContext context) {
-    _httpRest.incrementPage();
+    _httpRest.sendCustomCommand("PAGE_INCREMENT", "");
     _showSnackbar('Page Incremented', context);
     updateLastRequest("Page Incremented");
   }
 
   void _decrementPage(BuildContext context) {
-    _httpRest.decrementPage();
+    _httpRest.sendCustomCommand("PAGE_DECREMENT", "");
     _showSnackbar('Page Decremented', context);
     updateLastRequest("Page Decremented");
   }
