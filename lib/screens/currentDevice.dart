@@ -130,7 +130,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   Widget _createBackgroundSlideShowCard(){
-   return Card(
+    return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
         padding:
@@ -176,6 +176,65 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     tooltip: 'Next picture',
                     color: tertiaryColorDark,
                     iconSize: 35.0,
+                    onPressed: _backgroundSlideShowNext),
+                new SizedBox(
+                  width: 5.0,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _createStopWatchTimerCard(){
+   return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding:
+        EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Align(
+              alignment: Alignment.centerLeft,
+              child: new Container(
+                margin: new EdgeInsets.symmetric(
+                    horizontal: 6.0),
+                child: new Text(
+                  'Timer',
+                  textScaleFactor: 1.3,
+                ),
+              ),
+            ),
+            new Row(
+              mainAxisAlignment:
+              MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                new SizedBox(
+                  width: 5.0,
+                ),
+                new IconButton(
+                    icon: Icon(Icons.pause,
+                        semanticLabel: 'stop timer'),
+                    tooltip: 'Stop timer',
+                    color: tertiaryColorDark,
+                    iconSize: 35.0,
+                    onPressed: _backgroundSlideShowStop),
+                new IconButton(
+                    icon: Icon(Icons.play_arrow,
+                        semanticLabel: 'start timer'),
+                    tooltip: 'Start timer',
+                    color: tertiaryColorDark,
+                    iconSize: 35.0,
+                    onPressed: _backgroundSlideShowPlay),
+                new IconButton(
+                    icon: Icon(Icons.flash_on,
+                        semanticLabel: 'interrupt'),
+                    tooltip: 'Interrupt',
+                    color: tertiaryColorDark,
+                    iconSize: 30,
                     onPressed: _backgroundSlideShowNext),
                 new SizedBox(
                   width: 5.0,
@@ -419,6 +478,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
               children: <Widget>[
                 _createBackgroundSlideShowCard(),
                 _createBrightnessSliderCard(),
+                _createStopWatchTimerCard(),
               ],
             ),
           ),
