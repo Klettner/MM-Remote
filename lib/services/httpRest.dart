@@ -31,7 +31,7 @@ class HttpRest {
     http.get("http://" + ip + ":" + port + "/remote?action=" + action);
   }
 
-  void setBrightnes(int value){
+  void setBrightness(int value){
     http.get("http://" +
         ip +
         ":" +

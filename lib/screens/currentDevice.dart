@@ -107,335 +107,15 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     return Scaffold(
       key: _scaffoldKey,
       appBar: appBar,
-      drawer: Drawer(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              // ListView contains a group of widgets that scroll inside the drawer
-              child: ListView(
-                children: <Widget>[
-                  DrawerHeader(
-                    decoration: BoxDecoration(
-                      image: (_image == null) ? null : DecorationImage(
-                        image:FileImage(_image),
-                        fit: BoxFit.cover,
-                      ),
-                      color: primaryColor,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          deviceName,
-                          style: TextStyle(
-                            color: secondaryColor,
-                            fontSize: 20,
-                          ),
-                        ),
-                        Align(
-                          alignment: FractionalOffset.bottomRight,
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.edit,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              _pickImage();
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.devices,
-                        color:tertiaryColorMedium),
-                    title: Text('Choose Device'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.tv,
-                        color: _monitorToggleColor, semanticLabel: 'toggleMonitor'),
-                    title: Text('Toggle monitor on/off'),
-                    onTap: () {
-                      _toggleMonitor();
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.refresh, semanticLabel: 'reboot',
-                        color: tertiaryColorMedium),
-                    title: Text('Reboot Mirror'),
-                    onTap: () {
-                      _rebootPiDialog(context);
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(
-                      Icons.power_settings_new,
-                      semanticLabel: 'shutdown',
-                      color: tertiaryColorMedium,
-                    ),
-                    title: Text('Shutdown Mirror'),
-                    onTap: () {
-                      _shutdownPiDialog(context);
-                    },
-                  ),
-                  ],
-              ),
-            ),
-            Container(
-              // This align moves its children to the bottom
-                child: Align(
-                    alignment: FractionalOffset.bottomCenter,
-                    child: Container(
-                        child: Column(
-                          children: <Widget>[
-                            Divider(),
-                            ListTile(
-                              leading: Icon(Icons.settings, semanticLabel: 'settings',
-                                  color: tertiaryColorMedium),
-                              title: Text('Settings'),
-                              onTap: () {
-                                _navigateToSettingsPage();
-                              },
-                            ),
-                            ListTile(
-                              leading: Icon(
-                                Icons.help,
-                                color: tertiaryColorMedium,
-                              ),
-                              title: Text('Help & About (online)'),
-                              onTap: () {
-                                Navigator.pushNamed(context, HelpPage.routeName);
-                              },
-                            )
-                          ],
-                        )
-                    )
-                )
-            )
-          ],
-        ),
-      ),
+      drawer: _createDrawer(),
       body: Builder(
         builder: (context) => TabBarView(
           controller: _tabController,
           children: myTabs.map((Tab tab) {
             if (tab.text.compareTo('HOME') == 0) {
-              return new Container(
-                color: backgroundColor,
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: GridView.count(
-                        crossAxisCount:
-                            _deviceOrientation == Orientation.portrait ? 1 : 2,
-                        padding: _deviceOrientation == Orientation.portrait
-                            ? EdgeInsets.all(16.0)
-                            : EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
-                        childAspectRatio:
-                            _deviceOrientation == Orientation.portrait
-                                ? 8.0 / 3.0
-                                : 8.0 / 3.5,
-                        children: <Widget>[
-                          Card(
-                            clipBehavior: Clip.antiAlias,
-                            child: Padding(
-                              padding:
-                                  EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  new Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: new Container(
-                                      margin: new EdgeInsets.symmetric(
-                                          horizontal: 6.0),
-                                      child: new Text(
-                                        'BackgroundSlideShow:',
-                                        textScaleFactor: 1.3,
-                                      ),
-                                    ),
-                                  ),
-                                  new Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      new SizedBox(
-                                        width: 5.0,
-                                      ),
-                                      new IconButton(
-                                          icon: Icon(Icons.stop,
-                                              semanticLabel: 'stop slideshow'),
-                                          tooltip: 'Stop slideshow',
-                                          color: tertiaryColorDark,
-                                          iconSize: 35.0,
-                                          onPressed: _backgroundSlideShowStop),
-                                      new IconButton(
-                                          icon: Icon(Icons.play_arrow,
-                                              semanticLabel: 'start slideshow'),
-                                          tooltip: 'Start slideshow',
-                                          color: tertiaryColorDark,
-                                          iconSize: 35.0,
-                                          onPressed: _backgroundSlideShowPlay),
-                                      new IconButton(
-                                          icon: Icon(Icons.fast_forward,
-                                              semanticLabel: 'next picture'),
-                                          tooltip: 'Next picture',
-                                          color: tertiaryColorDark,
-                                          iconSize: 35.0,
-                                          onPressed: _backgroundSlideShowNext),
-                                      new SizedBox(
-                                        width: 5.0,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Card(
-                            clipBehavior: Clip.antiAlias,
-                            child: Padding(
-                              padding:
-                                  EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  new Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: new Container(
-                                      margin: new EdgeInsets.symmetric(
-                                          horizontal: 6.0),
-                                      child: new Text(
-                                        'BrightnessSlider:',
-                                        textScaleFactor: 1.3,
-                                      ),
-                                    ),
-                                  ),
-                                  new Slider(
-                                    value: _brightnessValue.toDouble(),
-                                    min: 0.0,
-                                    max: 200.0,
-                                    divisions: 20,
-                                    activeColor: primaryColor,
-                                    inactiveColor: tertiaryColorDark,
-                                    label: 'changing brightness',
-                                    semanticFormatterCallback:
-                                        (double newValue) {
-                                      return '${newValue.round()}/200 brightness';
-                                    },
-                                    onChanged: (double newValue) {
-                                      setState(() {
-                                        _brightnessValue = newValue.round();
-                                        _setBrightness(_brightnessValue, true);
-                                      });
-                                    },
-                                    onChangeEnd: (double newValue) {
-                                      _persistBrightnessSetting(
-                                          newValue.round());
-                                    },
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    new Container(
-                    color: secondaryColor,
-                      child: Column(
-                        children: <Widget>[
-                          new Divider(height: 1.0),
-                          new Row(
-                            children: <Widget>[
-                              new Flexible(
-                                child: new TextField(
-                                  enableSuggestions: false,
-                                  controller: _textController,
-                                  onChanged: (String text) {
-                                    setState(() {
-                                      _isComposing = text.length > 0;
-                                    });
-                                  },
-                                  decoration: new InputDecoration.collapsed(
-                                    hintText: "  " + lastRequest,
-                                  ),
-                                ),
-                              ),
-                              new Container(
-                                margin:
-                                    new EdgeInsets.symmetric(horizontal: 4.0),
-                                child: new IconButton(
-                                  icon: new Icon(Icons.send,
-                                      semanticLabel: 'send alert'),
-                                  color: tertiaryColorDark,
-                                  disabledColor: tertiaryColorLight,
-                                  tooltip:
-                                      'Send an alert or send "/AlertDuration: int" to set the display-time of an alert',
-                                  onPressed: _isComposing
-                                      ? () => _evaluateAlert(
-                                          _textController.text, context)
-                                      : null,
-                                ),
-                              ),
-                            ],
-                          ),
-                          //new Divider(height: 5.0),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
+              return _createHomeTab(_deviceOrientation);
             } else {
-              return new Container(
-                color: backgroundColor,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Expanded(
-                      child: GridView.count(
-                        crossAxisCount:
-                            _deviceOrientation == Orientation.portrait ? 1 : 2,
-                        padding: _deviceOrientation == Orientation.portrait
-                            ? EdgeInsets.all(16.0)
-                            : EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
-                        childAspectRatio:
-                            _deviceOrientation == Orientation.portrait
-                                ? 8.0 / 2.0
-                                : 8.0 / 2.25,
-                        children: _customCommands,
-                      ),
-                    ),
-                    Align(
-                        alignment: Alignment.lerp(
-                            Alignment.center, Alignment.centerRight, 0.85),
-                        child: Tooltip(
-                          message: 'Create new custom-command',
-                          child: FloatingActionButton(
-                            child: Icon(
-                              Icons.add,
-                              color: primaryColor,
-                              size: 35,
-                            ),
-                            backgroundColor: secondaryColor,
-                            //padding: EdgeInsets.fromLTRB(20.0, 13.0, 20.0, 13.0),
-                            elevation: 5.0,
-                            onPressed: () {
-                              _navigateAndCreateCustomCommand(context);
-                            },
-                          ),
-                        )),
-                    SizedBox(height: 20),
-                  ],
-                ),
-              );
+              return _createCustomCommandsTab(_deviceOrientation);
             }
           }).toList(),
         ),
@@ -443,41 +123,389 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       bottomNavigationBar: Builder(
         builder: (context) => BottomAppBar(
           elevation: 10.0,
-          child: new Container(
-            height: _deviceOrientation == Orientation.portrait ? 50.0 : 40.0,
-            color: primaryColor,
-            child: new Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+          child: _createBottomAppBar(_deviceOrientation),
+        ),
+      ),
+    );
+  }
+
+  Widget _createBackgroundSlideShowCard(){
+   return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding:
+        EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Align(
+              alignment: Alignment.centerLeft,
+              child: new Container(
+                margin: new EdgeInsets.symmetric(
+                    horizontal: 6.0),
+                child: new Text(
+                  'BackgroundSlideShow:',
+                  textScaleFactor: 1.3,
+                ),
+              ),
+            ),
+            new Row(
+              mainAxisAlignment:
+              MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                new IconButton(
-                    padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-                    icon: new Icon(Icons.arrow_back,
-                        size: 35.0,
-                        color: secondaryColor,
-                        semanticLabel: 'previous page'),
-                    tooltip: 'Previous mirror-page',
-                    onPressed: () {
-                      _decrementPage(context);
-                    }),
                 new SizedBox(
-                  width: 50.0,
-                  height: 50.0,
+                  width: 5.0,
                 ),
                 new IconButton(
-                  padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
-                  icon: new Icon(Icons.arrow_forward,
-                      size: 35.0,
-                      color: secondaryColor,
-                      semanticLabel: 'next page'),
-                  tooltip: 'Next mirror-page',
-                  onPressed: () {
-                    _incrementPage(context);
+                    icon: Icon(Icons.stop,
+                        semanticLabel: 'stop slideshow'),
+                    tooltip: 'Stop slideshow',
+                    color: tertiaryColorDark,
+                    iconSize: 35.0,
+                    onPressed: _backgroundSlideShowStop),
+                new IconButton(
+                    icon: Icon(Icons.play_arrow,
+                        semanticLabel: 'start slideshow'),
+                    tooltip: 'Start slideshow',
+                    color: tertiaryColorDark,
+                    iconSize: 35.0,
+                    onPressed: _backgroundSlideShowPlay),
+                new IconButton(
+                    icon: Icon(Icons.fast_forward,
+                        semanticLabel: 'next picture'),
+                    tooltip: 'Next picture',
+                    color: tertiaryColorDark,
+                    iconSize: 35.0,
+                    onPressed: _backgroundSlideShowNext),
+                new SizedBox(
+                  width: 5.0,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _createBrightnessSliderCard(){
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding:
+        EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Align(
+              alignment: Alignment.centerLeft,
+              child: new Container(
+                margin: new EdgeInsets.symmetric(
+                    horizontal: 6.0),
+                child: new Text(
+                  'BrightnessSlider:',
+                  textScaleFactor: 1.3,
+                ),
+              ),
+            ),
+            new Slider(
+              value: _brightnessValue.toDouble(),
+              min: 0.0,
+              max: 200.0,
+              divisions: 20,
+              activeColor: primaryColor,
+              inactiveColor: tertiaryColorDark,
+              label: 'changing brightness',
+              semanticFormatterCallback:
+                  (double newValue) {
+                return '${newValue.round()}/200 brightness';
+              },
+              onChanged: (double newValue) {
+                setState(() {
+                  _brightnessValue = newValue.round();
+                  _setBrightness(_brightnessValue, true);
+                });
+              },
+              onChangeEnd: (double newValue) {
+                _persistBrightnessSetting(
+                    newValue.round());
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _createAlertLauncher() {
+    return new Container(
+      color: secondaryColor,
+      child: Column(
+        children: <Widget>[
+          new Divider(height: 1.0),
+          new Row(
+            children: <Widget>[
+              new Flexible(
+                child: new TextField(
+                  enableSuggestions: false,
+                  controller: _textController,
+                  onChanged: (String text) {
+                    setState(() {
+                      _isComposing = text.length > 0;
+                    });
+                  },
+                  decoration: new InputDecoration.collapsed(
+                    hintText: "  " + lastRequest,
+                  ),
+                ),
+              ),
+              new Container(
+                margin:
+                new EdgeInsets.symmetric(horizontal: 4.0),
+                child: new IconButton(
+                  icon: new Icon(Icons.send,
+                      semanticLabel: 'send alert'),
+                  color: tertiaryColorDark,
+                  disabledColor: tertiaryColorLight,
+                  tooltip:
+                  'Send an alert or send "/AlertDuration: int" to set the display-time of an alert',
+                  onPressed: _isComposing
+                      ? () => _evaluateAlert(
+                      _textController.text, context)
+                      : null,
+                ),
+              ),
+            ],
+          ),
+          //new Divider(height: 5.0),
+        ],
+      ),
+    );
+  }
+
+  Widget _createDrawer() {
+    return Drawer(
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            // ListView contains a group of widgets that scroll inside the drawer
+            child: ListView(
+              children: <Widget>[
+                DrawerHeader(
+                  decoration: BoxDecoration(
+                    image: (_image == null) ? null : DecorationImage(
+                      image:FileImage(_image),
+                      fit: BoxFit.cover,
+                    ),
+                    color: primaryColor,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        deviceName,
+                        style: TextStyle(
+                          color: secondaryColor,
+                          fontSize: 20,
+                        ),
+                      ),
+                      Align(
+                        alignment: FractionalOffset.bottomRight,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            _pickImage();
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                ListTile(
+                  leading: Icon(Icons.devices,
+                      color:tertiaryColorMedium),
+                  title: Text('Choose Device'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.tv,
+                      color: _monitorToggleColor, semanticLabel: 'toggleMonitor'),
+                  title: Text('Toggle monitor on/off'),
+                  onTap: () {
+                    _toggleMonitor();
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.refresh, semanticLabel: 'reboot',
+                      color: tertiaryColorMedium),
+                  title: Text('Reboot Mirror'),
+                  onTap: () {
+                    _rebootPiDialog(context);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    Icons.power_settings_new,
+                    semanticLabel: 'shutdown',
+                    color: tertiaryColorMedium,
+                  ),
+                  title: Text('Shutdown Mirror'),
+                  onTap: () {
+                    _shutdownPiDialog(context);
                   },
                 ),
               ],
             ),
           ),
-        ),
+          Container(
+            // This align moves its children to the bottom
+              child: Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  child: Container(
+                      child: Column(
+                        children: <Widget>[
+                          Divider(),
+                          ListTile(
+                            leading: Icon(Icons.settings, semanticLabel: 'settings',
+                                color: tertiaryColorMedium),
+                            title: Text('Settings'),
+                            onTap: () {
+                              _navigateToSettingsPage();
+                            },
+                          ),
+                          ListTile(
+                            leading: Icon(
+                              Icons.help,
+                              color: tertiaryColorMedium,
+                            ),
+                            title: Text('Help & About (online)'),
+                            onTap: () {
+                              Navigator.pushNamed(context, HelpPage.routeName);
+                            },
+                          )
+                        ],
+                      )
+                  )
+              )
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _createHomeTab(var _deviceOrientation) {
+    return new Container(
+      color: backgroundColor,
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: GridView.count(
+              crossAxisCount:
+              _deviceOrientation == Orientation.portrait ? 1 : 2,
+              padding: _deviceOrientation == Orientation.portrait
+                  ? EdgeInsets.all(16.0)
+                  : EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
+              childAspectRatio:
+              _deviceOrientation == Orientation.portrait
+                  ? 8.0 / 3.0
+                  : 8.0 / 3.5,
+              children: <Widget>[
+                _createBackgroundSlideShowCard(),
+                _createBrightnessSliderCard(),
+              ],
+            ),
+          ),
+          _createAlertLauncher(),
+        ],
+      ),
+    );
+  }
+
+  Widget _createCustomCommandsTab(var _deviceOrientation) {
+    return new Container(
+      color: backgroundColor,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Expanded(
+            child: GridView.count(
+              crossAxisCount:
+              _deviceOrientation == Orientation.portrait ? 1 : 2,
+              padding: _deviceOrientation == Orientation.portrait
+                  ? EdgeInsets.all(16.0)
+                  : EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
+              childAspectRatio:
+              _deviceOrientation == Orientation.portrait
+                  ? 8.0 / 2.0
+                  : 8.0 / 2.25,
+              children: _customCommands,
+            ),
+          ),
+          Align(
+              alignment: Alignment.lerp(
+                  Alignment.center, Alignment.centerRight, 0.85),
+              child: Tooltip(
+                message: 'Create new custom-command',
+                child: FloatingActionButton(
+                  child: Icon(
+                    Icons.add,
+                    color: primaryColor,
+                    size: 35,
+                  ),
+                  backgroundColor: secondaryColor,
+                  //padding: EdgeInsets.fromLTRB(20.0, 13.0, 20.0, 13.0),
+                  elevation: 5.0,
+                  onPressed: () {
+                    _navigateAndCreateCustomCommand(context);
+                  },
+                ),
+              )),
+          SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _createBottomAppBar(var _deviceOrientation){
+    return new Container(
+      height: _deviceOrientation == Orientation.portrait ? 50.0 : 40.0,
+      color: primaryColor,
+      child: new Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          new IconButton(
+              padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+              icon: new Icon(Icons.arrow_back,
+                  size: 35.0,
+                  color: secondaryColor,
+                  semanticLabel: 'previous page'),
+              tooltip: 'Previous mirror-page',
+              onPressed: () {
+                _decrementPage(context);
+              }),
+          new SizedBox(
+            width: 50.0,
+            height: 50.0,
+          ),
+          new IconButton(
+            padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+            icon: new Icon(Icons.arrow_forward,
+                size: 35.0,
+                color: secondaryColor,
+                semanticLabel: 'next page'),
+            tooltip: 'Next mirror-page',
+            onPressed: () {
+              _incrementPage(context);
+            },
+          ),
+        ],
       ),
     );
   }
@@ -598,9 +626,9 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _setBrightness(int value, bool message) {
-    _httpRest.setBrightnes(value);
+    _httpRest.setBrightness(value);
     if (message) {
-      updateLastRequest("Brightness changed to" + '$value');
+    updateLastRequest("Brightness changed to " + '$value');
    }
   }
 
