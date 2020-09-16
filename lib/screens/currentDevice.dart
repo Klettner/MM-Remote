@@ -50,6 +50,8 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   String lastRequest = "Send alert";
   bool _isComposing = false;
   final TextEditingController _textController = new TextEditingController();
+  final TextEditingController _timerMinutesController = new TextEditingController();
+  final TextEditingController _timerSecondsController = new TextEditingController();
   File _image;
   final picker = ImagePicker();
   SharedPreferences prefs;
@@ -62,6 +64,8 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   bool _stateInitialized = false;
   List<Widget> _customCommands = List<Widget>();
   HttpRest _httpRest;
+
+  bool isPaused = false;
 
   @override
   void initState() {
@@ -108,16 +112,21 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       key: _scaffoldKey,
       appBar: appBar,
       drawer: _createDrawer(),
-      body: Builder(
-        builder: (context) => TabBarView(
-          controller: _tabController,
-          children: myTabs.map((Tab tab) {
-            if (tab.text.compareTo('HOME') == 0) {
-              return _createHomeTab(_deviceOrientation);
-            } else {
-              return _createCustomCommandsTab(_deviceOrientation);
-            }
-          }).toList(),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: Builder(
+          builder: (context) => TabBarView(
+            controller: _tabController,
+            children: myTabs.map((Tab tab) {
+              if (tab.text.compareTo('HOME') == 0) {
+                return _createHomeTab(_deviceOrientation);
+              } else {
+                return _createCustomCommandsTab(_deviceOrientation);
+              }
+            }).toList(),
+          ),
         ),
       ),
       bottomNavigationBar: Builder(
@@ -134,7 +143,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       clipBehavior: Clip.antiAlias,
       child: Padding(
         padding:
-        EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
+        EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -193,20 +202,52 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       clipBehavior: Clip.antiAlias,
       child: Padding(
         padding:
-        EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
+        EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            new Align(
-              alignment: Alignment.centerLeft,
-              child: new Container(
-                margin: new EdgeInsets.symmetric(
-                    horizontal: 6.0),
-                child: new Text(
-                  'Timer',
-                  textScaleFactor: 1.3,
+            Row(
+              children: [
+                new Align(
+                  alignment: Alignment.centerLeft,
+                  child: new Container(
+                    margin: new EdgeInsets.symmetric(
+                        horizontal: 6.0),
+                    child: new Text(
+                      'Timer',
+                      textScaleFactor: 1.3,
+                    ),
+                  ),
                 ),
-              ),
+                SizedBox(
+                  width: 20,
+                ),
+                SizedBox(
+                  width: 80,
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    controller: _timerMinutesController,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.zero,
+                      labelText: "minutes",
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                SizedBox(
+                  width: 80,
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    controller: _timerSecondsController,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.zero,
+                      labelText: "seconds",
+                    ),
+                  ),
+                ),
+              ],
             ),
             new Row(
               mainAxisAlignment:
@@ -221,21 +262,25 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     tooltip: 'Stop timer',
                     color: tertiaryColorDark,
                     iconSize: 35.0,
-                    onPressed: _backgroundSlideShowStop),
+                    onPressed: () {
+                      (isPaused) ? _timerUnpause() : _stopWatchTimerPause();
+                    }),
                 new IconButton(
                     icon: Icon(Icons.play_arrow,
                         semanticLabel: 'start timer'),
                     tooltip: 'Start timer',
                     color: tertiaryColorDark,
                     iconSize: 35.0,
-                    onPressed: _backgroundSlideShowPlay),
+                    onPressed: () {
+                      _timerStart(_getSeconds());
+                    }),
                 new IconButton(
                     icon: Icon(Icons.flash_on,
                         semanticLabel: 'interrupt'),
                     tooltip: 'Interrupt',
                     color: tertiaryColorDark,
                     iconSize: 30,
-                    onPressed: _backgroundSlideShowNext),
+                    onPressed: _stopWatchTimerInterrupt),
                 new SizedBox(
                   width: 5.0,
                 ),
@@ -247,12 +292,24 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     );
   }
 
+  int _getSeconds() {
+    int minutes = 0;
+    int seconds = 0;
+    if(_timerMinutesController.text.trim().compareTo("") != 0) {
+       minutes = int.parse(_timerMinutesController.text.trim());
+    }
+    if (_timerSecondsController.text.trim().compareTo("") != 0) {
+      seconds = int.parse(_timerSecondsController.text.trim());
+    }
+    return minutes * 60 + seconds;
+  }
+
   Widget _createBrightnessSliderCard(){
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
         padding:
-        EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0.0),
+        EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -906,6 +963,29 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   void _backgroundSlideShowPlay() {
     _httpRest.sendCustomCommand("BACKGROUNDSLIDESHOW_PLAY", "");
     updateLastRequest("Started SlideShow");
+  }
+  
+  void _stopWatchTimerPause() {
+    _httpRest.sendCustomCommand("PAUSE_TIMESTOPP", "");
+    isPaused = true;
+    updateLastRequest("Paused Timer/Stop-watch");
+  }
+
+  void _stopWatchTimerInterrupt() {
+    _httpRest.sendCustomCommand("INTERRUPT_TIMESTOPP", "");
+    updateLastRequest("Interrupted Timer/Stop-watch");
+  }
+
+  void _timerStart(int seconds) {
+   _httpRest.sendCustomCommand("START_COUNTER", "$seconds");
+   isPaused = false;
+   updateLastRequest("Started timer");
+  }
+
+  void _timerUnpause() {
+   _httpRest.sendCustomCommand("UNPAUSE_COUNTER", "");
+   isPaused = false;
+   updateLastRequest("Continued timer");
   }
 
   void updateLastRequest(String requestMessage) {
