@@ -50,8 +50,10 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   String lastRequest = "Send alert";
   bool _isComposing = false;
   final TextEditingController _textController = new TextEditingController();
-  final TextEditingController _timerMinutesController = new TextEditingController();
-  final TextEditingController _timerSecondsController = new TextEditingController();
+  final TextEditingController _timerMinutesController =
+      new TextEditingController();
+  final TextEditingController _timerSecondsController =
+      new TextEditingController();
   File _image;
   final picker = ImagePicker();
   SharedPreferences prefs;
@@ -65,7 +67,8 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   List<Widget> _customCommands = List<Widget>();
   HttpRest _httpRest;
 
-  bool isPaused = false;
+  bool _isPaused = false;
+  String _stopWatchTimerValue = "Timer";
 
   @override
   void initState() {
@@ -138,20 +141,18 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     );
   }
 
-  Widget _createBackgroundSlideShowCard(){
+  Widget _createBackgroundSlideShowCard() {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
-        padding:
-        EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
+        padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             new Align(
               alignment: Alignment.centerLeft,
               child: new Container(
-                margin: new EdgeInsets.symmetric(
-                    horizontal: 6.0),
+                margin: new EdgeInsets.symmetric(horizontal: 6.0),
                 child: new Text(
                   'Photo slideshow',
                   textScaleFactor: 1.3,
@@ -159,15 +160,13 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
               ),
             ),
             new Row(
-              mainAxisAlignment:
-              MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 new SizedBox(
                   width: 5.0,
                 ),
                 new IconButton(
-                    icon: Icon(Icons.stop,
-                        semanticLabel: 'stop slideshow'),
+                    icon: Icon(Icons.stop, semanticLabel: 'stop slideshow'),
                     tooltip: 'Stop slideshow',
                     color: tertiaryColorDark,
                     iconSize: 35.0,
@@ -180,8 +179,8 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     iconSize: 35.0,
                     onPressed: _backgroundSlideShowPlay),
                 new IconButton(
-                    icon: Icon(Icons.fast_forward,
-                        semanticLabel: 'next picture'),
+                    icon:
+                        Icon(Icons.fast_forward, semanticLabel: 'next picture'),
                     tooltip: 'Next picture',
                     color: tertiaryColorDark,
                     iconSize: 35.0,
@@ -197,12 +196,11 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     );
   }
 
-  Widget _createStopWatchTimerCard(){
-   return Card(
+  Widget _createStopWatchTimerCard() {
+    return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
-        padding:
-        EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
+        padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -211,72 +209,74 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 new Align(
                   alignment: Alignment.centerLeft,
                   child: new Container(
-                    margin: new EdgeInsets.symmetric(
-                        horizontal: 6.0),
-                    child: new Text(
-                      'Timer',
-                      textScaleFactor: 1.3,
-                    ),
-                  ),
+                      margin: new EdgeInsets.symmetric(horizontal: 6.0),
+                      child: PopupMenuButton<String>(
+                        onSelected: (String result) {
+                          setState(() {
+                            _timerSecondsController.clear();
+                            _timerMinutesController.clear();
+                            _stopWatchTimerValue = result;
+                          });
+                        },
+                        child: Row(
+                          children: [
+                            Text(
+                              (_isTimer()) ? "Timer" : "Stop-watch",
+                              textScaleFactor: 1.3,
+                            ),
+                            Icon(
+                             Icons.arrow_drop_down,
+                            )
+                          ],
+                        ),
+                        itemBuilder: (BuildContext context) =>
+                            <PopupMenuEntry<String>>[
+                          PopupMenuItem<String>(
+                            value: 'Timer',
+                            child: Text('Timer'),
+                          ),
+                          PopupMenuItem<String>(
+                              value: 'Stop-watch', child: Text('Stop-watch'))
+                        ],
+                      )),
                 ),
-                SizedBox(
-                  width: 20,
-                ),
-                SizedBox(
-                  width: 80,
-                  child: TextField(
-                    keyboardType: TextInputType.number,
-                    controller: _timerMinutesController,
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.zero,
-                      labelText: "minutes",
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                SizedBox(
-                  width: 80,
-                  child: TextField(
-                    keyboardType: TextInputType.number,
-                    controller: _timerSecondsController,
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.zero,
-                      labelText: "seconds",
-                    ),
-                  ),
-                ),
+                (_isTimer()) ? _createTimerInputFields() : new Container(),
               ],
             ),
             new Row(
-              mainAxisAlignment:
-              MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 new SizedBox(
                   width: 5.0,
                 ),
                 new IconButton(
                     icon: Icon(Icons.pause,
-                        semanticLabel: 'stop timer'),
-                    tooltip: 'Stop timer',
+                        semanticLabel: 'stop timer/stop-watch'),
+                    tooltip: 'Stop timer/stop-watch',
                     color: tertiaryColorDark,
                     iconSize: 35.0,
                     onPressed: () {
-                      (isPaused) ? _timerUnpause() : _stopWatchTimerPause();
+                      if (_isTimer()) {
+                        (_isPaused) ? _timerUnpause() : _stopWatchTimerPause();
+                      } else {
+                        (_isPaused)
+                            ? _stopWatchUnpause()
+                            : _stopWatchTimerPause();
+                      }
                     }),
                 new IconButton(
                     icon: Icon(Icons.play_arrow,
-                        semanticLabel: 'start timer'),
-                    tooltip: 'Start timer',
+                        semanticLabel: 'start timer/stop-watch'),
+                    tooltip: 'Start timer/stop-watch',
                     color: tertiaryColorDark,
                     iconSize: 35.0,
                     onPressed: () {
-                      _timerStart(_getSeconds());
+                      (_isTimer())
+                          ? _timerStart(_getSeconds())
+                          : _stopWatchStart();
                     }),
                 new IconButton(
-                    icon: Icon(Icons.flash_on,
-                        semanticLabel: 'interrupt'),
+                    icon: Icon(Icons.flash_on, semanticLabel: 'interrupt'),
                     tooltip: 'Interrupt',
                     color: tertiaryColorDark,
                     iconSize: 30,
@@ -292,11 +292,53 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     );
   }
 
+  bool _isTimer() {
+    if (_stopWatchTimerValue.compareTo("Timer") == 0) {
+      return true;
+    }
+    return false;
+  }
+
+  Widget _createTimerInputFields() {
+    return new Row(
+      children: [
+        SizedBox(
+          width: 30,
+        ),
+        SizedBox(
+          width: 50,
+          child: TextField(
+            keyboardType: TextInputType.number,
+            controller: _timerMinutesController,
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.zero,
+              labelText: "min.",
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 15,
+        ),
+        SizedBox(
+          width: 50,
+          child: TextField(
+            keyboardType: TextInputType.number,
+            controller: _timerSecondsController,
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.zero,
+              labelText: "sec.",
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
   int _getSeconds() {
     int minutes = 0;
     int seconds = 0;
-    if(_timerMinutesController.text.trim().compareTo("") != 0) {
-       minutes = int.parse(_timerMinutesController.text.trim());
+    if (_timerMinutesController.text.trim().compareTo("") != 0) {
+      minutes = int.parse(_timerMinutesController.text.trim());
     }
     if (_timerSecondsController.text.trim().compareTo("") != 0) {
       seconds = int.parse(_timerSecondsController.text.trim());
@@ -304,20 +346,18 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     return minutes * 60 + seconds;
   }
 
-  Widget _createBrightnessSliderCard(){
+  Widget _createBrightnessSliderCard() {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
-        padding:
-        EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
+        padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             new Align(
               alignment: Alignment.centerLeft,
               child: new Container(
-                margin: new EdgeInsets.symmetric(
-                    horizontal: 6.0),
+                margin: new EdgeInsets.symmetric(horizontal: 6.0),
                 child: new Text(
                   'Monitor brightness',
                   textScaleFactor: 1.3,
@@ -332,8 +372,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
               activeColor: primaryColor,
               inactiveColor: tertiaryColorDark,
               label: 'changing brightness',
-              semanticFormatterCallback:
-                  (double newValue) {
+              semanticFormatterCallback: (double newValue) {
                 return '${newValue.round()}/200 brightness';
               },
               onChanged: (double newValue) {
@@ -343,8 +382,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 });
               },
               onChangeEnd: (double newValue) {
-                _persistBrightnessSetting(
-                    newValue.round());
+                _persistBrightnessSetting(newValue.round());
               },
             )
           ],
@@ -376,18 +414,15 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 ),
               ),
               new Container(
-                margin:
-                new EdgeInsets.symmetric(horizontal: 4.0),
+                margin: new EdgeInsets.symmetric(horizontal: 4.0),
                 child: new IconButton(
-                  icon: new Icon(Icons.send,
-                      semanticLabel: 'send alert'),
+                  icon: new Icon(Icons.send, semanticLabel: 'send alert'),
                   color: tertiaryColorDark,
                   disabledColor: tertiaryColorLight,
                   tooltip:
-                  'Send an alert or send "/AlertDuration: int" to set the display-time of an alert',
+                      'Send an alert or send "/AlertDuration: int" to set the display-time of an alert',
                   onPressed: _isComposing
-                      ? () => _evaluateAlert(
-                      _textController.text, context)
+                      ? () => _evaluateAlert(_textController.text, context)
                       : null,
                 ),
               ),
@@ -409,10 +444,12 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
               children: <Widget>[
                 DrawerHeader(
                   decoration: BoxDecoration(
-                    image: (_image == null) ? null : DecorationImage(
-                      image:FileImage(_image),
-                      fit: BoxFit.cover,
-                    ),
+                    image: (_image == null)
+                        ? null
+                        : DecorationImage(
+                            image: FileImage(_image),
+                            fit: BoxFit.cover,
+                          ),
                     color: primaryColor,
                   ),
                   child: Column(
@@ -442,8 +479,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                   ),
                 ),
                 ListTile(
-                  leading: Icon(Icons.devices,
-                      color:tertiaryColorMedium),
+                  leading: Icon(Icons.devices, color: tertiaryColorMedium),
                   title: Text('Choose device'),
                   onTap: () {
                     Navigator.pop(context);
@@ -452,15 +488,16 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 ),
                 ListTile(
                   leading: Icon(Icons.tv,
-                      color: _monitorToggleColor, semanticLabel: 'toggleMonitor'),
+                      color: _monitorToggleColor,
+                      semanticLabel: 'toggleMonitor'),
                   title: Text('Toggle monitor on/off'),
                   onTap: () {
                     _toggleMonitor();
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.refresh, semanticLabel: 'reboot',
-                      color: tertiaryColorMedium),
+                  leading: Icon(Icons.refresh,
+                      semanticLabel: 'reboot', color: tertiaryColorMedium),
                   title: Text('Reboot mirror'),
                   onTap: () {
                     _rebootPiDialog(context);
@@ -481,36 +518,34 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
             ),
           ),
           Container(
-            // This align moves its children to the bottom
+              // This align moves its children to the bottom
               child: Align(
                   alignment: FractionalOffset.bottomCenter,
                   child: Container(
                       child: Column(
-                        children: <Widget>[
-                          Divider(),
-                          ListTile(
-                            leading: Icon(Icons.settings, semanticLabel: 'settings',
-                                color: tertiaryColorMedium),
-                            title: Text('Settings'),
-                            onTap: () {
-                              _navigateToSettingsPage();
-                            },
-                          ),
-                          ListTile(
-                            leading: Icon(
-                              Icons.help,
-                              color: tertiaryColorMedium,
-                            ),
-                            title: Text('Help & About (online)'),
-                            onTap: () {
-                              Navigator.pushNamed(context, HelpPage.routeName);
-                            },
-                          )
-                        ],
+                    children: <Widget>[
+                      Divider(),
+                      ListTile(
+                        leading: Icon(Icons.settings,
+                            semanticLabel: 'settings',
+                            color: tertiaryColorMedium),
+                        title: Text('Settings'),
+                        onTap: () {
+                          _navigateToSettingsPage();
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(
+                          Icons.help,
+                          color: tertiaryColorMedium,
+                        ),
+                        title: Text('Help & About (online)'),
+                        onTap: () {
+                          Navigator.pushNamed(context, HelpPage.routeName);
+                        },
                       )
-                  )
-              )
-          )
+                    ],
+                  ))))
         ],
       ),
     );
@@ -524,12 +559,11 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
           Expanded(
             child: GridView.count(
               crossAxisCount:
-              _deviceOrientation == Orientation.portrait ? 1 : 2,
+                  _deviceOrientation == Orientation.portrait ? 1 : 2,
               padding: _deviceOrientation == Orientation.portrait
                   ? EdgeInsets.all(16.0)
                   : EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
-              childAspectRatio:
-              _deviceOrientation == Orientation.portrait
+              childAspectRatio: _deviceOrientation == Orientation.portrait
                   ? 8.0 / 3.0
                   : 8.0 / 3.5,
               children: <Widget>[
@@ -554,20 +588,19 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
           Expanded(
             child: GridView.count(
               crossAxisCount:
-              _deviceOrientation == Orientation.portrait ? 1 : 2,
+                  _deviceOrientation == Orientation.portrait ? 1 : 2,
               padding: _deviceOrientation == Orientation.portrait
                   ? EdgeInsets.all(16.0)
                   : EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
-              childAspectRatio:
-              _deviceOrientation == Orientation.portrait
+              childAspectRatio: _deviceOrientation == Orientation.portrait
                   ? 8.0 / 2.0
                   : 8.0 / 2.25,
               children: _customCommands,
             ),
           ),
           Align(
-              alignment: Alignment.lerp(
-                  Alignment.center, Alignment.centerRight, 0.85),
+              alignment:
+                  Alignment.lerp(Alignment.center, Alignment.centerRight, 0.85),
               child: Tooltip(
                 message: 'Create new custom-command',
                 child: FloatingActionButton(
@@ -590,7 +623,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     );
   }
 
-  Widget _createBottomAppBar(var _deviceOrientation){
+  Widget _createBottomAppBar(var _deviceOrientation) {
     return new Container(
       height: _deviceOrientation == Orientation.portrait ? 50.0 : 40.0,
       color: primaryColor,
@@ -614,9 +647,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
           new IconButton(
             padding: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
             icon: new Icon(Icons.arrow_forward,
-                size: 35.0,
-                color: secondaryColor,
-                semanticLabel: 'next page'),
+                size: 35.0, color: secondaryColor, semanticLabel: 'next page'),
             tooltip: 'Next mirror-page',
             onPressed: () {
               _incrementPage(context);
@@ -631,7 +662,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     // Check if a image was picked
-    if(pickedFile == null){
+    if (pickedFile == null) {
       return;
     }
 
@@ -651,7 +682,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
   Future getImage() async {
     prefs = await SharedPreferences.getInstance();
-    if(prefs.getString(deviceName + 'Image') != null){
+    if (prefs.getString(deviceName + 'Image') != null) {
       setState(() {
         _image = File(prefs.getString(deviceName + 'Image'));
       });
@@ -680,10 +711,11 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     _stateInitialized = true;
 
     fetchSettingsFromDatabase(deviceName).then((SettingArguments tempSettings) {
-      if(tempSettings != null) {
+      if (tempSettings != null) {
         int _tempBrightnessValue = int.parse(tempSettings.brightness);
         int _tempAlertDuration = int.parse(tempSettings.alertDuration);
-        bool _tempMonitorColor = tempSettings.monitorStatus.compareTo('ON') == 0;
+        bool _tempMonitorColor =
+            tempSettings.monitorStatus.compareTo('ON') == 0;
         setState(() {
           _brightnessValue = _tempBrightnessValue;
           _alertDuration = _tempAlertDuration;
@@ -745,8 +777,8 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   void _setBrightness(int value, bool message) {
     _httpRest.setBrightness(value);
     if (message) {
-    updateLastRequest("Brightness changed to " + '$value');
-   }
+      updateLastRequest("Brightness changed to " + '$value');
+    }
   }
 
   void _evaluateAlert(String text, BuildContext context) {
@@ -803,7 +835,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       context,
       MaterialPageRoute(builder: (context) => SettingsPage()),
     );
-    if(result != null) {
+    if (result != null) {
       _alertDuration = int.parse(result);
       _persistAlertDurationSetting(_alertDuration);
       updateLastRequest('Alert duration set to $_alertDuration');
@@ -882,7 +914,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   void _sendCustomCommand(String commandName, String notification,
       String payload, BuildContext context) {
     _httpRest.sendCustomCommand(notification, payload);
-   _showSnackbar(commandName + ' sended', context);
+    _showSnackbar(commandName + ' sended', context);
     updateLastRequest(commandName + " sended");
   }
 
@@ -952,22 +984,32 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
   void _backgroundSlideShowNext() {
     _httpRest.sendCustomCommand("BACKGROUNDSLIDESHOW_NEXT", "");
-   updateLastRequest("Next picture");
+    updateLastRequest("Next picture");
   }
 
   void _backgroundSlideShowStop() {
     _httpRest.sendCustomCommand("BACKGROUNDSLIDESHOW_STOP", "");
-   updateLastRequest("Stopped SlideShow");
+    updateLastRequest("Stopped SlideShow");
   }
 
   void _backgroundSlideShowPlay() {
     _httpRest.sendCustomCommand("BACKGROUNDSLIDESHOW_PLAY", "");
     updateLastRequest("Started SlideShow");
   }
-  
+
+  void _stopWatchUnpause() {
+    _httpRest.sendCustomCommand("UNPAUSE_STOPPER", "");
+    _isPaused = false;
+    updateLastRequest("Continued stop-watch");
+  }
+
+  void _stopWatchStart() {
+    _httpRest.sendCustomCommand("START_STOPPER", "");
+  }
+
   void _stopWatchTimerPause() {
     _httpRest.sendCustomCommand("PAUSE_TIMESTOPP", "");
-    isPaused = true;
+    _isPaused = true;
     updateLastRequest("Paused Timer/Stop-watch");
   }
 
@@ -977,15 +1019,15 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _timerStart(int seconds) {
-   _httpRest.sendCustomCommand("START_COUNTER", "$seconds");
-   isPaused = false;
-   updateLastRequest("Started timer");
+    _httpRest.sendCustomCommand("START_COUNTER", "$seconds");
+    _isPaused = false;
+    updateLastRequest("Started timer");
   }
 
   void _timerUnpause() {
-   _httpRest.sendCustomCommand("UNPAUSE_COUNTER", "");
-   isPaused = false;
-   updateLastRequest("Continued timer");
+    _httpRest.sendCustomCommand("UNPAUSE_COUNTER", "");
+    _isPaused = false;
+    updateLastRequest("Continued timer");
   }
 
   void updateLastRequest(String requestMessage) {
