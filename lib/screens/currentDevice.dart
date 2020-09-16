@@ -69,6 +69,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
   bool _isPaused = false;
   String _stopWatchTimerValue = "Timer";
+  List<Widget> _defaultCommandCards = new List<Widget>();
 
   @override
   void initState() {
@@ -93,6 +94,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     //Only after start of the App
     if (!_stateInitialized) {
       _initializeSettings(deviceName);
+      _initializeDefaultCommandCards();
       _httpRest = new HttpRest(ip, port);
       getImage();
     }
@@ -226,6 +228,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                             ),
                             Icon(
                              Icons.arrow_drop_down,
+                              size: 25,
                             )
                           ],
                         ),
@@ -566,17 +569,19 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
               childAspectRatio: _deviceOrientation == Orientation.portrait
                   ? 8.0 / 3.0
                   : 8.0 / 3.5,
-              children: <Widget>[
-                _createBackgroundSlideShowCard(),
-                _createBrightnessSliderCard(),
-                _createStopWatchTimerCard(),
-              ],
+              children: _defaultCommandCards,
             ),
           ),
           _createAlertLauncher(),
         ],
       ),
     );
+  }
+
+  void _initializeDefaultCommandCards() {
+    _defaultCommandCards.add(_createBackgroundSlideShowCard());
+    _defaultCommandCards.add(_createBrightnessSliderCard());
+    _defaultCommandCards.add(_createStopWatchTimerCard());
   }
 
   Widget _createCustomCommandsTab(var _deviceOrientation) {

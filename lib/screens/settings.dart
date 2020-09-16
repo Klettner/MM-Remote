@@ -12,7 +12,10 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final _alertDurationController = TextEditingController();
   bool _isComposingAlertDuration = false;
-  String _alertDurationField = 'Alert-Duration (default 10)';
+  String _alertDurationField = 'Alert-Duration (default 10 sec.)';
+  bool _addMonitorBrightnessCard = true;
+  bool _addPhotoSlideshowCard = true;
+  bool _addStopwatchTimerCard = true;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,52 @@ class _SettingsPageState extends State<SettingsPage> {
         child: ListView(
           padding: EdgeInsets.symmetric(horizontal: 24.0),
           children: <Widget>[
-            SizedBox(height: 75),
+            SizedBox(height: 30),
+            Column(
+             children: [
+               Text("Default commands",
+               textScaleFactor: 1.3,
+               ),
+               SizedBox(
+                 height: 15,
+               ),
+               CheckboxListTile(
+                 title: const Text("Photo slideshow"),
+                 value: _addPhotoSlideshowCard,
+                 onChanged: (bool value) {
+                   setState(() {
+                     _addPhotoSlideshowCard = value;
+                   });
+                 },
+               ),
+               CheckboxListTile(
+                 title: const Text("Monitor brightness"),
+                 value: _addMonitorBrightnessCard,
+                 onChanged: (bool value) {
+                    setState(() {
+                      _addMonitorBrightnessCard = value;
+                    });
+                 },
+               ),
+                CheckboxListTile(
+                  title: const Text("Stop-watch/Timer"),
+                  value: _addStopwatchTimerCard,
+                  onChanged: (bool value) {
+                    setState(() {
+                      _addStopwatchTimerCard = value;
+                    });
+                  },
+                )
+             ],
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            Center(
+              child: Text("Alert settings",
+              textScaleFactor: 1.3,
+              ),
+            ),
             AccentColorOverride(
               color: primaryColor,
               child: TextField(
