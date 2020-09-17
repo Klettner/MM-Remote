@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mmremotecontrol/models/settingArguments.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
@@ -70,6 +71,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   bool _isPaused = false;
   String _stopWatchTimerValue = "Timer";
   List<Widget> _defaultCommandCards = new List<Widget>();
+  List<DefaultCommand> _defaultCommands = new List<DefaultCommand>();
 
   @override
   void initState() {
@@ -589,13 +591,29 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _updateDefaultCommandCards() {
-    List<Widget> updated = new List<Widget>();
-    updated.add(_createBackgroundSlideShowCard());
-    updated.add(_createBrightnessSliderCard());
-    updated.add(_createStopWatchTimerCard());
+    List<Widget> updatedList = new List<Widget>();
+    for(DefaultCommand command in _defaultCommands){
+        _addDefaultCommand(updatedList, command);
+    }
     setState(() {
-      _defaultCommandCards = updated;
+      _defaultCommandCards = updatedList;
     });
+  }
+
+  void _addDefaultCommand(List<Widget> commands, DefaultCommand command) {
+    switch (command){
+      case DefaultCommand.PhotoSlideshow:
+        commands.add(_createBackgroundSlideShowCard());
+        break;
+      case DefaultCommand.MonitorBrightness:
+        commands.add(_createBrightnessSliderCard());
+        break;
+      case DefaultCommand.StopwatchTimer:
+        commands.add(_createStopWatchTimerCard());
+        break;
+      default:
+        print("This default command is not specified");
+    }
   }
 
   Widget _createCustomCommandsTab(var _deviceOrientation) {
@@ -850,14 +868,16 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   _navigateToSettingsPage() async {
-    String result = await Navigator.push(
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => SettingsPage())
     );
     if (result != null) {
-      _alertDuration = int.parse(result);
+      SettingArguments settings = result;
+      _alertDuration = settings.alertDuration;
+      _defaultCommands = settings.defaultCommands;
+      _updateDefaultCommandCards();
       _persistAlertDurationSetting(_alertDuration);
-      updateLastRequest('Alert duration set to $_alertDuration');
     }
   }
 
