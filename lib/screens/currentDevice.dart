@@ -585,9 +585,10 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _initializeDefaultCommandCards() {
-    _defaultCommandCards.add(_createBackgroundSlideShowCard());
-    _defaultCommandCards.add(_createBrightnessSliderCard());
-    _defaultCommandCards.add(_createStopWatchTimerCard());
+    _defaultCommands.add(DefaultCommand.PhotoSlideshow);
+    _defaultCommands.add(DefaultCommand.MonitorBrightness);
+    _defaultCommands.add(DefaultCommand.StopwatchTimer);
+    _updateDefaultCommandCards();
   }
 
   void _updateDefaultCommandCards() {
@@ -868,9 +869,13 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   _navigateToSettingsPage() async {
-    final result = await Navigator.push(
+    SettingArguments _currentSettings = new SettingArguments(_defaultCommands, _alertDuration);
+    final result = await Navigator.pushNamed(
       context,
-      MaterialPageRoute(builder: (context) => SettingsPage())
+      SettingsPage.routeName,
+      arguments: {
+        "currentSettings": _currentSettings,
+      }
     );
     if (result != null) {
       SettingArguments settings = result;

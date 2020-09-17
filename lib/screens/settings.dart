@@ -12,11 +12,21 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final _alertDurationController = TextEditingController();
-  String _alertDurationField = 'Alert-Duration (default 10 sec.)';
-  List<DefaultCommand> defaultCommands = new List<DefaultCommand>();
+  List<DefaultCommand> _defaultCommands = new List<DefaultCommand>();
+  bool _stateInitialized = false;
+  int _alertDuration;
 
   @override
   Widget build(BuildContext context) {
+    if(!_stateInitialized) {
+      _stateInitialized = true;
+      SettingArguments tmp;
+      final Map<String, SettingArguments> currentSettings =
+      ModalRoute.of(context).settings.arguments as Map;
+      tmp = currentSettings["currentSettings"];
+      _defaultCommands = tmp.defaultCommands;
+      _alertDuration = tmp.alertDuration;
+    }
     return Scaffold(
       appBar: AppBar(
         brightness: Brightness.light,
@@ -43,21 +53,21 @@ class _SettingsPageState extends State<SettingsPage> {
                  ),
                  CheckboxListTile(
                    title: const Text("Photo slideshow"),
-                   value: defaultCommands.contains(DefaultCommand.PhotoSlideshow),
+                   value: _defaultCommands.contains(DefaultCommand.PhotoSlideshow),
                    onChanged: (bool value) {
                     _changeDefaultCommand(value, DefaultCommand.PhotoSlideshow);
                    },
                  ),
                  CheckboxListTile(
                    title: const Text("Monitor brightness"),
-                   value: defaultCommands.contains(DefaultCommand.MonitorBrightness),
+                   value: _defaultCommands.contains(DefaultCommand.MonitorBrightness),
                    onChanged: (bool value) {
                      _changeDefaultCommand(value, DefaultCommand.MonitorBrightness);
                    },
                  ),
                   CheckboxListTile(
                     title: const Text("Stop-watch/Timer"),
-                    value: defaultCommands.contains(DefaultCommand.StopwatchTimer),
+                    value: _defaultCommands.contains(DefaultCommand.StopwatchTimer),
                     onChanged: (bool value) {
                       _changeDefaultCommand(value, DefaultCommand.StopwatchTimer);
                     },
@@ -78,7 +88,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   keyboardType: TextInputType.number,
                   controller: _alertDurationController,
                   decoration: InputDecoration(
-                    labelText: _alertDurationField,
+                    labelText: "Alert duration (currently $_alertDuration sec.)",
                   ),
                 ),
               ),
@@ -111,12 +121,12 @@ class _SettingsPageState extends State<SettingsPage> {
 
   void _changeDefaultCommand(bool value, DefaultCommand defaultCommand) {
     if(value) {
-      if(!defaultCommands.contains(defaultCommand)){
-        defaultCommands.add(defaultCommand);
+      if(!_defaultCommands.contains(defaultCommand)){
+        _defaultCommands.add(defaultCommand);
       }
     } else {
-      if(defaultCommands.contains(defaultCommand)){
-        defaultCommands.remove(defaultCommand);
+      if(_defaultCommands.contains(defaultCommand)){
+        _defaultCommands.remove(defaultCommand);
       }
     }
     // Update Widgets
@@ -125,12 +135,11 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _submitSettings() {
-    int alertDuration = -1;
     if(_alertDurationController.text.trim().compareTo("") != 0) {
-      alertDuration = int.parse(_alertDurationController.text.trim());
+      _alertDuration = int.parse(_alertDurationController.text.trim());
     }
     _alertDurationController.clear();
-    SettingArguments settings = new SettingArguments(defaultCommands, alertDuration);
+    SettingArguments settings = new SettingArguments(_defaultCommands, _alertDuration);
       Navigator.pop(
         context,
         settings,
