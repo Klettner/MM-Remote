@@ -10,7 +10,7 @@ import 'package:mmremotecontrol/screens/help.dart';
 import 'package:mmremotecontrol/shared/colors.dart';
 import 'package:mmremotecontrol/services/httpRest.dart';
 import 'package:mmremotecontrol/screens/addCommand.dart';
-import 'package:mmremotecontrol/models/settingArguments.dart';
+import 'package:mmremotecontrol/models/mirrorStateArguments.dart';
 import 'package:mmremotecontrol/models/commandArguments.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
 import 'package:mmremotecontrol/services/database.dart';
@@ -23,9 +23,9 @@ Future<List<CommandArguments>> fetchCommandsFromDatabase(
   return commands;
 }
 
-Future<SettingArguments> fetchSettingsFromDatabase(String deviceName) async {
+Future<MirrorStateArguments> fetchSettingsFromDatabase(String deviceName) async {
   var dbHelper = SqLite();
-  Future<SettingArguments> setting = dbHelper.getSettings(deviceName);
+  Future<MirrorStateArguments> setting = dbHelper.getSettings(deviceName);
   return setting;
 }
 
@@ -214,11 +214,12 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                       margin: new EdgeInsets.symmetric(horizontal: 6.0),
                       child: PopupMenuButton<String>(
                         onSelected: (String result) {
+                          _timerSecondsController.clear();
+                          _timerMinutesController.clear();
                           setState(() {
-                            _timerSecondsController.clear();
-                            _timerMinutesController.clear();
                             _stopWatchTimerValue = result;
                           });
+                          _updateDefaultCommandCards();
                         },
                         child: Row(
                           children: [
@@ -297,8 +298,10 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
   bool _isTimer() {
     if (_stopWatchTimerValue.compareTo("Timer") == 0) {
+      print("_isTimer(): true");
       return true;
     }
+    print("_isTimer(): false");
     return false;
   }
 
@@ -381,8 +384,9 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
               onChanged: (double newValue) {
                 setState(() {
                   _brightnessValue = newValue.round();
-                  _setBrightness(_brightnessValue, true);
                 });
+                _updateDefaultCommandCards();
+                _setBrightness(_brightnessValue, true);
               },
               onChangeEnd: (double newValue) {
                 _persistBrightnessSetting(newValue.round());
@@ -584,6 +588,16 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     _defaultCommandCards.add(_createStopWatchTimerCard());
   }
 
+  void _updateDefaultCommandCards() {
+    List<Widget> updated = new List<Widget>();
+    updated.add(_createBackgroundSlideShowCard());
+    updated.add(_createBrightnessSliderCard());
+    updated.add(_createStopWatchTimerCard());
+    setState(() {
+      _defaultCommandCards = updated;
+    });
+  }
+
   Widget _createCustomCommandsTab(var _deviceOrientation) {
     return new Container(
       color: backgroundColor,
@@ -715,7 +729,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   void _initializeSettings(String deviceName) {
     _stateInitialized = true;
 
-    fetchSettingsFromDatabase(deviceName).then((SettingArguments tempSettings) {
+    fetchSettingsFromDatabase(deviceName).then((MirrorStateArguments tempSettings) {
       if (tempSettings != null) {
         int _tempBrightnessValue = int.parse(tempSettings.brightness);
         int _tempAlertDuration = int.parse(tempSettings.alertDuration);
@@ -756,7 +770,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _persistBrightnessSetting(int newValue) {
-    var setting = SettingArguments(
+    var setting = MirrorStateArguments(
         deviceName, '$newValue', '$_alertDuration', '$_monitorToggleColor');
     var dbHelper = SqLite();
     dbHelper.deleteSettings(deviceName);
@@ -764,7 +778,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _persistAlertDurationSetting(int newValue) {
-    var setting = SettingArguments(
+    var setting = MirrorStateArguments(
         deviceName, '$_brightnessValue', '$newValue', '$_monitorToggleColor');
     var dbHelper = SqLite();
     dbHelper.deleteSettings(deviceName);
@@ -772,7 +786,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _persistMonitorSetting(String status) {
-    var setting = SettingArguments(
+    var setting = MirrorStateArguments(
         deviceName, '$_brightnessValue', '$_alertDuration', status);
     var dbHelper = SqLite();
     dbHelper.deleteSettings(deviceName);
@@ -838,7 +852,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   _navigateToSettingsPage() async {
     String result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SettingsPage()),
+      MaterialPageRoute(builder: (context) => SettingsPage())
     );
     if (result != null) {
       _alertDuration = int.parse(result);

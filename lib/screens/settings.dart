@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mmremotecontrol/models/settingArguments.dart';
 import 'package:mmremotecontrol/shared/colors.dart';
 
 
@@ -11,11 +12,8 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final _alertDurationController = TextEditingController();
-  bool _isComposingAlertDuration = false;
   String _alertDurationField = 'Alert-Duration (default 10 sec.)';
-  bool _addMonitorBrightnessCard = true;
-  bool _addPhotoSlideshowCard = true;
-  bool _addStopwatchTimerCard = true;
+  List<DefaultCommand> defaultCommands = new List<DefaultCommand>();
 
   @override
   Widget build(BuildContext context) {
@@ -26,118 +24,116 @@ class _SettingsPageState extends State<SettingsPage> {
         titleSpacing: 0.0,
         title: Text('Settings'),
       ),
-      body: SafeArea(
-        child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 24.0),
-          children: <Widget>[
-            SizedBox(height: 30),
-            Column(
-             children: [
-               Text("Default commands",
-               textScaleFactor: 1.3,
-               ),
-               SizedBox(
-                 height: 15,
-               ),
-               CheckboxListTile(
-                 title: const Text("Photo slideshow"),
-                 value: _addPhotoSlideshowCard,
-                 onChanged: (bool value) {
-                   setState(() {
-                     _addPhotoSlideshowCard = value;
-                   });
-                 },
-               ),
-               CheckboxListTile(
-                 title: const Text("Monitor brightness"),
-                 value: _addMonitorBrightnessCard,
-                 onChanged: (bool value) {
-                    setState(() {
-                      _addMonitorBrightnessCard = value;
-                    });
-                 },
-               ),
-                CheckboxListTile(
-                  title: const Text("Stop-watch/Timer"),
-                  value: _addStopwatchTimerCard,
-                  onChanged: (bool value) {
-                    setState(() {
-                      _addStopwatchTimerCard = value;
-                    });
-                  },
-                )
-             ],
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Center(
-              child: Text("Alert settings",
-              textScaleFactor: 1.3,
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: SafeArea(
+          child: ListView(
+            padding: EdgeInsets.symmetric(horizontal: 24.0),
+            children: <Widget>[
+              SizedBox(height: 30),
+              Column(
+               children: [
+                 Text("Default commands",
+                 textScaleFactor: 1.3,
+                 ),
+                 SizedBox(
+                   height: 15,
+                 ),
+                 CheckboxListTile(
+                   title: const Text("Photo slideshow"),
+                   value: defaultCommands.contains(DefaultCommand.PhotoSlideshow),
+                   onChanged: (bool value) {
+                    _changeDefaultCommand(value, DefaultCommand.PhotoSlideshow);
+                   },
+                 ),
+                 CheckboxListTile(
+                   title: const Text("Monitor brightness"),
+                   value: defaultCommands.contains(DefaultCommand.MonitorBrightness),
+                   onChanged: (bool value) {
+                     _changeDefaultCommand(value, DefaultCommand.MonitorBrightness);
+                   },
+                 ),
+                  CheckboxListTile(
+                    title: const Text("Stop-watch/Timer"),
+                    value: defaultCommands.contains(DefaultCommand.StopwatchTimer),
+                    onChanged: (bool value) {
+                      _changeDefaultCommand(value, DefaultCommand.StopwatchTimer);
+                    },
+                  )
+               ],
               ),
-            ),
-            AccentColorOverride(
-              color: primaryColor,
-              child: TextField(
-                keyboardType: TextInputType.number,
-                controller: _alertDurationController,
-                decoration: InputDecoration(
-                  labelText: _alertDurationField,
-                ),
-                onChanged: (String text) {
-                  setState(() {
-                    _isComposingAlertDuration = text.trim().length > 0;
-                  });
-                },
+              SizedBox(
+                height: 30,
               ),
-            ),
-            SizedBox(height: 10),
-            ButtonBar(
-              children: <Widget>[
-                FlatButton(
-                  child: Text('CLEAR'),
-                  shape: BeveledRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(7.0)),
-                  ),
-                  onPressed: () {
-                    _alertDurationController.clear();
-                    setState(() {
-                      _isComposingAlertDuration = false;
-                    });
-                  },
+              Center(
+                child: Text("Alert settings",
+                textScaleFactor: 1.3,
                 ),
-                RaisedButton(
-                  child: Text('Apply',
-                  style: TextStyle(
-                    color: secondaryColor
+              ),
+              AccentColorOverride(
+                color: primaryColor,
+                child: TextField(
+                  keyboardType: TextInputType.number,
+                  controller: _alertDurationController,
+                  decoration: InputDecoration(
+                    labelText: _alertDurationField,
                   ),
-                  ),
-                  elevation: 8.0,
-                  color: primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                  ),
-                  onPressed: (_isComposingAlertDuration)
-                      ? () => _setAlertDuration(_alertDurationController.text)
-                      : null,
-                )
-              ],
-            )
-          ],
+                ),
+              ),
+              SizedBox(height: 10),
+              ButtonBar(
+                children: <Widget>[
+                  RaisedButton(
+                    child: Text('FINISH',
+                    style: TextStyle(
+                      color: secondaryColor
+                    ),
+                    ),
+                    elevation: 8.0,
+                    color: primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                    ),
+                    onPressed: () {
+                      _submitSettings();
+                    }
+                  )
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void _setAlertDuration(
-      String alertDuration) {
-    _alertDurationController.clear();
+  void _changeDefaultCommand(bool value, DefaultCommand defaultCommand) {
+    if(value) {
+      if(!defaultCommands.contains(defaultCommand)){
+        defaultCommands.add(defaultCommand);
+      }
+    } else {
+      if(defaultCommands.contains(defaultCommand)){
+        defaultCommands.remove(defaultCommand);
+      }
+    }
+    // Update Widgets
     setState(() {
-      _isComposingAlertDuration = false;
     });
+  }
+
+  void _submitSettings() {
+    int alertDuration = -1;
+    if(_alertDurationController.text.trim().compareTo("") != 0) {
+      alertDuration = int.parse(_alertDurationController.text.trim());
+    }
+    _alertDurationController.clear();
+    SettingArguments settings = new SettingArguments(defaultCommands, alertDuration);
       Navigator.pop(
         context,
-        alertDuration
+        settings,
       );
   }
 }

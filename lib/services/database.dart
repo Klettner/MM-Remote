@@ -7,7 +7,7 @@ import 'package:logger/logger.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
 import 'package:mmremotecontrol/models/commandArguments.dart';
-import 'package:mmremotecontrol/models/settingArguments.dart';
+import 'package:mmremotecontrol/models/mirrorStateArguments.dart';
 
 class SqLite{
   static Database _db;
@@ -127,7 +127,7 @@ class SqLite{
     return devices;
   }
 
-  void saveSetting(SettingArguments settingArguments) async {
+  void saveSetting(MirrorStateArguments settingArguments) async {
     loggerNoStack.i('saving settings');
     var dbClient = await db;
     await dbClient.transaction((txn) async {
@@ -159,15 +159,15 @@ class SqLite{
     loggerNoStack.i("Deleted Settings of " + deviceName);
   }
 
-  Future<SettingArguments> getSettings(String deviceName) async {
+  Future<MirrorStateArguments> getSettings(String deviceName) async {
     loggerNoStack.i('getting settings');
     var dbClient = await db;
     List<Map> list = await dbClient
         .query('Settings', where: "deviceName = ?", whereArgs: [deviceName]);
-    SettingArguments setting;
+    MirrorStateArguments setting;
     //there should only be one device per Name
     if(list.length >= 1) {
-      setting = new SettingArguments(
+      setting = new MirrorStateArguments(
           list[0]["deviceName"], list[0]["brightness"],
           list[0]["alertDuration"], list[0]["monitorStatus"]);
     }
