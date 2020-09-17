@@ -21,7 +21,7 @@ class SqLite{
 
   initDb() async {
     io.Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "magicMirror.db");
+    String path = join(documentsDirectory.path, "magicMirror1.db");
     var theDb = await openDatabase(path, version: 1, onCreate: _onCreate);
     return theDb;
   }
@@ -37,6 +37,46 @@ class SqLite{
     await db.execute(
         "CREATE TABLE Settings(id INTEGER PRIMARY KEY,deviceName TEXT, brightness TEXT, alertDuration TEXT, monitorStatus TEXT)");
     loggerNoStack.i("Created Settings table");
+    await db.execute(
+        "CREATE TABLE DefaultCommands(id INTEGER PRIMARY KEY, deviceName TEXT, defaultCommand TEXT)");
+    loggerNoStack.i("Created DefaultCommands table");
+  }
+
+  void saveDefaultCommand(String deviceName, String defaultCommand) async {
+    var dbClient = await db;
+    await dbClient.transaction((txn) async {
+      return await txn.rawInsert(
+          'INSERT INTO DefaultCommands(deviceName, defaultCommand) VALUES(' +
+              '\'' +
+              deviceName +
+              '\'' +
+              ',' +
+              '\'' +
+              defaultCommand +
+              '\'' +
+              ')');
+    });
+    loggerNoStack.i('defaultCommand saved');
+  }
+
+  void deleteDefaultCommand(String deviceName, String defaultCommand) async {
+    var dbClient = await db;
+    dbClient.delete('DefaultCommands',
+        where: "deviceName = ? AND defaultCommand = ?",
+        whereArgs: [deviceName, defaultCommand]);
+    loggerNoStack.i("Deleted " + defaultCommand);
+  }
+
+  Future<List<String>> getDefaultCommands(String deviceName) async {
+    loggerNoStack.i('getting persistent DefaultCommands');
+    var dbClient = await db;
+    List<Map> list = await dbClient
+        .query('DefaultCommands', where: "deviceName = ?", whereArgs: [deviceName]);
+    List<String> defaultCommands = new List();
+    for (int i = 0; i < list.length; i++) {
+      defaultCommands.add(list[i]["defaultCommand"]);
+    }
+    return defaultCommands;
   }
 
   void saveCommand(CommandArguments customCommand) async {
@@ -61,7 +101,7 @@ class SqLite{
               '\'' +
               ')');
     });
-    loggerNoStack.i('command Saved');
+    loggerNoStack.i('command saved');
   }
 
   void deleteCommand(String deviceName, String commandName) async {
