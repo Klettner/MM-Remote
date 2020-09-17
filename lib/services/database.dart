@@ -67,6 +67,14 @@ class SqLite{
     loggerNoStack.i("Deleted " + defaultCommand);
   }
 
+  void deleteAllDefaultCommands(String deviceName) async {
+    var dbClient = await db;
+    dbClient.delete('DefaultCommands',
+        where: "deviceName = ?",
+        whereArgs: [deviceName]);
+    loggerNoStack.i("Deleted all defaultCommands of" + deviceName);
+  }
+
   Future<List<String>> getDefaultCommands(String deviceName) async {
     loggerNoStack.i('getting persistent DefaultCommands');
     var dbClient = await db;

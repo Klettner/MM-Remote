@@ -17,6 +17,12 @@ import 'package:mmremotecontrol/models/deviceArguments.dart';
 import 'package:mmremotecontrol/services/database.dart';
 import 'package:mmremotecontrol/screens/settings.dart';
 
+Future<List<String>> fetchDefaultCommandsFromDatabase(String deviceName) async {
+  var dbHelper = SqLite();
+  Future<List<String>> defaultCommandString = dbHelper.getDefaultCommands(deviceName);
+  return defaultCommandString;
+}
+
 Future<List<CommandArguments>> fetchCommandsFromDatabase(
     String deviceName) async {
   var dbHelper = SqLite();
@@ -617,6 +623,22 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     }
   }
 
+  void _createDefaultCommands(List<String> defaultCommandStrings){
+    _defaultCommands.clear();
+    for(String defaultCommandString in defaultCommandStrings){
+      if(defaultCommandString.compareTo("MonitorBrightness") == 0){
+        _defaultCommands.add(DefaultCommand.MonitorBrightness);
+      }
+      if(defaultCommandString.compareTo("PhotoSlideshow") == 0) {
+        _defaultCommands.add(DefaultCommand.PhotoSlideshow);
+      }
+      if(defaultCommandString.compareTo("StopwatchTimer") == 0) {
+        _defaultCommands.add(DefaultCommand.StopwatchTimer);
+      }
+    }
+    _updateDefaultCommandCards();
+  }
+
   Widget _createCustomCommandsTab(var _deviceOrientation) {
     return new Container(
       color: backgroundColor,
@@ -748,6 +770,11 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   void _initializeSettings(String deviceName) {
     _stateInitialized = true;
 
+    fetchDefaultCommandsFromDatabase(deviceName)
+        .then((List<String> defaultCommandStrings) {
+      _createDefaultCommands(defaultCommandStrings);
+    });
+
     fetchSettingsFromDatabase(deviceName).then((MirrorStateArguments tempSettings) {
       if (tempSettings != null) {
         int _tempBrightnessValue = int.parse(tempSettings.brightness);
@@ -778,6 +805,16 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     setState(() {
       _customCommands = _customCommandsTemp;
     });
+  }
+
+  void _persistDefaultCommands(List<DefaultCommand> defaultCommands) {
+    // delete already existing defaultCommands for this device
+    var dbHelper = SqLite();
+    dbHelper.deleteAllDefaultCommands(deviceName);
+    for (DefaultCommand defaultCommand in defaultCommands){
+      String defaultCommandString = defaultCommand.toString().split('.').last;
+      dbHelper.saveDefaultCommand(deviceName, defaultCommandString);
+    }
   }
 
   void _persistCommand(
@@ -882,6 +919,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       _alertDuration = settings.alertDuration;
       _defaultCommands = settings.defaultCommands;
       _updateDefaultCommandCards();
+      _persistDefaultCommands(_defaultCommands);
       _persistAlertDurationSetting(_alertDuration);
     }
   }
