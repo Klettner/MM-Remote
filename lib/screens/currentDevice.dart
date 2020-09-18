@@ -101,9 +101,11 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
     //Only after start of the App
     if (!_stateInitialized) {
+      // _httpRest will be needed for the initialization of DefaultCommandCards,
+      // therefore it has to be instantiated first
+      _httpRest = new HttpRest(ip, port, _updateLastRequest, _showSnackbar);
       _initializeSettings(deviceName);
       _initializeDefaultCommandCards();
-      _httpRest = new HttpRest(ip, port);
       getImage();
     }
 
@@ -180,21 +182,21 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     tooltip: 'Stop slideshow',
                     color: tertiaryColorDark,
                     iconSize: 35.0,
-                    onPressed: _backgroundSlideShowStop),
+                    onPressed: _httpRest.backgroundSlideShowStop),
                 new IconButton(
                     icon: Icon(Icons.play_arrow,
                         semanticLabel: 'start slideshow'),
                     tooltip: 'Start slideshow',
                     color: tertiaryColorDark,
                     iconSize: 35.0,
-                    onPressed: _backgroundSlideShowPlay),
+                    onPressed: _httpRest.backgroundSlideShowPlay),
                 new IconButton(
                     icon:
                         Icon(Icons.fast_forward, semanticLabel: 'next picture'),
                     tooltip: 'Next picture',
                     color: tertiaryColorDark,
                     iconSize: 35.0,
-                    onPressed: _backgroundSlideShowNext),
+                    onPressed: _httpRest.backgroundSlideShowNext),
                 new SizedBox(
                   width: 5.0,
                 ),
@@ -268,13 +270,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     color: tertiaryColorDark,
                     iconSize: 35.0,
                     onPressed: () {
-                      if (_isTimer()) {
-                        (_isPaused) ? _timerUnpause() : _stopWatchTimerPause();
-                      } else {
-                        (_isPaused)
-                            ? _stopWatchUnpause()
-                            : _stopWatchTimerPause();
-                      }
+                     _handlePauseUnpause();
                     }),
                 new IconButton(
                     icon: Icon(Icons.play_arrow,
@@ -283,16 +279,14 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     color: tertiaryColorDark,
                     iconSize: 35.0,
                     onPressed: () {
-                      (_isTimer())
-                          ? _timerStart(_getSeconds())
-                          : _stopWatchStart();
+                      _handleStart();
                     }),
                 new IconButton(
                     icon: Icon(Icons.flash_on, semanticLabel: 'interrupt'),
                     tooltip: 'Interrupt',
                     color: tertiaryColorDark,
                     iconSize: 30,
-                    onPressed: _stopWatchTimerInterrupt),
+                    onPressed: _httpRest.stopWatchTimerInterrupt),
                 new SizedBox(
                   width: 5.0,
                 ),
@@ -304,13 +298,41 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     );
   }
 
+  void _handlePauseUnpause() {
+    if (_isTimer()) {
+      if(_isPaused) {
+        _isPaused = false;
+        _httpRest.timerUnpause();
+      } else {
+        _isPaused = true;
+        _httpRest.stopWatchTimerPause();
+      }
+    } else {
+      if(_isPaused) {
+        _isPaused = false;
+        _httpRest.stopWatchUnpause();
+      } else {
+        _isPaused = true;
+        _httpRest.stopWatchTimerPause();
+      }
+    }
+  }
+
+  _handleStart(){
+    if(_isTimer()) {
+      _isPaused = false;
+      _httpRest.timerStart(_getSeconds());
+    } else {
+      _isPaused = false;
+      _httpRest.stopWatchStart();
+    }
+  }
+
   bool _isTimer() {
     if (_stopWatchTimerValue.compareTo("Timer") == 0) {
-      print("_isTimer(): true");
       return true;
     }
-    print("_isTimer(): false");
-    return false;
+      return false;
   }
 
   Widget _createTimerInputFields() {
@@ -394,7 +416,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                   _brightnessValue = newValue.round();
                 });
                 _updateDefaultCommandCards();
-                _setBrightness(_brightnessValue, true);
+                _httpRest.setBrightness(_brightnessValue, true);
               },
               onChangeEnd: (double newValue) {
                 _persistBrightnessSetting(newValue.round());
@@ -698,7 +720,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                   semanticLabel: 'previous page'),
               tooltip: 'Previous mirror-page',
               onPressed: () {
-                _decrementPage(context);
+                _httpRest.decrementPage(context);
               }),
           new SizedBox(
             width: 50.0,
@@ -710,7 +732,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 size: 35.0, color: secondaryColor, semanticLabel: 'next page'),
             tooltip: 'Next mirror-page',
             onPressed: () {
-              _incrementPage(context);
+              _httpRest.incrementPage(context);
             },
           ),
         ],
@@ -849,13 +871,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     dbHelper.saveSetting(setting);
   }
 
-  void _setBrightness(int value, bool message) {
-    _httpRest.setBrightness(value);
-    if (message) {
-      updateLastRequest("Brightness changed to " + '$value');
-    }
-  }
-
   void _evaluateAlert(String text, BuildContext context) {
     _textController.clear();
     setState(() {
@@ -869,7 +884,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         0) {
       _setAlertDuration(_temptext);
     } else {
-      _sendAlert(text);
+      _httpRest.sendAlert(text, _alertDuration);
     }
   }
 
@@ -879,7 +894,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     if (int.tryParse(_amount) != null) {
       _alertDuration = int.tryParse(_amount);
       _persistAlertDurationSetting(_alertDuration);
-      updateLastRequest('Alert duration set to ' + _amount);
+      _updateLastRequest('Alert duration set to ' + _amount);
     }
   }
 
@@ -956,7 +971,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                   ],
                 ),
                 onPressed: () {
-                  _sendCustomCommand(
+                  _httpRest.executeCustomCommand(
                       commandName, notification, payload, context);
                 },
               ),
@@ -993,18 +1008,12 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     });
   }
 
-  void _sendCustomCommand(String commandName, String notification,
-      String payload, BuildContext context) {
-    _httpRest.sendCustomCommand(notification, payload);
-    _showSnackbar(commandName + ' sended', context);
-    updateLastRequest(commandName + " sended");
-  }
 
   void _toggleMonitor() {
     if (_monitorToggleColor == primaryColor) {
-      _toggleMonitorOff(true);
+      _toggleMonitorOff();
     } else {
-      _toggleMonitorOn(true);
+      _toggleMonitorOn();
     }
   }
 
@@ -1025,7 +1034,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
             FlatButton(
               child: Text('Reboot'),
               onPressed: () {
-                _rebootPi();
+                _httpRest.rebootPi();
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
@@ -1053,7 +1062,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
             FlatButton(
               child: Text('Shutdown'),
               onPressed: () {
-                _shutdownPi();
+                _httpRest.shutdownPi();
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
@@ -1064,107 +1073,21 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     );
   }
 
-  void _backgroundSlideShowNext() {
-    _httpRest.sendCustomCommand("BACKGROUNDSLIDESHOW_NEXT", "");
-    updateLastRequest("Next picture");
-  }
-
-  void _backgroundSlideShowStop() {
-    _httpRest.sendCustomCommand("BACKGROUNDSLIDESHOW_STOP", "");
-    updateLastRequest("Stopped SlideShow");
-  }
-
-  void _backgroundSlideShowPlay() {
-    _httpRest.sendCustomCommand("BACKGROUNDSLIDESHOW_PLAY", "");
-    updateLastRequest("Started SlideShow");
-  }
-
-  void _stopWatchUnpause() {
-    _httpRest.sendCustomCommand("UNPAUSE_STOPPER", "");
-    _isPaused = false;
-    updateLastRequest("Continued stop-watch");
-  }
-
-  void _stopWatchStart() {
-    _httpRest.sendCustomCommand("START_STOPPER", "");
-  }
-
-  void _stopWatchTimerPause() {
-    _httpRest.sendCustomCommand("PAUSE_TIMESTOPP", "");
-    _isPaused = true;
-    updateLastRequest("Paused Timer/Stop-watch");
-  }
-
-  void _stopWatchTimerInterrupt() {
-    _httpRest.sendCustomCommand("INTERRUPT_TIMESTOPP", "");
-    updateLastRequest("Interrupted Timer/Stop-watch");
-  }
-
-  void _timerStart(int seconds) {
-    _httpRest.sendCustomCommand("START_COUNTER", "$seconds");
-    _isPaused = false;
-    updateLastRequest("Started timer");
-  }
-
-  void _timerUnpause() {
-    _httpRest.sendCustomCommand("UNPAUSE_COUNTER", "");
-    _isPaused = false;
-    updateLastRequest("Continued timer");
-  }
-
-  void updateLastRequest(String requestMessage) {
+  void _updateLastRequest(String requestMessage) {
     setState(() {
       lastRequest = requestMessage;
     });
   }
 
-  void _shutdownPi() {
-    _httpRest.sendAction("SHUTDOWN");
-    updateLastRequest("Shutting down mirror");
-  }
-
-  void _toggleMonitorOn(bool stateChange) {
-    _httpRest.sendAction("MONITORON");
-    setState(() {
+  void _toggleMonitorOn() {
       _monitorToggleColor = primaryColor;
-
-      if (stateChange) {
-        lastRequest = "Monitor On";
-      }
-    });
-    _persistMonitorSetting('ON');
+      _httpRest.toggleMonitorOn();
+      _persistMonitorSetting('ON');
   }
 
-  void _toggleMonitorOff(bool stateChange) {
-    _httpRest.sendAction("MONITOROFF");
-    setState(() {
+  void _toggleMonitorOff() {
       _monitorToggleColor = tertiaryColorDark;
-      if (stateChange) {
-        lastRequest = "Monitor Off";
-      }
-    });
-    _persistMonitorSetting('OFF');
-  }
-
-  void _rebootPi() {
-    _httpRest.sendAction("REBOOT");
-    updateLastRequest("Rebooting mirror");
-  }
-
-  void _sendAlert(String text) {
-    _httpRest.sendAlert(text, _alertDuration);
-    updateLastRequest("Sending alert");
-  }
-
-  void _incrementPage(BuildContext context) {
-    _httpRest.sendCustomCommand("PAGE_INCREMENT", "");
-    _showSnackbar('Page Incremented', context);
-    updateLastRequest("Page Incremented");
-  }
-
-  void _decrementPage(BuildContext context) {
-    _httpRest.sendCustomCommand("PAGE_DECREMENT", "");
-    _showSnackbar('Page Decremented', context);
-    updateLastRequest("Page Decremented");
+      _httpRest.toggleMonitorOff();
+      _persistMonitorSetting('OFF');
   }
 }
