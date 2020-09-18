@@ -1,13 +1,8 @@
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mmremotecontrol/models/settingArguments.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart' as pPath;
+import 'package:mmremotecontrol/screens/currentDevice/currentDeviceDrawer.dart';
 
-import 'package:mmremotecontrol/screens/help.dart';
 import 'package:mmremotecontrol/shared/colors.dart';
 import 'package:mmremotecontrol/services/httpRest.dart';
 import 'package:mmremotecontrol/screens/addCommand.dart';
@@ -61,9 +56,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       new TextEditingController();
   final TextEditingController _timerSecondsController =
       new TextEditingController();
-  File _image;
-  final picker = ImagePicker();
-  SharedPreferences prefs;
   String ip;
   String port;
   String deviceName;
@@ -106,7 +98,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       _httpRest = new HttpRest(ip, port, _updateLastRequest, _showSnackbar);
       _initializeSettings(deviceName);
       _initializeDefaultCommandCards();
-      getImage();
     }
 
     var appBar = AppBar(
@@ -126,7 +117,8 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     return Scaffold(
       key: _scaffoldKey,
       appBar: appBar,
-      drawer: _createDrawer(),
+      drawer: CurrentDeviceDrawer(_httpRest, deviceName, _navigateToSettingsPage,
+          _persistMonitorSetting, _monitorToggleColor),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
@@ -471,122 +463,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     );
   }
 
-  Widget _createDrawer() {
-    return Drawer(
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            // ListView contains a group of widgets that scroll inside the drawer
-            child: ListView(
-              children: <Widget>[
-                DrawerHeader(
-                  decoration: BoxDecoration(
-                    image: (_image == null)
-                        ? null
-                        : DecorationImage(
-                            image: FileImage(_image),
-                            fit: BoxFit.cover,
-                          ),
-                    color: primaryColor,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        deviceName,
-                        style: TextStyle(
-                          color: secondaryColor,
-                          fontSize: 20,
-                        ),
-                      ),
-                      Align(
-                        alignment: FractionalOffset.bottomRight,
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.edit,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
-                            _pickImage();
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.devices, color: tertiaryColorMedium),
-                  title: Text('Choose device'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.tv,
-                      color: _monitorToggleColor,
-                      semanticLabel: 'toggleMonitor'),
-                  title: Text('Toggle monitor on/off'),
-                  onTap: () {
-                    _toggleMonitor();
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.refresh,
-                      semanticLabel: 'reboot', color: tertiaryColorMedium),
-                  title: Text('Reboot mirror'),
-                  onTap: () {
-                    _rebootPiDialog(context);
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.power_settings_new,
-                    semanticLabel: 'shutdown',
-                    color: tertiaryColorMedium,
-                  ),
-                  title: Text('Shutdown mirror'),
-                  onTap: () {
-                    _shutdownPiDialog(context);
-                  },
-                ),
-              ],
-            ),
-          ),
-          Container(
-              // This align moves its children to the bottom
-              child: Align(
-                  alignment: FractionalOffset.bottomCenter,
-                  child: Container(
-                      child: Column(
-                    children: <Widget>[
-                      Divider(),
-                      ListTile(
-                        leading: Icon(Icons.settings,
-                            semanticLabel: 'settings',
-                            color: tertiaryColorMedium),
-                        title: Text('Settings'),
-                        onTap: () {
-                          _navigateToSettingsPage();
-                        },
-                      ),
-                      ListTile(
-                        leading: Icon(
-                          Icons.help,
-                          color: tertiaryColorMedium,
-                        ),
-                        title: Text('Help & About (online)'),
-                        onTap: () {
-                          Navigator.pushNamed(context, HelpPage.routeName);
-                        },
-                      )
-                    ],
-                  ))))
-        ],
-      ),
-    );
-  }
 
   Widget _createHomeTab(var _deviceOrientation) {
     return new Container(
@@ -738,37 +614,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         ],
       ),
     );
-  }
-
-  Future _pickImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-    // Check if a image was picked
-    if (pickedFile == null) {
-      return;
-    }
-
-    setState(() {
-      _image = File(pickedFile.path);
-    });
-
-    final appDir = await pPath.getApplicationDocumentsDirectory();
-    final String imagePath = appDir.path;
-    final fileName = path.basename(pickedFile.path);
-    final File localImage = await _image.copy('$imagePath/$fileName');
-
-    //persist image path
-    prefs = await SharedPreferences.getInstance();
-    prefs.setString(deviceName + 'Image', localImage.path);
-  }
-
-  Future getImage() async {
-    prefs = await SharedPreferences.getInstance();
-    if (prefs.getString(deviceName + 'Image') != null) {
-      setState(() {
-        _image = File(prefs.getString(deviceName + 'Image'));
-      });
-    }
   }
 
   void _showSnackbar(String message, BuildContext context) {
@@ -1008,86 +853,9 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     });
   }
 
-
-  void _toggleMonitor() {
-    if (_monitorToggleColor == primaryColor) {
-      _toggleMonitorOff();
-    } else {
-      _toggleMonitorOn();
-    }
-  }
-
-  Future<void> _rebootPiDialog(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Do you want to reboot the mirror?'),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            FlatButton(
-              child: Text('Reboot'),
-              onPressed: () {
-                _httpRest.rebootPi();
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _shutdownPiDialog(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Do you want to shutdown the mirror?'),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            FlatButton(
-              child: Text('Shutdown'),
-              onPressed: () {
-                _httpRest.shutdownPi();
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _updateLastRequest(String requestMessage) {
     setState(() {
       lastRequest = requestMessage;
     });
-  }
-
-  void _toggleMonitorOn() {
-      _monitorToggleColor = primaryColor;
-      _httpRest.toggleMonitorOn();
-      _persistMonitorSetting('ON');
-  }
-
-  void _toggleMonitorOff() {
-      _monitorToggleColor = tertiaryColorDark;
-      _httpRest.toggleMonitorOff();
-      _persistMonitorSetting('OFF');
   }
 }

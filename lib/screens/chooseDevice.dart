@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mmremotecontrol/models/mirrorStateArguments.dart';
-import 'package:mmremotecontrol/models/settingArguments.dart';
 
-import 'currentDevice.dart';
+import 'currentDevice/currentDevice.dart';
 import 'addDevice.dart';
 import 'package:mmremotecontrol/shared/colors.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
