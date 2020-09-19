@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as pPath;
 
+import 'package:mmremotecontrol/models/mirrorStateArguments.dart';
+import 'package:mmremotecontrol/screens/currentDevice/cdDatabaseAccess.dart';
 import 'package:mmremotecontrol/shared/colors.dart';
 import 'package:mmremotecontrol/services/httpRest.dart';
 import 'package:mmremotecontrol/screens/help.dart';
@@ -12,12 +14,10 @@ import 'package:mmremotecontrol/screens/help.dart';
 class CurrentDeviceDrawer extends StatefulWidget {
   final HttpRest _httpRest;
   final String deviceName;
-  final Color _monitorToggleColor;
   final Function _navigateToSettingsPage;
-  final Function _persistMonitorSetting;
 
   CurrentDeviceDrawer(this._httpRest, this.deviceName,
-      this._navigateToSettingsPage,this._persistMonitorSetting, this._monitorToggleColor);
+      this._navigateToSettingsPage);
 
   @override
   _CurrentDeviceDrawerState createState() => _CurrentDeviceDrawerState();
@@ -33,7 +33,18 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
   void initState(){
     super.initState();
     getImage();
-    this._monitorToggleColor = this.widget._monitorToggleColor;
+    //get monitorToggleColor from database
+    fetchSettingsFromDatabase(this.widget.deviceName).then((MirrorStateArguments tempSettings) {
+      if (tempSettings != null) {
+        bool _tempMonitorColor =
+            tempSettings.monitorStatus.compareTo('ON') == 0;
+          if (_tempMonitorColor) {
+            _monitorToggleColor = primaryColor;
+          } else {
+            _monitorToggleColor = tertiaryColorDark;
+          }
+      }
+    });
   }
 
   @override
@@ -220,13 +231,13 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
   void _toggleMonitorOn() {
     _monitorToggleColor = primaryColor;
     this.widget._httpRest.toggleMonitorOn();
-    this.widget._persistMonitorSetting('ON');
+    updateMonitorStatus(widget.deviceName, 'ON');
   }
 
   void _toggleMonitorOff() {
     _monitorToggleColor = tertiaryColorDark;
     this.widget._httpRest.toggleMonitorOff();
-    this.widget._persistMonitorSetting('OFF');
+    updateMonitorStatus(widget.deviceName, 'OFF');
   }
 
   Future _pickImage() async {

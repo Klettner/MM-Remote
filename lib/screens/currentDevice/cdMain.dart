@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mmremotecontrol/models/settingArguments.dart';
-import 'package:mmremotecontrol/screens/currentDevice/currentDeviceDrawer.dart';
+import 'package:mmremotecontrol/screens/currentDevice/cdDrawer.dart';
 
 import 'package:mmremotecontrol/shared/colors.dart';
 import 'package:mmremotecontrol/services/httpRest.dart';
@@ -11,25 +11,7 @@ import 'package:mmremotecontrol/models/commandArguments.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
 import 'package:mmremotecontrol/services/database.dart';
 import 'package:mmremotecontrol/screens/settings.dart';
-
-Future<List<String>> fetchDefaultCommandsFromDatabase(String deviceName) async {
-  var dbHelper = SqLite();
-  Future<List<String>> defaultCommandString = dbHelper.getDefaultCommands(deviceName);
-  return defaultCommandString;
-}
-
-Future<List<CommandArguments>> fetchCommandsFromDatabase(
-    String deviceName) async {
-  var dbHelper = SqLite();
-  Future<List<CommandArguments>> commands = dbHelper.getCommands(deviceName);
-  return commands;
-}
-
-Future<MirrorStateArguments> fetchSettingsFromDatabase(String deviceName) async {
-  var dbHelper = SqLite();
-  Future<MirrorStateArguments> setting = dbHelper.getSettings(deviceName);
-  return setting;
-}
+import 'package:mmremotecontrol/screens/currentDevice/cdDatabaseAccess.dart';
 
 class CurrentDevicePage extends StatefulWidget {
   static const routeName = '/homePage';
@@ -117,8 +99,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     return Scaffold(
       key: _scaffoldKey,
       appBar: appBar,
-      drawer: CurrentDeviceDrawer(_httpRest, deviceName, _navigateToSettingsPage,
-          _persistMonitorSetting, _monitorToggleColor),
+      drawer: CurrentDeviceDrawer(_httpRest, deviceName, _navigateToSettingsPage),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
@@ -637,11 +618,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   void _initializeSettings(String deviceName) {
     _stateInitialized = true;
 
-    fetchDefaultCommandsFromDatabase(deviceName)
-        .then((List<String> defaultCommandStrings) {
-      _createDefaultCommands(defaultCommandStrings);
-    });
-
     fetchSettingsFromDatabase(deviceName).then((MirrorStateArguments tempSettings) {
       if (tempSettings != null) {
         int _tempBrightnessValue = int.parse(tempSettings.brightness);
@@ -660,6 +636,11 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       }
     });
 
+    fetchDefaultCommandsFromDatabase(deviceName)
+        .then((List<String> defaultCommandStrings) {
+      _createDefaultCommands(defaultCommandStrings);
+    });
+
     final List<Widget> _customCommandsTemp = List<Widget>();
     fetchCommandsFromDatabase(deviceName)
         .then((List<CommandArguments> commands) {
@@ -674,46 +655,16 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     });
   }
 
-  void _persistDefaultCommands(List<DefaultCommand> defaultCommands) {
-    // delete already existing defaultCommands for this device
-    var dbHelper = SqLite();
-    dbHelper.deleteAllDefaultCommands(deviceName);
-    for (DefaultCommand defaultCommand in defaultCommands){
-      String defaultCommandString = defaultCommand.toString().split('.').last;
-      dbHelper.saveDefaultCommand(deviceName, defaultCommandString);
-    }
-  }
-
-  void _persistCommand(
-      String commandName, String notification, String payload) {
-    var command =
-        CommandArguments(deviceName, commandName, notification, payload);
-    var dbHelper = SqLite();
-    dbHelper.saveCommand(command);
-  }
-
   void _persistBrightnessSetting(int newValue) {
     var setting = MirrorStateArguments(
         deviceName, '$newValue', '$_alertDuration', '$_monitorToggleColor');
-    var dbHelper = SqLite();
-    dbHelper.deleteSettings(deviceName);
-    dbHelper.saveSetting(setting);
+    persistMirrorStateSettings(deviceName, setting);
   }
 
   void _persistAlertDurationSetting(int newValue) {
     var setting = MirrorStateArguments(
         deviceName, '$_brightnessValue', '$newValue', '$_monitorToggleColor');
-    var dbHelper = SqLite();
-    dbHelper.deleteSettings(deviceName);
-    dbHelper.saveSetting(setting);
-  }
-
-  void _persistMonitorSetting(String status) {
-    var setting = MirrorStateArguments(
-        deviceName, '$_brightnessValue', '$_alertDuration', status);
-    var dbHelper = SqLite();
-    dbHelper.deleteSettings(deviceName);
-    dbHelper.saveSetting(setting);
+    persistMirrorStateSettings(deviceName, setting);
   }
 
   void _evaluateAlert(String text, BuildContext context) {
@@ -779,7 +730,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       _alertDuration = settings.alertDuration;
       _defaultCommands = settings.defaultCommands;
       _updateDefaultCommandCards();
-      _persistDefaultCommands(_defaultCommands);
+      persistDefaultCommands(deviceName, _defaultCommands);
       _persistAlertDurationSetting(_alertDuration);
     }
   }
@@ -787,7 +738,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   Card _createCommandCard(String commandName, String notification,
       String payload, BuildContext context, bool persist) {
     if (persist) {
-      _persistCommand(commandName, notification, payload);
+      persistCommand(deviceName, commandName, notification, payload);
     }
     return Card(
       clipBehavior: Clip.antiAlias,

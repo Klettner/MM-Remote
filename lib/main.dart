@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mmremotecontrol/screens/help.dart';
 import 'package:mmremotecontrol/screens/settings.dart';
 
-import 'screens/currentDevice/currentDevice.dart';
+import 'screens/currentDevice/cdMain.dart';
 import 'screens/chooseDevice.dart';
 import 'screens/addDevice.dart';
 import 'package:mmremotecontrol/shared/colors.dart';

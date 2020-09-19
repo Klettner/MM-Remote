@@ -200,6 +200,19 @@ class SqLite{
     });
   }
 
+  Future updateMonitorStatus(String deviceName, String monitorStatus) async {
+    var dbClient = await db;
+    await dbClient.transaction((txn) async {
+      return await txn.rawUpdate(
+          'UPDATE Settings SET monitorStatus = ? WHERE deviceName = ?',
+          [
+            monitorStatus,
+            deviceName,
+          ]);
+    });
+    loggerNoStack.i('Monitor status updated');
+  }
+
   void deleteSettings(String deviceName) async {
     var dbClient = await db;
     dbClient
