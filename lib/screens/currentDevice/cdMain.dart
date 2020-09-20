@@ -41,7 +41,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   String ip;
   String port;
   String deviceName;
-  Color _monitorToggleColor = primaryColor;
   int _brightnessValue = 200;
   int _alertDuration = 10;
   bool _stateInitialized = false;
@@ -390,7 +389,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 setState(() {
                   _brightnessValue = newValue.round();
                 });
-                _updateDefaultCommandCards();
+                _updateBrightnessSliderCard();
                 _httpRest.setBrightness(_brightnessValue, true);
               },
               onChangeEnd: (double newValue) {
@@ -492,6 +491,20 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     for(DefaultCommand command in _defaultCommands){
         _addDefaultCommand(updatedList, command);
     }
+    setState(() {
+      _defaultCommandCards = updatedList;
+    });
+  }
+
+  void _updateBrightnessSliderCard() {
+    int brightnessCardIndex = _defaultCommands.indexOf(DefaultCommand.MonitorBrightness);
+    List<Widget> updatedList = new List<Widget>();
+    for(Widget widget in _defaultCommandCards) {
+      updatedList.add(widget);
+    }
+    updatedList.removeAt(brightnessCardIndex);
+    Widget brightnessSliderCard = _createBrightnessSliderCard();
+    updatedList.insert(brightnessCardIndex, brightnessSliderCard);
     setState(() {
       _defaultCommandCards = updatedList;
     });
@@ -633,16 +646,9 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       if (tempSettings != null) {
         int _tempBrightnessValue = int.parse(tempSettings.brightness);
         int _tempAlertDuration = int.parse(tempSettings.alertDuration);
-        bool _tempMonitorColor =
-            tempSettings.monitorStatus.compareTo('ON') == 0;
         setState(() {
           _brightnessValue = _tempBrightnessValue;
           _alertDuration = _tempAlertDuration;
-          if (_tempMonitorColor) {
-            _monitorToggleColor = primaryColor;
-          } else {
-            _monitorToggleColor = tertiaryColorDark;
-          }
         });
       }
     });
