@@ -235,7 +235,7 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
       _monitorToggleColor = primaryColor;
     });
     this.widget._httpRest.toggleMonitorOn();
-    updateMonitorStatus(widget.deviceName, 'ON');
+    updateMonitorStatusSetting(widget.deviceName, 'ON');
   }
 
   void _toggleMonitorOff() {
@@ -243,7 +243,7 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
       _monitorToggleColor = tertiaryColorDark;
     });
     this.widget._httpRest.toggleMonitorOff();
-    updateMonitorStatus(widget.deviceName, 'OFF');
+    updateMonitorStatusSetting(widget.deviceName, 'OFF');
   }
 
   Future _pickImage() async {

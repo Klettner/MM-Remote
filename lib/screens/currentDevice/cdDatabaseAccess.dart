@@ -47,8 +47,18 @@ void persistMirrorStateSettings(String deviceName, MirrorStateArguments setting)
   dbHelper.saveSetting(setting);
 }
 
-void updateMonitorStatus(String deviceName, String monitorStatus){
+void updateMonitorStatusSetting(String deviceName, String monitorStatus){
   var dbHelper = SqLite();
-  dbHelper.updateMonitorStatus(deviceName, monitorStatus);
+  dbHelper.updateMonitorStatusSetting(deviceName, monitorStatus);
+}
+
+void updateAlertDurationSetting(String deviceName, int duration) {
+  var dbHelper = SqLite();
+  dbHelper.updateAlertDurationSetting(deviceName, duration);
+}
+
+void updateBrightnessSetting(String deviceName, int brightnessValue) {
+  var dbHelper = SqLite();
+  dbHelper.updateBrightnessSetting(deviceName, brightnessValue);
 }
 

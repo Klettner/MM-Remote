@@ -35,7 +35,7 @@ class SqLite{
         "CREATE TABLE Devices(id INTEGER PRIMARY KEY,deviceName TEXT, ipAddress TEXT, port TEXT)");
     loggerNoStack.i("Created Devices table");
     await db.execute(
-        "CREATE TABLE Settings(id INTEGER PRIMARY KEY,deviceName TEXT, brightness TEXT, alertDuration TEXT, monitorStatus TEXT)");
+        "CREATE TABLE Settings(id INTEGER PRIMARY KEY,deviceName TEXT, brightness INTEGER, alertDuration INTEGER, monitorStatus TEXT)");
     loggerNoStack.i("Created Settings table");
     await db.execute(
         "CREATE TABLE DefaultCommands(id INTEGER PRIMARY KEY, deviceName TEXT, defaultCommand TEXT)");
@@ -200,7 +200,7 @@ class SqLite{
     });
   }
 
-  Future updateMonitorStatus(String deviceName, String monitorStatus) async {
+  Future updateMonitorStatusSetting(String deviceName, String monitorStatus) async {
     var dbClient = await db;
     await dbClient.transaction((txn) async {
       return await txn.rawUpdate(
@@ -211,6 +211,32 @@ class SqLite{
           ]);
     });
     loggerNoStack.i('Monitor status updated');
+  }
+
+  Future updateAlertDurationSetting(String deviceName, int duration) async {
+    var dbClient = await db;
+    await dbClient.transaction((txn) async {
+      return await txn.rawUpdate(
+          'UPDATE Settings SET  alertDuration = ? WHERE deviceName = ?',
+          [
+            duration,
+            deviceName,
+          ]);
+    });
+    loggerNoStack.i('AlertDuration updated');
+  }
+
+  Future updateBrightnessSetting(String deviceName, int brightnessValue) async {
+    var dbClient = await db;
+    await dbClient.transaction((txn) async {
+      return await txn.rawUpdate(
+          'UPDATE Settings SET  brightness = ? WHERE deviceName = ?',
+          [
+            brightnessValue,
+            deviceName,
+          ]);
+    });
+    loggerNoStack.i('Brightness updated');
   }
 
   void deleteSettings(String deviceName) async {

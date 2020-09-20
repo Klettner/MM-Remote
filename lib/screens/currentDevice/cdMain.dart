@@ -394,7 +394,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 _httpRest.setBrightness(_brightnessValue, true);
               },
               onChangeEnd: (double newValue) {
-                _persistBrightnessSetting(newValue.round());
+                updateBrightnessSetting(deviceName, newValue.round());
               },
             )
           ],
@@ -666,18 +666,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     });
   }
 
-  void _persistBrightnessSetting(int newValue) {
-    var setting = MirrorStateArguments(
-        deviceName, '$newValue', '$_alertDuration', '$_monitorToggleColor');
-    persistMirrorStateSettings(deviceName, setting);
-  }
-
-  void _persistAlertDurationSetting(int newValue) {
-    var setting = MirrorStateArguments(
-        deviceName, '$_brightnessValue', '$newValue', '$_monitorToggleColor');
-    persistMirrorStateSettings(deviceName, setting);
-  }
-
   void _evaluateAlert(String text, BuildContext context) {
     _textController.clear();
     setState(() {
@@ -700,7 +688,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
     if (int.tryParse(_amount) != null) {
       _alertDuration = int.tryParse(_amount);
-      _persistAlertDurationSetting(_alertDuration);
+      updateAlertDurationSetting(deviceName, _alertDuration);
       _updateLastRequest('Alert duration set to ' + _amount);
     }
   }
@@ -742,7 +730,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       _defaultCommands = settings.defaultCommands;
       _updateDefaultCommandCards();
       persistDefaultCommands(deviceName, _defaultCommands);
-      _persistAlertDurationSetting(_alertDuration);
+      updateAlertDurationSetting(deviceName, _alertDuration);
     }
   }
 
