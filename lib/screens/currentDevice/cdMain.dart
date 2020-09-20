@@ -6,11 +6,8 @@ import 'package:mmremotecontrol/screens/currentDevice/cdDrawer.dart';
 
 import 'package:mmremotecontrol/shared/colors.dart';
 import 'package:mmremotecontrol/services/httpRest.dart';
-import 'package:mmremotecontrol/screens/addCommand.dart';
 import 'package:mmremotecontrol/models/mirrorStateArguments.dart';
-import 'package:mmremotecontrol/models/commandArguments.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
-import 'package:mmremotecontrol/services/database.dart';
 import 'package:mmremotecontrol/screens/settings.dart';
 import 'package:mmremotecontrol/screens/currentDevice/cdDatabaseAccess.dart';
 
@@ -42,10 +39,9 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   String ip;
   String port;
   String deviceName;
-  int _brightnessValue = 200;
+  int _brightnessValue = 0;
   int _alertDuration = 10;
   bool _stateInitialized = false;
-  List<Widget> _customCommands = List<Widget>();
   HttpRest _httpRest;
   CurrentDeviceDrawer _currentDeviceDrawer;
 

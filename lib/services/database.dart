@@ -35,7 +35,7 @@ class SqLite{
         "CREATE TABLE Devices(id INTEGER PRIMARY KEY,deviceName TEXT, ipAddress TEXT, port TEXT)");
     loggerNoStack.i("Created Devices table");
     await db.execute(
-        "CREATE TABLE Settings(id INTEGER PRIMARY KEY,deviceName TEXT, brightness INTEGER, alertDuration INTEGER, monitorStatus TEXT)");
+        "CREATE TABLE Settings(id INTEGER PRIMARY KEY,deviceName TEXT, brightness TEXT, alertDuration TEXT, monitorStatus TEXT)");
     loggerNoStack.i("Created Settings table");
     await db.execute(
         "CREATE TABLE DefaultCommands(id INTEGER PRIMARY KEY, deviceName TEXT, defaultCommand TEXT)");
