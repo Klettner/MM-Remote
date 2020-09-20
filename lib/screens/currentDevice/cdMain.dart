@@ -47,6 +47,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   bool _stateInitialized = false;
   List<Widget> _customCommands = List<Widget>();
   HttpRest _httpRest;
+  CurrentDeviceDrawer _currentDeviceDrawer;
 
   bool _isPaused = false;
   String _stopWatchTimerValue = "Timer";
@@ -78,6 +79,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       // _httpRest will be needed for the initialization of DefaultCommandCards,
       // therefore it has to be instantiated first
       _httpRest = new HttpRest(ip, port, _updateLastRequest, _showSnackbar);
+      _initializeDrawerImage();
       _initializeSettings(deviceName);
       _initializeDefaultCommandCards();
     }
@@ -99,7 +101,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     return Scaffold(
       key: _scaffoldKey,
       appBar: appBar,
-      drawer: CurrentDeviceDrawer(_httpRest, deviceName, _navigateToSettingsPage),
+      drawer: _currentDeviceDrawer,
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
@@ -467,6 +469,15 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         ],
       ),
     );
+  }
+
+  void _initializeDrawerImage() {
+    getImage(deviceName).then((_image) {
+      setState(() {
+        _currentDeviceDrawer = CurrentDeviceDrawer(_httpRest, deviceName, _image,
+            _navigateToSettingsPage, _initializeDrawerImage);
+      });
+    });
   }
 
   void _initializeDefaultCommandCards() {

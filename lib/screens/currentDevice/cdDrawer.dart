@@ -14,10 +14,12 @@ import 'package:mmremotecontrol/screens/help.dart';
 class CurrentDeviceDrawer extends StatefulWidget {
   final HttpRest _httpRest;
   final String deviceName;
+  final File _image;
   final Function _navigateToSettingsPage;
+  final Function _initializeDrawerImage;
 
-  CurrentDeviceDrawer(this._httpRest, this.deviceName,
-      this._navigateToSettingsPage);
+  CurrentDeviceDrawer(this._httpRest, this.deviceName, this._image,
+      this._navigateToSettingsPage, this._initializeDrawerImage);
 
   @override
   _CurrentDeviceDrawerState createState() => _CurrentDeviceDrawerState();
@@ -32,17 +34,17 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
   @override
   void initState(){
     super.initState();
-    getImage();
+    _image = widget._image;
     //get monitorToggleColor from database
     fetchSettingsFromDatabase(this.widget.deviceName).then((MirrorStateArguments tempSettings) {
       if (tempSettings != null) {
-        bool _tempMonitorColor =
-            tempSettings.monitorStatus.compareTo('ON') == 0;
-          if (_tempMonitorColor) {
+        setState(() {
+          if (tempSettings.monitorStatus.compareTo('ON') == 0) {
             _monitorToggleColor = primaryColor;
           } else {
             _monitorToggleColor = tertiaryColorDark;
           }
+        });
       }
     });
   }
@@ -229,13 +231,17 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
   }
 
   void _toggleMonitorOn() {
-    _monitorToggleColor = primaryColor;
+    setState(() {
+      _monitorToggleColor = primaryColor;
+    });
     this.widget._httpRest.toggleMonitorOn();
     updateMonitorStatus(widget.deviceName, 'ON');
   }
 
   void _toggleMonitorOff() {
-    _monitorToggleColor = tertiaryColorDark;
+    setState(() {
+      _monitorToggleColor = tertiaryColorDark;
+    });
     this.widget._httpRest.toggleMonitorOff();
     updateMonitorStatus(widget.deviceName, 'OFF');
   }
@@ -260,14 +266,14 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
     //persist image path
     prefs = await SharedPreferences.getInstance();
     prefs.setString(this.widget.deviceName + 'Image', localImage.path);
+    this.widget._initializeDrawerImage();
   }
+}
 
-  Future getImage() async {
-    prefs = await SharedPreferences.getInstance();
-    if (prefs.getString(this.widget.deviceName + 'Image') != null) {
-      setState(() {
-        _image = File(prefs.getString(this.widget.deviceName + 'Image'));
-      });
-    }
+Future<File> getImage(String deviceName) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  if (prefs.getString(deviceName + 'Image') != null) {
+    return File(prefs.getString(deviceName + 'Image'));
   }
+  return null;
 }
