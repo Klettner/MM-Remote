@@ -37,15 +37,10 @@ If you do not use all the optional dependencies some of the default commands won
 &nbsp;
 ## Set-up ##
 ### Option 1 (easiest) ###
-Click [here](https://github.com/Klettner/MM-Remote/releases) and choose the latest release. There are four different .apk files available (the file which will install the app on your phone :iphone:). Pick the **app-release.apk** file and download :arrow_down: it. This file should be compatible with every android phone (but takes a little bit more storage than set-up option 2). Once the file is downloaded to your phone, click it to install the app. A warning will popup as this app was not downloaded from the app store. If you ignore this warning, the app will install and your done. 
+Click [here](https://github.com/Klettner/MM-Remote/releases) and choose the latest release. Pick the **app-release.apk** file and download :arrow_down: it. This file should be compatible with every android phone. Once the file is downloaded to your phone, click it to install the app. A warning will popup as this app was not downloaded from the app store. If you ignore this warning, the app will install and your done. 
 Once the app is installed you can delete the .apk file, it is not needed anymore.  
 
-### Option 2 (uses less storage) ###
-Click [here](https://github.com/Klettner/MM-Remote/releases) and choose the latest release. There are four different .apk files available (the file which will install the app on your phone :iphone:). Pick the .apk file which is compatible with your phone and download :arrow_down: it (not the app-release.apk as this file is basically the other three files combined and therefore takes more storage). If you don't know which one to choose you can simply download all three .apk files and try the following whith each of them.  
-Once the file is downloaded to your phone, click on it to install. A warning will popup as this app was not downloaded from the app store. If you ignore this warning, the app will install and your done. If there is an error message, the .apk file is most likely not compatible with you phone and you need to try one of the other remaining .apk file.  
-Once the app is installed you can delete the .apk files, these are not needed anymore.
-
-### Option 3 (compile the app by yourselfe) ###
+### Option 2 (compile the app by yourselfe) ###
 First you need to clone this repository with Git. The app is written in **Dart** with the help of googles **Flutter** framework. To compile the app you need to setup Flutter if you haven't done so already. If you have never used Flutter before, there is a good [installation guide and documentation](https://flutter.dev/docs/get-started/install) available. After Flutter is set-up, run ```flutter build apk``` or ```flutter build apk --split-per-abi``` in your terminal to create the apk files.
 
 ## Getting started ##
