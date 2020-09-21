@@ -83,32 +83,32 @@ class HttpRest {
   }
 
   void stopWatchUnpause() {
-    sendCustomCommand("UNPAUSE_STOPPER", "");
+    sendCustomCommand("UNPAUSE_STOPWATCH", "");
     updateLastRequest("Continued stop-watch");
   }
 
   void stopWatchStart() {
-    sendCustomCommand("START_STOPPER", "");
+    sendCustomCommand("START_STOPWATCH", "");
     updateLastRequest("Started stop-watch");
   }
 
   void stopWatchTimerPause() {
-    sendCustomCommand("PAUSE_TIMESTOPP", "");
+    sendCustomCommand("PAUSE_STOPWATCHTIMER", "");
     updateLastRequest("Paused Timer/Stop-watch");
   }
 
   void stopWatchTimerInterrupt() {
-    sendCustomCommand("INTERRUPT_TIMESTOPP", "");
+    sendCustomCommand("INTERRUPT_STOPWATCHTIMER", "");
     updateLastRequest("Interrupted Timer/Stop-watch");
   }
 
   void timerStart(int seconds) {
-    sendCustomCommand("START_COUNTER", "$seconds");
+    sendCustomCommand("START_TIMER", "$seconds");
     updateLastRequest("Started timer");
   }
 
   void timerUnpause() {
-    sendCustomCommand("UNPAUSE_COUNTER", "");
+    sendCustomCommand("UNPAUSE_TIMER", "");
     updateLastRequest("Continued timer");
   }
 
