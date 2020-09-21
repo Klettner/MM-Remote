@@ -1,4 +1,4 @@
-## MM-Remote 
+# MM-Remote 
 [![Build and Release apk](https://github.com/Klettner/MM-Remote/workflows/Build%20and%20Release%20apk/badge.svg)](https://GitHub.com/Klettner/MM-Remote/releases/)
 [![GitHub release](https://img.shields.io/github/release/Klettner/MM-Remote)](https://GitHub.com/Klettner/MM-Remote/releases/)
 [![GitHub license](https://img.shields.io/github/license/Klettner/MM-Remote)](https://github.com/Klettner/MM-Remote/blob/master/LICENSE)
@@ -6,7 +6,7 @@
   
 MM-Remote is an Android app to control your **MagicMirror** remotly via smartphone :iphone:.  
   
-![](assets/MMRemote.png)
+![](assets/currentDeviceHomeTab.png)
   
 ## Features ##
   * Change the monitor brightness :high_brightness:    
@@ -19,7 +19,7 @@ MM-Remote is an Android app to control your **MagicMirror** remotly via smartpho
     
 ### v1.0.3 ###
   * Start a timer on the mirror
-  * Start a stop-watch :hourglass: on the mirror
+  * Start a stop-watch :hourglass_flowing_sand: on the mirror
   * Hide and reorder default commands on the Home-tab
   
 ## Dependencies ##
@@ -37,16 +37,16 @@ If you do not use all the optional dependencies some of the default commands won
 &nbsp;
 ## Set-up ##
 ### Option 1 (easiest) ###
-Click [here](https://github.com/Klettner/MM-Remote/releases) and choose the latest release. There are four different .apk files available (the file which will install the app on your phone :iphone:). Pick the **---.apk** file and download :arrow_down: it. This file should be compatible with every android phone (but takes a little bit more storage than set-up option 2). Once the file is downloaded to your phone, click it to install the app. A warning will popup as this app was not downloaded from the app store. If you ignore this warning, the app will install and your done. 
+Click [here](https://github.com/Klettner/MM-Remote/releases) and choose the latest release. There are four different .apk files available (the file which will install the app on your phone :iphone:). Pick the **app-release.apk** file and download :arrow_down: it. This file should be compatible with every android phone (but takes a little bit more storage than set-up option 2). Once the file is downloaded to your phone, click it to install the app. A warning will popup as this app was not downloaded from the app store. If you ignore this warning, the app will install and your done. 
 Once the app is installed you can delete the .apk file, it is not needed anymore.  
 
 ### Option 2 (uses less storage) ###
-Click [here](https://github.com/Klettner/MM-Remote/releases) and choose the latest release. There are four different .apk files available (the file which will install the app on your phone :iphone:). Pick the .apk file which is compatible with your phone and download :arrow_down: it (not the ---.apk as this file is basically the other three files combined and therefore takes more storage). If you don't know which one to choose you can simply download all three .apk files and try the following whith each of them.  
+Click [here](https://github.com/Klettner/MM-Remote/releases) and choose the latest release. There are four different .apk files available (the file which will install the app on your phone :iphone:). Pick the .apk file which is compatible with your phone and download :arrow_down: it (not the app-release.apk as this file is basically the other three files combined and therefore takes more storage). If you don't know which one to choose you can simply download all three .apk files and try the following whith each of them.  
 Once the file is downloaded to your phone, click on it to install. A warning will popup as this app was not downloaded from the app store. If you ignore this warning, the app will install and your done. If there is an error message, the .apk file is most likely not compatible with you phone and you need to try one of the other remaining .apk file.  
 Once the app is installed you can delete the .apk files, these are not needed anymore.
 
 ### Option 3 (compile the app by yourselfe) ###
-First you need to clone this repository. The app is written in **Dart** with the help of googles **Flutter** framework. To compile the app you need to setup Flutter if you haven't done so already. If you have never used Flutter before, there is a good [installation guide and documentation](https://flutter.dev/docs/get-started/install) available. After Flutter is set-up, run ```flutter build apk``` or ```flutter build apk --split-per-abi``` in your terminal to create the apk files.
+First you need to clone this repository with Git. The app is written in **Dart** with the help of googles **Flutter** framework. To compile the app you need to setup Flutter if you haven't done so already. If you have never used Flutter before, there is a good [installation guide and documentation](https://flutter.dev/docs/get-started/install) available. After Flutter is set-up, run ```flutter build apk``` or ```flutter build apk --split-per-abi``` in your terminal to create the apk files.
 
 ## Getting started ##
 After starting the MM-Remote app, tab on the :heavy_plus_sign: on the bottom-right to add you MagicMirror. 
@@ -60,7 +60,7 @@ Now you should be able to remote control your mirror. If you want to reorder or 
 ## :bulb: Trouble shooting :bulb: ##  
   - If you have performed the above steps but the mirror still does not respond, have a look at you *config.js* file. Usually at the beginning of the file there is  something called the `ipWhitelist:`. Add the IP-address of your smartphone here to allow it sending commands to your mirror. If you don't know how to find out the IP-address of your smartphone a quick search with your favorite search engine will help.  
   - Check if the port you have specified in your *config.js* file is the same as in the app.  
-  - If a command is not working even though you are using all the required dependencies (e.g. toggling the monitor on/off might not work if you are using a TV instead of a pc-monitor) you can overwrite the shell-command which is used with a command that is working for you. To do this, open your **config.js** file and add the **customCommand** section to the module MMM-Remote-Control.  
+  - If a command is not working even though you are using all the required dependencies (e.g. toggling the monitor on/off might not work if you are using a TV instead of a pc-monitor) you can overwrite the shell-command which is used with a command that is working for you. To do this, open your **config.js** file and add the **customCommand** section to the module [MMM-Remote-Control](https://github.com/Jopyth/MMM-Remote-Control).  
   ```
   module: 'MMM-Remote-Control',
     config: {
