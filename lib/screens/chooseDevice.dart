@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mmremotecontrol/models/mirrorStateArguments.dart';
 
-import 'currentDevice.dart';
+import 'currentDevice/cdMain.dart';
 import 'addDevice.dart';
 import 'package:mmremotecontrol/shared/colors.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
@@ -104,6 +105,8 @@ class _StartPageState extends State<StartPage> {
     Card _newDevice = _createDevice(_deviceArguments.deviceName, _deviceArguments.ip,
         _deviceArguments.port, true);
     _initializeDevice(_newDevice);
+    _initializeDefaultCommands(_deviceArguments.deviceName);
+    _initializeSettings(_deviceArguments.deviceName);
   }
 
   void _initializeDevice(Card _newDevice) {
@@ -113,7 +116,7 @@ class _StartPageState extends State<StartPage> {
 
     setState(() {
       _devices = _devicesTemp;
-    });
+    })  ;
   }
 
   Future<void> _deleteDeviceDialog(BuildContext context, String deviceName) async {
@@ -233,5 +236,22 @@ class _StartPageState extends State<StartPage> {
     var device = DeviceArguments(deviceName, ipAdress, port);
     var dbHelper = SqLite();
     dbHelper.saveDevice(device);
+  }
+
+  void _initializeDefaultCommands(String deviceName) {
+    // delete already existing defaultCommands for this device
+    var dbHelper = SqLite();
+    dbHelper.deleteAllDefaultCommands(deviceName);
+    dbHelper.saveDefaultCommand(deviceName, "PhotoSlideshow");
+    dbHelper.saveDefaultCommand(deviceName, "MonitorBrightness");
+    dbHelper.saveDefaultCommand(deviceName, "StopwatchTimer");
+  }
+
+  void _initializeSettings(String deviceName) {
+    var setting = MirrorStateArguments(
+        deviceName, '200', '10', 'ON');
+    var dbHelper = SqLite();
+    dbHelper.deleteSettings(deviceName);
+    dbHelper.saveSetting(setting);
   }
 }

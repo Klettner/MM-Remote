@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mmremotecontrol/models/settingArguments.dart';
 import 'package:mmremotecontrol/shared/colors.dart';
 
 
@@ -11,11 +12,21 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final _alertDurationController = TextEditingController();
-  bool _isComposingAlertDuration = false;
-  String _alertDurationField = 'Alert-Duration (default 10)';
+  List<DefaultCommand> _defaultCommands = new List<DefaultCommand>();
+  bool _stateInitialized = false;
+  int _alertDuration;
 
   @override
   Widget build(BuildContext context) {
+    if(!_stateInitialized) {
+      _stateInitialized = true;
+      SettingArguments tmp;
+      final Map<String, SettingArguments> currentSettings =
+      ModalRoute.of(context).settings.arguments as Map;
+      tmp = currentSettings["currentSettings"];
+      _defaultCommands = tmp.defaultCommands;
+      _alertDuration = tmp.alertDuration;
+    }
     return Scaffold(
       appBar: AppBar(
         brightness: Brightness.light,
@@ -23,73 +34,115 @@ class _SettingsPageState extends State<SettingsPage> {
         titleSpacing: 0.0,
         title: Text('Settings'),
       ),
-      body: SafeArea(
-        child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 24.0),
-          children: <Widget>[
-            SizedBox(height: 75),
-            AccentColorOverride(
-              color: primaryColor,
-              child: TextField(
-                keyboardType: TextInputType.number,
-                controller: _alertDurationController,
-                decoration: InputDecoration(
-                  labelText: _alertDurationField,
-                ),
-                onChanged: (String text) {
-                  setState(() {
-                    _isComposingAlertDuration = text.trim().length > 0;
-                  });
-                },
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: SafeArea(
+          child: ListView(
+            padding: EdgeInsets.symmetric(horizontal: 24.0),
+            children: <Widget>[
+              SizedBox(height: 30),
+              Column(
+               children: [
+                 Text("Default commands",
+                 textScaleFactor: 1.3,
+                 ),
+                 SizedBox(
+                   height: 15,
+                 ),
+                 CheckboxListTile(
+                   title: const Text("Photo slideshow"),
+                   value: _defaultCommands.contains(DefaultCommand.PhotoSlideshow),
+                   onChanged: (bool value) {
+                    _changeDefaultCommand(value, DefaultCommand.PhotoSlideshow);
+                   },
+                 ),
+                 CheckboxListTile(
+                   title: const Text("Monitor brightness"),
+                   value: _defaultCommands.contains(DefaultCommand.MonitorBrightness),
+                   onChanged: (bool value) {
+                     _changeDefaultCommand(value, DefaultCommand.MonitorBrightness);
+                   },
+                 ),
+                  CheckboxListTile(
+                    title: const Text("Stop-watch/Timer"),
+                    value: _defaultCommands.contains(DefaultCommand.StopwatchTimer),
+                    onChanged: (bool value) {
+                      _changeDefaultCommand(value, DefaultCommand.StopwatchTimer);
+                    },
+                  )
+               ],
               ),
-            ),
-            SizedBox(height: 10),
-            ButtonBar(
-              children: <Widget>[
-                FlatButton(
-                  child: Text('CLEAR'),
-                  shape: BeveledRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(7.0)),
-                  ),
-                  onPressed: () {
-                    _alertDurationController.clear();
-                    setState(() {
-                      _isComposingAlertDuration = false;
-                    });
-                  },
+              SizedBox(
+                height: 30,
+              ),
+              Center(
+                child: Text("Alert settings",
+                textScaleFactor: 1.3,
                 ),
-                RaisedButton(
-                  child: Text('Apply',
-                  style: TextStyle(
-                    color: secondaryColor
+              ),
+              AccentColorOverride(
+                color: primaryColor,
+                child: TextField(
+                  keyboardType: TextInputType.number,
+                  controller: _alertDurationController,
+                  decoration: InputDecoration(
+                    labelText: "Alert duration (currently $_alertDuration sec.)",
                   ),
-                  ),
-                  elevation: 8.0,
-                  color: primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                  ),
-                  onPressed: (_isComposingAlertDuration)
-                      ? () => _setAlertDuration(_alertDurationController.text)
-                      : null,
-                )
-              ],
-            )
-          ],
+                ),
+              ),
+              SizedBox(height: 10),
+              ButtonBar(
+                children: <Widget>[
+                  RaisedButton(
+                    child: Text('FINISH',
+                    style: TextStyle(
+                      color: secondaryColor
+                    ),
+                    ),
+                    elevation: 8.0,
+                    color: primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                    ),
+                    onPressed: () {
+                      _submitSettings();
+                    }
+                  )
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void _setAlertDuration(
-      String alertDuration) {
-    _alertDurationController.clear();
+  void _changeDefaultCommand(bool value, DefaultCommand defaultCommand) {
+    if(value) {
+      if(!_defaultCommands.contains(defaultCommand)){
+        _defaultCommands.add(defaultCommand);
+      }
+    } else {
+      if(_defaultCommands.contains(defaultCommand)){
+        _defaultCommands.remove(defaultCommand);
+      }
+    }
+    // Update Widgets
     setState(() {
-      _isComposingAlertDuration = false;
     });
+  }
+
+  void _submitSettings() {
+    if(_alertDurationController.text.trim().compareTo("") != 0) {
+      _alertDuration = int.parse(_alertDurationController.text.trim());
+    }
+    _alertDurationController.clear();
+    SettingArguments settings = new SettingArguments(_defaultCommands, _alertDuration);
       Navigator.pop(
         context,
-        alertDuration
+        settings,
       );
   }
 }

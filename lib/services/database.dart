@@ -7,7 +7,7 @@ import 'package:logger/logger.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
 import 'package:mmremotecontrol/models/commandArguments.dart';
-import 'package:mmremotecontrol/models/settingArguments.dart';
+import 'package:mmremotecontrol/models/mirrorStateArguments.dart';
 
 class SqLite{
   static Database _db;
@@ -21,7 +21,7 @@ class SqLite{
 
   initDb() async {
     io.Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "magicMirror.db");
+    String path = join(documentsDirectory.path, "magicMirror1.db");
     var theDb = await openDatabase(path, version: 1, onCreate: _onCreate);
     return theDb;
   }
@@ -37,6 +37,54 @@ class SqLite{
     await db.execute(
         "CREATE TABLE Settings(id INTEGER PRIMARY KEY,deviceName TEXT, brightness TEXT, alertDuration TEXT, monitorStatus TEXT)");
     loggerNoStack.i("Created Settings table");
+    await db.execute(
+        "CREATE TABLE DefaultCommands(id INTEGER PRIMARY KEY, deviceName TEXT, defaultCommand TEXT)");
+    loggerNoStack.i("Created DefaultCommands table");
+  }
+
+  void saveDefaultCommand(String deviceName, String defaultCommand) async {
+    var dbClient = await db;
+    await dbClient.transaction((txn) async {
+      return await txn.rawInsert(
+          'INSERT INTO DefaultCommands(deviceName, defaultCommand) VALUES(' +
+              '\'' +
+              deviceName +
+              '\'' +
+              ',' +
+              '\'' +
+              defaultCommand +
+              '\'' +
+              ')');
+    });
+    loggerNoStack.i('defaultCommand saved');
+  }
+
+  void deleteDefaultCommand(String deviceName, String defaultCommand) async {
+    var dbClient = await db;
+    dbClient.delete('DefaultCommands',
+        where: "deviceName = ? AND defaultCommand = ?",
+        whereArgs: [deviceName, defaultCommand]);
+    loggerNoStack.i("Deleted " + defaultCommand);
+  }
+
+  void deleteAllDefaultCommands(String deviceName) async {
+    var dbClient = await db;
+    dbClient.delete('DefaultCommands',
+        where: "deviceName = ?",
+        whereArgs: [deviceName]);
+    loggerNoStack.i("Deleted all defaultCommands of" + deviceName);
+  }
+
+  Future<List<String>> getDefaultCommands(String deviceName) async {
+    loggerNoStack.i('getting persistent DefaultCommands');
+    var dbClient = await db;
+    List<Map> list = await dbClient
+        .query('DefaultCommands', where: "deviceName = ?", whereArgs: [deviceName]);
+    List<String> defaultCommands = new List();
+    for (int i = 0; i < list.length; i++) {
+      defaultCommands.add(list[i]["defaultCommand"]);
+    }
+    return defaultCommands;
   }
 
   void saveCommand(CommandArguments customCommand) async {
@@ -61,7 +109,7 @@ class SqLite{
               '\'' +
               ')');
     });
-    loggerNoStack.i('command Saved');
+    loggerNoStack.i('command saved');
   }
 
   void deleteCommand(String deviceName, String commandName) async {
@@ -127,7 +175,7 @@ class SqLite{
     return devices;
   }
 
-  void saveSetting(SettingArguments settingArguments) async {
+  void saveSetting(MirrorStateArguments settingArguments) async {
     loggerNoStack.i('saving settings');
     var dbClient = await db;
     await dbClient.transaction((txn) async {
@@ -152,6 +200,45 @@ class SqLite{
     });
   }
 
+  Future updateMonitorStatusSetting(String deviceName, String monitorStatus) async {
+    var dbClient = await db;
+    await dbClient.transaction((txn) async {
+      return await txn.rawUpdate(
+          'UPDATE Settings SET monitorStatus = ? WHERE deviceName = ?',
+          [
+            monitorStatus,
+            deviceName,
+          ]);
+    });
+    loggerNoStack.i('Monitor status updated');
+  }
+
+  Future updateAlertDurationSetting(String deviceName, int duration) async {
+    var dbClient = await db;
+    await dbClient.transaction((txn) async {
+      return await txn.rawUpdate(
+          'UPDATE Settings SET  alertDuration = ? WHERE deviceName = ?',
+          [
+            duration,
+            deviceName,
+          ]);
+    });
+    loggerNoStack.i('AlertDuration updated');
+  }
+
+  Future updateBrightnessSetting(String deviceName, int brightnessValue) async {
+    var dbClient = await db;
+    await dbClient.transaction((txn) async {
+      return await txn.rawUpdate(
+          'UPDATE Settings SET  brightness = ? WHERE deviceName = ?',
+          [
+            brightnessValue,
+            deviceName,
+          ]);
+    });
+    loggerNoStack.i('Brightness updated');
+  }
+
   void deleteSettings(String deviceName) async {
     var dbClient = await db;
     dbClient
@@ -159,15 +246,15 @@ class SqLite{
     loggerNoStack.i("Deleted Settings of " + deviceName);
   }
 
-  Future<SettingArguments> getSettings(String deviceName) async {
+  Future<MirrorStateArguments> getSettings(String deviceName) async {
     loggerNoStack.i('getting settings');
     var dbClient = await db;
     List<Map> list = await dbClient
         .query('Settings', where: "deviceName = ?", whereArgs: [deviceName]);
-    SettingArguments setting;
+    MirrorStateArguments setting;
     //there should only be one device per Name
     if(list.length >= 1) {
-      setting = new SettingArguments(
+      setting = new MirrorStateArguments(
           list[0]["deviceName"], list[0]["brightness"],
           list[0]["alertDuration"], list[0]["monitorStatus"]);
     }
