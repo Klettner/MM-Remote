@@ -36,8 +36,8 @@ If you do not use all the optional dependencies some of the default commands won
   
 &nbsp;
 ## Set-up ##
-### Option 1 (easiest) ###
-Click [here](https://github.com/Klettner/MM-Remote/releases) and choose the latest release. Pick the **app-release.apk** file and download :arrow_down: it. This file should be compatible with every android phone. Once the file is downloaded to your phone, click it to install the app. A warning will popup as this app was not downloaded from the app store. If you ignore this warning, the app will install and your done. 
+### Option 1 (easy) ###
+Click [here](https://github.com/Klettner/MM-Remote/releases) and choose the latest release. Pick the **app-release.apk** file and download [:arrow_down:](https://github.com/Klettner/MM-Remote/releases) it. This file should be compatible with every android phone. Once the file is downloaded to your phone, click it to install the app. A warning will popup as this app was not downloaded from the app store. If you ignore this warning, the app will install and your done. 
 Once the app is installed you can delete the .apk file, it is not needed anymore.  
 
 ### Option 2 (compile the app by yourselfe) ###
