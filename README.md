@@ -46,7 +46,7 @@ First you need to clone this repository with Git. The app is written in **Dart**
 ## Getting started ##
 After starting the MM-Remote app, tab on the :heavy_plus_sign: on the bottom-right to add you MagicMirror. 
   - Give your mirror a name. 
-  - Add it's IP-address to the next field (e.g. something like 192.168.0.0). You can get the IP-address by typing `ipconfig` in the console of the raspberry pi. In the output after *inet addr:* you will find the ip-adress. 
+  - Add it's IP-address to the next field (e.g. something like 192.168.0.0). You can get the IP-address by typing `hostname -I` in the console of the raspberry pi. 
   - Put the port in the last field (e.g. 8080) and click on create.
 
 Now you should be able to remote control your mirror. If you want to reorder or hide some of the default commands displayed in the **HOME** tab, go to settings and check :white_check_mark: the default command boxes in the order in which these commands should be displayed. Keep in mind, if you don't use all the modules mentioned under dependencies, some of the buttons might not work (e.g. changing the displayed UI-pages of your mirror via the left and right arrows on the bottom only works if you are using the MMM-Pages module). You can always create you own commands in the **CUSTOM-COMMANDS** tab to extend the functionalities of the app. If there are any MagicMirror modules for which it is impractical to create your own **CUSTOM-COMMANDS** (e.g. because you need text input fileds, a slider or many buttons) let me know, I might consider creating :wrench: a default command for it in future releases.  
