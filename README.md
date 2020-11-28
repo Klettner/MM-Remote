@@ -20,8 +20,9 @@ MM-Remote is an Android app to control your **MagicMirror** remotly via smartpho
 ### v1.0.3 ###
   * Start a timer on the mirror
   * Start a stop-watch :hourglass_flowing_sand: on the mirror
-  * Hide and reorder default commands on the Home-tab
+  * Hide and reorder default commands on the Home-tab  
   
+&nbsp;
 ## Dependencies ##
   
 ### Required :warning: (the app won't work without it): ###
@@ -30,13 +31,12 @@ MM-Remote is an Android app to control your **MagicMirror** remotly via smartpho
 | [MMM-Remote-Control](https://github.com/Jopyth/MMM-Remote-Control) | Communication between app and mirror |
     
 ### Optional (without these, some default commands won't work): ###
+If you do not use all the optional dependencies some of the default commands won't work, but such commands can be hidden in the settings.
 | Module | Usage |
 | ------ |------ |
 | [MMM-BackgroundSlideshow](https://github.com/darickc/MMM-BackgroundSlideshow) | Controlling a photo-slideshow on the mirror |
 | [MMM-Pages](https://github.com/edward-shen/MMM-pages) | Switching between different UI-pages |
 | [MMM-StopwatchTimer](https://github.com/klettner/MMM-StopwatchTimer) | Controlling a timer/stop-watch on the mirror |
-  
-If you do not use all the optional dependencies some of the default commands won't work, but such commands can be hidden in the settings.  
   
 &nbsp;
 ## Set-up ##
