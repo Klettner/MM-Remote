@@ -25,12 +25,16 @@ MM-Remote is an Android app to control your **MagicMirror** remotly via smartpho
 ## Dependencies ##
   
 ### Required :warning: (the app won't work without it): ###
-  * [MMM-Remote-Control](https://github.com/Jopyth/MMM-Remote-Control) (used for communication with the mirror)
+| Module | Usage |
+| ------ |------ |
+| [MMM-Remote-Control](https://github.com/Jopyth/MMM-Remote-Control) | Communication between app and mirror |
     
 ### Optional (without these, some default commands won't work): ###
-  * [MMM-BackgroundSlideshow](https://github.com/darickc/MMM-BackgroundSlideshow) (controlling a photo-slideshow on the mirror)
-  * [MMM-Pages](https://github.com/edward-shen/MMM-pages) (switching between different UI-pages)
-  * [MMM-StopwatchTimer](https://github.com/klettner/MMM-StopwatchTimer) (controlling a timer/stop-watch on the mirror)
+| Module | Usage |
+| ------ |------ |
+| [MMM-BackgroundSlideshow](https://github.com/darickc/MMM-BackgroundSlideshow) | Controlling a photo-slideshow on the mirror |
+| [MMM-Pages](https://github.com/edward-shen/MMM-pages) | Switching between different UI-pages |
+| [MMM-StopwatchTimer](https://github.com/klettner/MMM-StopwatchTimer) | Controlling a timer/stop-watch on the mirror |
   
 If you do not use all the optional dependencies some of the default commands won't work, but such commands can be hidden in the settings.  
   
