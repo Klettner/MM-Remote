@@ -181,15 +181,16 @@ class _StartPageState extends State<StartPage> {
                       children: <Widget>[
                         Text(
                           device.deviceName,
-                          textScaleFactor: 1.1,
+                          textScaleFactor: 1.2,
                           style: TextStyle(
                             color: primaryColor,
                           ),
                         ),
                         SizedBox(height: 12.0),
-                        Text('IP: ' + device.ip),
-                        SizedBox(height: 8.0),
-                        Text('Port: ' + device.port),
+                        Text(
+                          'IP: ' + device.ip,
+                          textScaleFactor: 1.1,
+                        ),
                         SizedBox(height: 4.0),
                       ],
                     ),

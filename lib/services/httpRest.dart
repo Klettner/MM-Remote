@@ -13,8 +13,8 @@ class HttpRest {
   Function(String) updateLastRequest;
   Function(String, BuildContext) showSnackbar;
 
-  HttpRest(this.ip, this.port, this._getApiKey, this.updateLastRequest, this.showSnackbar){
-    _baseUrl = "http://$ip:$port/api/";
+  HttpRest(this.ip, this._getApiKey, this.updateLastRequest, this.showSnackbar){
+    _baseUrl = "http://$ip:8080/api/";
   }
 
   Map<String, String> _getHeader(){

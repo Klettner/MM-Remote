@@ -32,7 +32,7 @@ class SqLite{
         "CREATE TABLE Commands(id INTEGER PRIMARY KEY,deviceName TEXT, commandName TEXT, notification TEXT, payload TEXT)");
     loggerNoStack.i("Created Commands table");
     await db.execute(
-        "CREATE TABLE Devices(id INTEGER PRIMARY KEY,deviceName TEXT, ipAddress TEXT, port TEXT, apiKey TEXT)");
+        "CREATE TABLE Devices(id INTEGER PRIMARY KEY,deviceName TEXT, ipAddress TEXT, apiKey TEXT)");
     loggerNoStack.i("Created Devices table");
     await db.execute(
         "CREATE TABLE Settings(id INTEGER PRIMARY KEY,deviceName TEXT, brightness TEXT, alertDuration TEXT, monitorStatus TEXT)");
@@ -137,17 +137,13 @@ class SqLite{
     var dbClient = await db;
     await dbClient.transaction((txn) async {
       return await txn.rawInsert(
-          'INSERT INTO Devices(deviceName, ipAddress, port, apiKey) VALUES(' +
+          'INSERT INTO Devices(deviceName, ipAddress, apiKey) VALUES(' +
               '\'' +
               deviceArguments.deviceName +
               '\'' +
               ',' +
               '\'' +
               deviceArguments.ip +
-              '\'' +
-              ',' +
-              '\'' +
-              deviceArguments.port +
               '\'' +
               ',' +
               '\'' +
@@ -187,7 +183,7 @@ class SqLite{
     List<DeviceArguments> devices = new List();
     for (int i = 0; i < list.length; i++) {
       devices.add(new DeviceArguments(
-          list[i]["deviceName"], list[i]["ipAddress"], list[i]["port"], list[i]["apiKey"]));
+          list[i]["deviceName"], list[i]["ipAddress"], list[i]["apiKey"]));
     }
     return devices;
   }
@@ -200,8 +196,7 @@ class SqLite{
     if(list.length >= 1)
     {
       device = new DeviceArguments(
-          list[0]["deviceName"], list[0]["ipAddress"],
-          list[0]["port"], list[0]["apiKey"]);
+          list[0]["deviceName"], list[0]["ipAddress"], list[0]["apiKey"]);
     }
     return device;
   }

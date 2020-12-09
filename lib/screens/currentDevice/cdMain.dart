@@ -37,7 +37,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   final TextEditingController _timerSecondsController =
       new TextEditingController();
   String ip;
-  String port;
   String deviceName;
   String _apiKey;
   int _brightnessValue = 0;
@@ -71,13 +70,12 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     //Only after start of the App
     if (!_stateInitialized) {
       this.ip = args.ip;
-      this.port = args.port;
       this.deviceName = args.deviceName;
       this._apiKey = args.apiKey;
       
       // _httpRest will be needed for the initialization of DefaultCommandCards,
       // therefore it has to be instantiated first
-      _httpRest = new HttpRest(ip, port, _getApiKey, _updateLastRequest, _showSnackbar);
+      _httpRest = new HttpRest(ip, _getApiKey, _updateLastRequest, _showSnackbar);
       _initializeDrawerImage();
       _initializeSettings(deviceName);
       _initializeDefaultCommandCards();
