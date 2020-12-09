@@ -23,9 +23,9 @@ MM-Remote is an Android app to control your [**MagicMirror**](https://magicmirro
   * Hide and reorder default commands on the Home-tab  
 
 ### v2.0.0 ###
-  * Changing to new API of MMM-Remote-Control for the communication with the mirror, as the previously used one will be deprecated soon
+  * Changed to new API of MMM-Remote-Control for the communication with the mirror, as the previously used one will be deprecated soon
   * Increased security through the usage of apiKeys
-  * Port should always be 8080 and is therefore removed
+  * Removed port setting, because it was redundant (should always be port 8080)
   
 &nbsp;
 ## Dependencies ##
@@ -56,7 +56,7 @@ First you need to clone this repository with Git. The app is written in **Dart**
 ## Getting started ##
 After starting the MM-Remote app, tab on the :heavy_plus_sign: on the bottom-right to add you MagicMirror. 
   - Give your mirror a name
-  - Add it's IP-address to the next field (e.g. something like 192.168.0.0). You can get the IP-address by typing `hostname -I` in the console of the raspberry pi44 
+  - Add it's IP-address to the next field (e.g. something like 192.168.0.0). You can get the IP-address by typing `hostname -I` in the console of the raspberry pi 
   - The last field requires the apiKey you have specified for the MMM-Remote-Control module in the config.js of your mirror (make sure it is correct, otherwise the app will not be able to communicate with the mirror)
 
 **How to get your apiKey:**  
