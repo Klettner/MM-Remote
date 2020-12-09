@@ -84,7 +84,8 @@ functionalities of the app. If there are any MagicMirror modules for which it is
 ## :bulb: Trouble shooting :bulb: ##  
   - If you have performed the above steps, but the mirror still does not respond, have a look at you *config.js* file. Usually at the beginning of the file there is  something called the `ipWhitelist:`. Add the IP-address of your smartphone here to allow it sending commands to your mirror. If you don't know how to find out the IP-address of your smartphone a quick search with your favorite search engine will help.  
   - Check if you are using a recent version (2.2.0 or higher) of [MMM-Remote-Control](https://github.com/Jopyth/MMM-Remote-Control)
-  - Check if you have put in the apiKey which is specified in your config.js. To do this, open the settings of MM-Remote. Here you can see the currently active apiKey and can change it (e.g. if there is a typo present).
+  - Check if you have put in the apiKey which is specified in your config.js. To do this, open the settings of MM-Remote. Here you can see the currently active apiKey and can change it (e.g. if there is a typo present).  
+  - If you have already installed an older version of the app previously, you might need to deinstall it before installing the new version
   - If a command is not working even though you are using all the required dependencies (e.g. toggling the monitor on/off might not work if you are using a TV instead of a pc-monitor) you can overwrite the shell-command which is used with a command that is working for you. To do this, open your **config.js** file and add the **customCommand** section to the module [MMM-Remote-Control](https://github.com/Jopyth/MMM-Remote-Control).  
   ```
   module: 'MMM-Remote-Control',
