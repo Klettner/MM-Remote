@@ -62,3 +62,8 @@ void updateBrightnessSetting(String deviceName, int brightnessValue) {
   dbHelper.updateBrightnessSetting(deviceName, brightnessValue);
 }
 
+void updateApiKey(String deviceName, String apiKey) {
+  var dbHelper = SqLite();
+  dbHelper.updateApiKey(deviceName, apiKey);
+}
+

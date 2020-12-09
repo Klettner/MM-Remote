@@ -1,60 +1,54 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class HttpRest {
   String ip;
   String port;
+  String _baseUrl;
+  Function() _getApiKey;
   Function(String) updateLastRequest;
   Function(String, BuildContext) showSnackbar;
 
-  HttpRest(this.ip, this.port, this.updateLastRequest, this.showSnackbar);
+  HttpRest(this.ip, this.port, this._getApiKey, this.updateLastRequest, this.showSnackbar){
+    _baseUrl = "http://$ip:$port/api/";
+  }
+
+  Map<String, String> _getHeader(){
+    return {
+      "Authorization": "apiKey " + _getApiKey(),
+      HttpHeaders.contentTypeHeader: "application/json"
+    };
+  }
 
   void sendCustomCommand(String notification,
       String payload) {
     if (payload.trim().compareTo('') == 0) {
-      http.get("http://" +
-          ip +
-          ":" +
-          port +
-          "/remote?action=NOTIFICATION&notification=" +
-          notification);
+      http.get(_baseUrl + "notification/$notification", headers: _getHeader());
     } else {
-      http.get("http://" +
-          ip +
-          ":" +
-          port +
-          "/remote?action=NOTIFICATION&notification=" +
-          notification +
-          "&payload=" +
-          payload);
+      http.get(_baseUrl + "notification/$notification/$payload", headers: _getHeader());
     }
   }
 
-  void sendAction(String action) {
-    http.get("http://" + ip + ":" + port + "/remote?action=" + action);
-  }
-
-  void setBrightness(int value, bool message) async {
-    http.get("http://" +
-        ip +
-        ":" +
-        port +
-        "/remote?action=BRIGHTNESS&value=" +
-        '$value');
+  void setBrightness(int value, bool message) {
+    http.get(_baseUrl + "brightness/$value", headers: _getHeader());
     if(message){
-      updateLastRequest("Brightness changed to " + '$value');
+      updateLastRequest("Brightness changed to $value");
     }
   }
 
   void sendAlert(String text, int _alertDuration) {
     updateLastRequest("Sending alert");
-    http.get("http://" +
-        ip +
-        ":" +
-        port +
-        "/remote?action=SHOW_ALERT&message=&title=" +
-        text +
-        "&timer=$_alertDuration&type=alert");
+
+    var body = {
+      "title": text,
+      "timer": _alertDuration * 1000
+    };
+
+    http.post(_baseUrl + "module/alert/showalert", headers: _getHeader(), body: jsonEncode(body));
   }
 
   void backgroundSlideShowPlay() {
@@ -73,12 +67,12 @@ class HttpRest {
   }
 
   void rebootPi() {
-    sendAction("REBOOT");
+    http.get(_baseUrl + "reboot", headers: _getHeader());
     updateLastRequest("Rebooting mirror");
   }
 
   void shutdownPi() {
-    sendAction("SHUTDOWN");
+    http.get(_baseUrl + "shutdown", headers: _getHeader());
     updateLastRequest("Shutting down mirror");
   }
 
@@ -113,12 +107,12 @@ class HttpRest {
   }
 
   void toggleMonitorOn() {
-    sendAction("MONITORON");
+    http.post(_baseUrl + "monitor/on", headers: _getHeader());
     updateLastRequest("Monitor on");
   }
 
   void toggleMonitorOff() {
-    sendAction("MONITOROFF");
+    http.post(_baseUrl + "monitor/off", headers: _getHeader());
     updateLastRequest("Monitor off");
   }
 
