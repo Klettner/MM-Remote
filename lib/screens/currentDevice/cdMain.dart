@@ -37,8 +37,8 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   final TextEditingController _timerSecondsController =
       new TextEditingController();
   String ip;
-  String port;
   String deviceName;
+  String _apiKey;
   int _brightnessValue = 0;
   int _alertDuration = 10;
   bool _stateInitialized = false;
@@ -66,15 +66,16 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   Widget build(BuildContext context) {
     var _deviceOrientation = MediaQuery.of(context).orientation;
     final DeviceArguments args = ModalRoute.of(context).settings.arguments;
-    this.ip = args.ip;
-    this.port = args.port;
-    this.deviceName = args.deviceName;
 
     //Only after start of the App
     if (!_stateInitialized) {
+      this.ip = args.ip;
+      this.deviceName = args.deviceName;
+      this._apiKey = args.apiKey;
+      
       // _httpRest will be needed for the initialization of DefaultCommandCards,
       // therefore it has to be instantiated first
-      _httpRest = new HttpRest(ip, port, _updateLastRequest, _showSnackbar);
+      _httpRest = new HttpRest(ip, _getApiKey, _updateLastRequest, _showSnackbar);
       _initializeDrawerImage();
       _initializeSettings(deviceName);
       _initializeDefaultCommandCards();
@@ -632,13 +633,15 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
     if (int.tryParse(_amount) != null) {
       _alertDuration = int.tryParse(_amount);
+      // Change the duration to seconds
+      _alertDuration = _alertDuration;
       updateAlertDurationSetting(deviceName, _alertDuration);
       _updateLastRequest('Alert duration set to ' + _amount);
     }
   }
 
   _navigateToSettingsPage() async {
-    SettingArguments _currentSettings = new SettingArguments(_defaultCommands, _alertDuration);
+    SettingArguments _currentSettings = new SettingArguments(_defaultCommands, _alertDuration, _apiKey);
     final result = await Navigator.pushNamed(
       context,
       SettingsPage.routeName,
@@ -650,9 +653,11 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       SettingArguments settings = result;
       _alertDuration = settings.alertDuration;
       _defaultCommands = settings.defaultCommands;
+      _apiKey = settings.apiKey;
       _updateDefaultCommandCards();
       persistDefaultCommands(deviceName, _defaultCommands);
       updateAlertDurationSetting(deviceName, _alertDuration);
+      updateApiKey(deviceName, _apiKey);
     }
   }
 
@@ -660,5 +665,9 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     setState(() {
       lastRequest = requestMessage;
     });
+  }
+
+  String _getApiKey(){
+    return _apiKey;
   }
 }

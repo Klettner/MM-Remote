@@ -12,20 +12,23 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final _alertDurationController = TextEditingController();
+  final _apiKeyController = TextEditingController();
   List<DefaultCommand> _defaultCommands = new List<DefaultCommand>();
   bool _stateInitialized = false;
   int _alertDuration;
+  String _apiKey;
 
   @override
   Widget build(BuildContext context) {
     if(!_stateInitialized) {
       _stateInitialized = true;
       SettingArguments tmp;
-      final Map<String, SettingArguments> currentSettings =
+      final Map<String, Object> currentSettings =
       ModalRoute.of(context).settings.arguments as Map;
       tmp = currentSettings["currentSettings"];
       _defaultCommands = tmp.defaultCommands;
       _alertDuration = tmp.alertDuration;
+      _apiKey = tmp.apiKey;
     }
     return Scaffold(
       appBar: AppBar(
@@ -92,6 +95,24 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
               ),
+              SizedBox(
+                height: 30,
+              ),
+              Center(
+                child: Text("API Key",
+                  textScaleFactor: 1.3,
+                ),
+              ),
+              AccentColorOverride(
+                color: primaryColor,
+                child: TextField(
+                  keyboardType: TextInputType.visiblePassword,
+                  controller: _apiKeyController,
+                  decoration: InputDecoration(
+                    labelText: "Current API key: $_apiKey",
+                  ),
+                ),
+              ),
               SizedBox(height: 10),
               ButtonBar(
                 children: <Widget>[
@@ -138,8 +159,12 @@ class _SettingsPageState extends State<SettingsPage> {
     if(_alertDurationController.text.trim().compareTo("") != 0) {
       _alertDuration = int.parse(_alertDurationController.text.trim());
     }
+    if(_apiKeyController.text.trim().compareTo("") != 0){
+      _apiKey = _apiKeyController.text.trim();
+    }
+    _apiKeyController.clear();
     _alertDurationController.clear();
-    SettingArguments settings = new SettingArguments(_defaultCommands, _alertDuration);
+    SettingArguments settings = new SettingArguments(_defaultCommands, _alertDuration, _apiKey);
       Navigator.pop(
         context,
         settings,

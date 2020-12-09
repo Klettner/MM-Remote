@@ -8,11 +8,6 @@ import 'package:mmremotecontrol/shared/colors.dart';
 import 'package:mmremotecontrol/models/deviceArguments.dart';
 import 'package:mmremotecontrol/services/database.dart';
 
-Future<List<DeviceArguments>> fetchDevicesFromDatabase() async {
-  var dbHelper = SqLite();
-  Future<List<DeviceArguments>> devices = dbHelper.getDevices();
-  return devices;
-}
 
 class StartPage extends StatefulWidget {
   static const routeName = '/startPage';
@@ -33,7 +28,7 @@ class _StartPageState extends State<StartPage> {
     fetchDevicesFromDatabase().then((List<DeviceArguments> devices) {
       for (DeviceArguments device in devices) {
         Card _newDevice =
-            _createDevice(device.deviceName, device.ip, device.port, false);
+            _createDevice(device, false);
         _devicesTemp.add(_newDevice);
       }
       setState(() {
@@ -102,8 +97,7 @@ class _StartPageState extends State<StartPage> {
     );
     DeviceArguments _deviceArguments = result;
 
-    Card _newDevice = _createDevice(_deviceArguments.deviceName, _deviceArguments.ip,
-        _deviceArguments.port, true);
+    Card _newDevice = _createDevice(_deviceArguments, true);
     _initializeDevice(_newDevice);
     _initializeDefaultCommands(_deviceArguments.deviceName);
     _initializeSettings(_deviceArguments.deviceName);
@@ -154,7 +148,7 @@ class _StartPageState extends State<StartPage> {
     fetchDevicesFromDatabase().then((List<DeviceArguments> devices) {
       for (DeviceArguments device in devices) {
         Card _newDevice =
-        _createDevice(device.deviceName, device.ip, device.port, false);
+        _createDevice(device, false);
         _devicesTemp.add(_newDevice);
       }
       setState(() {
@@ -163,9 +157,9 @@ class _StartPageState extends State<StartPage> {
     });
   }
 
-  Card _createDevice(String deviceName, String ip, String port, bool persist) {
+  Card _createDevice(DeviceArguments device, bool persist) {
     if (persist) {
-      _persistDevice(deviceName, ip, port);
+      _persistDevice(device);
     }
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -186,31 +180,30 @@ class _StartPageState extends State<StartPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          deviceName,
-                          textScaleFactor: 1.1,
+                          device.deviceName,
+                          textScaleFactor: 1.2,
                           style: TextStyle(
                             color: primaryColor,
                           ),
                         ),
                         SizedBox(height: 12.0),
-                        Text('IP: ' + ip),
-                        SizedBox(height: 8.0),
-                        Text('Port: ' + port),
+                        Text(
+                          'IP: ' + device.ip,
+                          textScaleFactor: 1.1,
+                        ),
                         SizedBox(height: 4.0),
                       ],
                     ),
                   ),
                 ),
                 onPressed: () {
-                  Navigator.pushNamed(
-                    context,
-                    CurrentDevicePage.routeName,
-                    arguments: DeviceArguments(
-                      deviceName,
-                      ip,
-                      port,
-                    ),
-                  );
+                  fetchDeviceFromDatabase(device.deviceName).then((DeviceArguments newDevice){
+                    Navigator.pushNamed(
+                      context,
+                      CurrentDevicePage.routeName,
+                      arguments: newDevice,
+                    );
+                  });
                 },
               ),
             ),
@@ -223,7 +216,7 @@ class _StartPageState extends State<StartPage> {
               ),
               tooltip: 'Delete device',
               onPressed: () {
-                _deleteDeviceDialog(context, deviceName);
+                _deleteDeviceDialog(context, device.deviceName);
               },
             ),
           ],
@@ -232,8 +225,7 @@ class _StartPageState extends State<StartPage> {
     );
   }
 
-  void _persistDevice(String deviceName, String ipAdress, String port) {
-    var device = DeviceArguments(deviceName, ipAdress, port);
+  void _persistDevice(DeviceArguments device) {
     var dbHelper = SqLite();
     dbHelper.saveDevice(device);
   }
@@ -254,4 +246,16 @@ class _StartPageState extends State<StartPage> {
     dbHelper.deleteSettings(deviceName);
     dbHelper.saveSetting(setting);
   }
+}
+
+Future<List<DeviceArguments>> fetchDevicesFromDatabase() async {
+  var dbHelper = SqLite();
+  Future<List<DeviceArguments>> devices = dbHelper.getDevices();
+  return devices;
+}
+
+Future<DeviceArguments> fetchDeviceFromDatabase(String deviceName) async {
+  var dbHelper = SqLite();
+  Future<DeviceArguments> device = dbHelper.getDevice(deviceName);
+  return device;
 }

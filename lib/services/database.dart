@@ -21,7 +21,7 @@ class SqLite{
 
   initDb() async {
     io.Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "magicMirror1.db");
+    String path = join(documentsDirectory.path, "magicMirror2.db");
     var theDb = await openDatabase(path, version: 1, onCreate: _onCreate);
     return theDb;
   }
@@ -32,7 +32,7 @@ class SqLite{
         "CREATE TABLE Commands(id INTEGER PRIMARY KEY,deviceName TEXT, commandName TEXT, notification TEXT, payload TEXT)");
     loggerNoStack.i("Created Commands table");
     await db.execute(
-        "CREATE TABLE Devices(id INTEGER PRIMARY KEY,deviceName TEXT, ipAddress TEXT, port TEXT)");
+        "CREATE TABLE Devices(id INTEGER PRIMARY KEY,deviceName TEXT, ipAddress TEXT, apiKey TEXT)");
     loggerNoStack.i("Created Devices table");
     await db.execute(
         "CREATE TABLE Settings(id INTEGER PRIMARY KEY,deviceName TEXT, brightness TEXT, alertDuration TEXT, monitorStatus TEXT)");
@@ -137,7 +137,7 @@ class SqLite{
     var dbClient = await db;
     await dbClient.transaction((txn) async {
       return await txn.rawInsert(
-          'INSERT INTO Devices(deviceName, ipAddress, port) VALUES(' +
+          'INSERT INTO Devices(deviceName, ipAddress, apiKey) VALUES(' +
               '\'' +
               deviceArguments.deviceName +
               '\'' +
@@ -147,10 +147,23 @@ class SqLite{
               '\'' +
               ',' +
               '\'' +
-              deviceArguments.port +
+              deviceArguments.apiKey +
               '\'' +
               ')');
     });
+  }
+
+  Future updateApiKey(String deviceName, String apiKey) async {
+    var dbClient = await db;
+    await dbClient.transaction((txn) async {
+      return await txn.rawUpdate(
+          'UPDATE Devices SET apiKey = ? WHERE deviceName = ?',
+          [
+            apiKey,
+            deviceName,
+          ]);
+    });
+    loggerNoStack.i('API Key updated');
   }
 
   void deleteDevice(String deviceName) async {
@@ -170,9 +183,22 @@ class SqLite{
     List<DeviceArguments> devices = new List();
     for (int i = 0; i < list.length; i++) {
       devices.add(new DeviceArguments(
-          list[i]["deviceName"], list[i]["ipAddress"], list[i]["port"]));
+          list[i]["deviceName"], list[i]["ipAddress"], list[i]["apiKey"]));
     }
     return devices;
+  }
+
+  Future<DeviceArguments> getDevice(String deviceName) async {
+    var dbClient = await db;
+    List<Map> list = await dbClient
+        .query('Devices', where: "deviceName = ?", whereArgs: [deviceName]);
+    DeviceArguments device;
+    if(list.length >= 1)
+    {
+      device = new DeviceArguments(
+          list[0]["deviceName"], list[0]["ipAddress"], list[0]["apiKey"]);
+    }
+    return device;
   }
 
   void saveSetting(MirrorStateArguments settingArguments) async {

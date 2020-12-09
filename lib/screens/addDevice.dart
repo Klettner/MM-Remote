@@ -14,13 +14,13 @@ class AddDevicePage extends StatefulWidget {
 class _AddDevicePageState extends State<AddDevicePage> {
   final _titleController = TextEditingController();
   final _ipController = TextEditingController();
-  final _portController = TextEditingController();
+  final _apiKeyController = TextEditingController();
   bool _isComposingTitle = false;
   bool _isComposingIp = false;
-  bool _isComposingPort = false;
+  bool _isComposingApiKey = false;
   String _titleField = 'Device name';
   String _ipField = 'IP-Address';
-  String _portField = 'Port';
+  String _apiKeyField = 'API Key';
 
   @override
   Widget build(BuildContext context) {
@@ -69,13 +69,13 @@ class _AddDevicePageState extends State<AddDevicePage> {
             AccentColorOverride(
               color: primaryColor,
               child: TextField(
-                controller: _portController,
+                controller: _apiKeyController,
                 decoration: InputDecoration(
-                  labelText: _portField,
+                  labelText: _apiKeyField,
                 ),
                 onChanged: (String text) {
                   setState(() {
-                    _isComposingPort = text.trim().length > 0;
+                    _isComposingApiKey = text.trim().length > 0;
                   });
                 },
               ),
@@ -90,11 +90,11 @@ class _AddDevicePageState extends State<AddDevicePage> {
                   onPressed: () {
                     _titleController.clear();
                     _ipController.clear();
-                    _portController.clear();
+                    _apiKeyController.clear();
                     setState(() {
                       _isComposingTitle = false;
                       _isComposingIp = false;
-                      _isComposingPort = false;
+                      _isComposingApiKey = false;
                     });
                   },
                 ),
@@ -109,9 +109,9 @@ class _AddDevicePageState extends State<AddDevicePage> {
                     borderRadius: BorderRadius.all(Radius.circular(15.0)),
                   ),
                   onPressed:
-                      (_isComposingTitle && _isComposingIp && _isComposingPort)
+                      (_isComposingTitle && _isComposingIp && _isComposingApiKey)
                           ? () => _handleSubmitted(_titleController.text,
-                              _ipController.text, _portController.text)
+                              _ipController.text, _apiKeyController.text)
                           : null,
                 )
               ],
@@ -122,21 +122,21 @@ class _AddDevicePageState extends State<AddDevicePage> {
     );
   }
 
-  void _handleSubmitted(String title, String ip, String port) {
+  void _handleSubmitted(String title, String ip, String apiKey) {
     _titleController.clear();
     _ipController.clear();
-    _portController.clear();
+    _apiKeyController.clear();
     setState(() {
       _isComposingTitle = false;
       _isComposingIp = false;
-      _isComposingPort = false;
+      _isComposingApiKey = false;
     });
     Navigator.pop(
       context,
       DeviceArguments(
         title.trim(),
         ip.trim(),
-        port.trim(),
+        apiKey.trim(),
       ),
     );
   }
