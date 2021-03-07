@@ -27,10 +27,10 @@ class HttpRest {
 
   void sendCustomCommand(String notification, String payload) {
     if (payload.trim().compareTo('') == 0) {
-      http.get(Uri.http(_baseUrl, "notification/$notification"),
+      http.get(Uri.http(_baseUrl, "/api/notification/$notification"),
           headers: _getHeader());
     } else {
-      http.get(Uri.https(_baseUrl, "notification/$notification/$payload"),
+      http.get(Uri.https(_baseUrl, "/api/notification/$notification/$payload"),
           headers: _getHeader());
     }
   }
@@ -67,12 +67,12 @@ class HttpRest {
   }
 
   void rebootPi() {
-    http.get(Uri.https(_baseUrl, "reboot"), headers: _getHeader());
+    http.get(Uri.https(_baseUrl, "/api/reboot"), headers: _getHeader());
     updateLastRequest("Rebooting mirror");
   }
 
   void shutdownPi() {
-    http.get(Uri.https(_baseUrl, "shutdown"), headers: _getHeader());
+    http.get(Uri.https(_baseUrl, "/api/shutdown"), headers: _getHeader());
     updateLastRequest("Shutting down mirror");
   }
 
@@ -107,12 +107,12 @@ class HttpRest {
   }
 
   void toggleMonitorOn() {
-    http.post(Uri.https(_baseUrl, "monitor/on"), headers: _getHeader());
+    http.post(Uri.https(_baseUrl, "/api/monitor/on"), headers: _getHeader());
     updateLastRequest("Monitor on");
   }
 
   void toggleMonitorOff() {
-    http.post(Uri.https(_baseUrl, "monitor/off"), headers: _getHeader());
+    http.post(Uri.https(_baseUrl, "/api/monitor/off"), headers: _getHeader());
     updateLastRequest("Monitor off");
   }
 
