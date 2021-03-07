@@ -10,11 +10,9 @@ class HttpRest {
   String port;
   String _baseUrl;
   Function() _getApiKey;
-  Function(String) updateLastRequest;
   Function(String, BuildContext) showSnackbar;
 
-  HttpRest(
-      this.ip, this._getApiKey, this.updateLastRequest, this.showSnackbar) {
+  HttpRest(this.ip, this._getApiKey, this.showSnackbar) {
     _baseUrl = "$ip:8080";
   }
 
@@ -35,11 +33,11 @@ class HttpRest {
     }
   }
 
-  void setBrightness(int value, bool message) {
+  void setBrightness(int value, bool message, BuildContext context) {
     http.get(Uri.http(_baseUrl, "/api/brightness/$value"),
         headers: _getHeader());
     if (message) {
-      updateLastRequest("Brightness changed to $value");
+      showSnackbar("Brightness changed to $value", context);
     }
   }
 
@@ -51,76 +49,70 @@ class HttpRest {
   }
 
   void sendAlert(String text, int _alertDuration) {
-    updateLastRequest("Sending alert");
-
     var body = {"title": text, "timer": _alertDuration * 1000};
     http.post(Uri.http(_baseUrl, "/api/module/alert/showalert"),
         headers: _getHeader(), body: jsonEncode(body));
   }
 
-  void backgroundSlideShowPlay() {
+  void backgroundSlideShowPlay(BuildContext context) {
     sendCustomCommand("BACKGROUNDSLIDESHOW_PLAY", "");
-    updateLastRequest("Started SlideShow");
+    showSnackbar("Started SlideShow", context);
   }
 
-  void backgroundSlideShowNext() {
+  void backgroundSlideShowNext(BuildContext context) {
     sendCustomCommand("BACKGROUNDSLIDESHOW_NEXT", "");
-    updateLastRequest("Next picture");
+    showSnackbar("Next picture", context);
   }
 
-  void backgroundSlideShowStop() {
+  void backgroundSlideShowStop(BuildContext context) {
     sendCustomCommand("BACKGROUNDSLIDESHOW_STOP", "");
-    updateLastRequest("Stopped SlideShow");
+    showSnackbar("Stopped SlideShow", context);
   }
 
   void rebootPi() {
     http.get(Uri.http(_baseUrl, "/api/reboot"), headers: _getHeader());
-    updateLastRequest("Rebooting mirror");
   }
 
   void shutdownPi() {
     http.get(Uri.http(_baseUrl, "/api/shutdown"), headers: _getHeader());
-    updateLastRequest("Shutting down mirror");
   }
 
-  void stopWatchUnpause() {
+  void stopWatchUnpause(BuildContext context) {
     sendCustomCommand("UNPAUSE_STOPWATCH", "");
-    updateLastRequest("Continued stop-watch");
+    showSnackbar("Continued stop-watch", context);
   }
 
-  void stopWatchStart() {
+  void stopWatchStart(BuildContext context) {
     sendCustomCommand("START_STOPWATCH", "");
-    updateLastRequest("Started stop-watch");
+    showSnackbar("Started stop-watch", context);
   }
 
-  void stopWatchTimerPause() {
+  void stopWatchTimerPause(BuildContext context) {
     sendCustomCommand("PAUSE_STOPWATCHTIMER", "");
-    updateLastRequest("Paused Timer/Stop-watch");
+    showSnackbar("Paused Timer/Stop-watch", context);
   }
 
-  void stopWatchTimerInterrupt() {
+  void stopWatchTimerInterrupt(BuildContext context) {
     sendCustomCommand("INTERRUPT_STOPWATCHTIMER", "");
-    updateLastRequest("Interrupted Timer/Stop-watch");
+    showSnackbar("Interrupted Timer/Stop-watch", context);
   }
 
-  void timerStart(int seconds) {
+  void timerStart(int seconds, BuildContext context) {
     sendCustomCommand("START_TIMER", "$seconds");
-    updateLastRequest("Started timer");
+    showSnackbar("Started timer", context);
   }
 
-  void timerUnpause() {
+  void timerUnpause(BuildContext context) {
     sendCustomCommand("UNPAUSE_TIMER", "");
-    updateLastRequest("Continued timer");
+    showSnackbar("Continued timer", context);
   }
 
   void toggleMonitorOn() {
     http.post(Uri.http(_baseUrl, "/api/monitor/on"), headers: _getHeader());
-    updateLastRequest("Monitor on");
   }
 
   void toggleMonitorOff() {
     http.post(Uri.http(_baseUrl, "/api/monitor/off"), headers: _getHeader());
-    updateLastRequest("Monitor off");
   }
 
   Future<bool> isMonitorOn() async {
@@ -132,19 +124,16 @@ class HttpRest {
   void incrementPage(BuildContext context) {
     sendCustomCommand("PAGE_INCREMENT", "");
     showSnackbar('Page Incremented', context);
-    updateLastRequest("Page Incremented");
   }
 
   void decrementPage(BuildContext context) {
     sendCustomCommand("PAGE_DECREMENT", "");
     showSnackbar('Page Decremented', context);
-    updateLastRequest("Page Decremented");
   }
 
   void executeCustomCommand(String commandName, String notification,
       String payload, BuildContext context) {
     sendCustomCommand(notification, payload);
     showSnackbar(commandName + ' sended', context);
-    updateLastRequest(commandName + " sended");
   }
 }
