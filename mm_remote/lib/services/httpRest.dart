@@ -43,6 +43,13 @@ class HttpRest {
     }
   }
 
+  Future<int> getBrightness() async {
+    var response = await http.get(Uri.http(_baseUrl, "/api/brightness"),
+        headers: _getHeader());
+    var responseInJson = await jsonDecode(response.body);
+    return responseInJson['result'] as int;
+  }
+
   void sendAlert(String text, int _alertDuration) {
     updateLastRequest("Sending alert");
 

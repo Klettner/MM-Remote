@@ -78,6 +78,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       _initializeDrawerImage();
       _initializeSettings(deviceName);
       _initializeDefaultCommandCards();
+      _syncBrightness();
     }
 
     var appBar = AppBar(
@@ -100,6 +101,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
+          _syncBrightness();
         },
         child: Builder(
           builder: (context) => TabBarView(
@@ -501,6 +503,15 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     updatedList.insert(brightnessCardIndex, brightnessSliderCard);
     setState(() {
       _defaultCommandCards = updatedList;
+    });
+  }
+
+  void _syncBrightness() async {
+    _httpRest.getBrightness().then((brightness) {
+      setState(() {
+        _brightnessValue = brightness;
+      });
+      _updateBrightnessSliderCard();
     });
   }
 
