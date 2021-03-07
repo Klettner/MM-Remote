@@ -184,13 +184,13 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
         return AlertDialog(
           title: Text('Do you want to reboot the mirror?'),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
-            FlatButton(
+            TextButton(
               child: Text('Reboot'),
               onPressed: () {
                 this.widget._httpRest.rebootPi();
@@ -212,13 +212,13 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
         return AlertDialog(
           title: Text('Do you want to shutdown the mirror?'),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
-            FlatButton(
+            TextButton(
               child: Text('Shutdown'),
               onPressed: () {
                 this.widget._httpRest.shutdownPi();

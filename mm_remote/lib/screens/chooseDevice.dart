@@ -18,12 +18,12 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
-  List<Widget> _devices = List<Widget>();
+  List<Widget> _devices = <Widget>[];
 
   @override
   void initState() {
     super.initState();
-    final List<Widget> _devicesTemp = List<Widget>();
+    final List<Widget> _devicesTemp = <Widget>[];
     fetchDevicesFromDatabase().then((List<DeviceArguments> devices) {
       for (DeviceArguments device in devices) {
         Card _newDevice = _createDevice(device, false);
@@ -102,7 +102,7 @@ class _StartPageState extends State<StartPage> {
   }
 
   void _initializeDevice(Card _newDevice) {
-    final List<Widget> _devicesTemp = List<Widget>();
+    final List<Widget> _devicesTemp = <Widget>[];
     _devicesTemp.addAll(_devices);
     _devicesTemp.add(_newDevice);
 
@@ -120,19 +120,18 @@ class _StartPageState extends State<StartPage> {
         return AlertDialog(
           title: Text('Do you want to delete this device?'),
           actions: <Widget>[
-            FlatButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            FlatButton(
-              child: Text('Delete'),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Cancel')),
+            TextButton(
               onPressed: () {
                 _deleteDevice(deviceName);
                 Navigator.of(context).pop();
               },
-            ),
+              child: Text('Delete'),
+            )
           ],
         );
       },
@@ -143,7 +142,7 @@ class _StartPageState extends State<StartPage> {
     var dbHelper = SqLite();
     dbHelper.deleteDevice(deviceName);
 
-    final List<Widget> _devicesTemp = List<Widget>();
+    final List<Widget> _devicesTemp = <Widget>[];
     fetchDevicesFromDatabase().then((List<DeviceArguments> devices) {
       for (DeviceArguments device in devices) {
         Card _newDevice = _createDevice(device, false);
@@ -169,7 +168,7 @@ class _StartPageState extends State<StartPage> {
           children: <Widget>[
             Flexible(
               fit: FlexFit.tight,
-              child: FlatButton(
+              child: TextButton(
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Container(

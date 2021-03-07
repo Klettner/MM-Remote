@@ -17,12 +17,12 @@ class CustomCommandsTab extends StatefulWidget {
 }
 
 class _CustomCommandsTabState extends State<CustomCommandsTab> {
-  List<Widget> _customCommands = List<Widget>();
+  List<Widget> _customCommands = <Widget>[];
 
   @override
   void initState() {
     super.initState();
-    final List<Widget> _customCommandsTemp = List<Widget>();
+    final List<Widget> _customCommandsTemp = <Widget>[];
     fetchCommandsFromDatabase(this.widget.deviceName)
         .then((List<CommandArguments> commands) {
       for (CommandArguments command in commands) {
@@ -95,7 +95,7 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
         _commandArguments.payload,
         context,
         true);
-    final List<Widget> _customCommandsTemp = List<Widget>();
+    final List<Widget> _customCommandsTemp = <Widget>[];
     _customCommandsTemp.addAll(_customCommands);
     _customCommandsTemp.add(_newCommand);
 
@@ -108,7 +108,7 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
     var dbHelper = SqLite();
     dbHelper.deleteCommand(widget.deviceName, commandName);
 
-    final List<Widget> _customCommandsTemp = List<Widget>();
+    final List<Widget> _customCommandsTemp = <Widget>[];
     fetchCommandsFromDatabase(widget.deviceName)
         .then((List<CommandArguments> commands) {
       for (CommandArguments command in commands) {
@@ -137,7 +137,7 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
           children: <Widget>[
             Flexible(
               fit: FlexFit.tight,
-              child: FlatButton(
+              child: TextButton(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
