@@ -40,13 +40,19 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
         .then((MirrorStateArguments tempSettings) {
       if (tempSettings != null) {
         setState(() {
-          if (tempSettings.monitorStatus.compareTo('ON') == 0) {
-            _monitorToggleColor = primaryColor;
-          } else {
-            _monitorToggleColor = tertiaryColorDark;
-          }
+          (tempSettings.monitorStatus.compareTo('ON') == 0)
+              ? _monitorToggleColor = primaryColor
+              : _monitorToggleColor = tertiaryColorDark;
         });
       }
+    });
+    // get current monitor status from mirror
+    this.widget._httpRest.isMonitorOn().then((bool isOn) {
+      setState(() {
+        isOn
+            ? _monitorToggleColor = primaryColor
+            : _monitorToggleColor = tertiaryColorDark;
+      });
     });
   }
 
@@ -169,11 +175,9 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
   }
 
   void _toggleMonitor() {
-    if (_monitorToggleColor == primaryColor) {
-      _toggleMonitorOff();
-    } else {
-      _toggleMonitorOn();
-    }
+    (_monitorToggleColor == primaryColor)
+        ? _toggleMonitorOff()
+        : _toggleMonitorOn();
   }
 
   Future<void> _rebootPiDialog(BuildContext context) async {
@@ -232,7 +236,7 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
     );
   }
 
-  void _toggleMonitorOn() {
+  void _toggleMonitorOn() async {
     setState(() {
       _monitorToggleColor = primaryColor;
     });
@@ -240,7 +244,7 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
     updateMonitorStatusSetting(widget.deviceName, 'ON');
   }
 
-  void _toggleMonitorOff() {
+  void _toggleMonitorOff() async {
     setState(() {
       _monitorToggleColor = tertiaryColorDark;
     });

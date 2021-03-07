@@ -116,6 +116,12 @@ class HttpRest {
     updateLastRequest("Monitor off");
   }
 
+  Future<bool> isMonitorOn() async {
+    var result = await http.get(Uri.http(_baseUrl, "/api/monitor"),
+        headers: _getHeader());
+    return !result.body.contains("off");
+  }
+
   void incrementPage(BuildContext context) {
     sendCustomCommand("PAGE_INCREMENT", "");
     showSnackbar('Page Incremented', context);
