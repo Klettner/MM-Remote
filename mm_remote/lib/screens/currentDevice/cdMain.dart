@@ -577,7 +577,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
       ),
-      duration: new Duration(milliseconds: 400),
+      duration: new Duration(milliseconds: 800),
       backgroundColor: secondaryColor,
       content: Text(
         message,
