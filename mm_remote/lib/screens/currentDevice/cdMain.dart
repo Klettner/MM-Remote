@@ -21,7 +21,6 @@ class CurrentDevicePage extends StatefulWidget {
 
 class _CurrentDevicePageState extends State<CurrentDevicePage>
     with SingleTickerProviderStateMixin {
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final List<Tab> myTabs = <Tab>[
     Tab(text: 'HOME'),
     Tab(text: 'CUSTOM-COMMANDS'),
@@ -46,8 +45,8 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
   bool _isPaused = false;
   String _stopWatchTimerValue = "Timer";
-  List<Widget> _defaultCommandCards = new List<Widget>();
-  List<DefaultCommand> _defaultCommands = new List<DefaultCommand>();
+  List<Widget> _defaultCommandCards = <Widget>[];
+  List<DefaultCommand> _defaultCommands = <DefaultCommand>[];
 
   @override
   void initState() {
@@ -96,7 +95,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     );
 
     return Scaffold(
-      key: _scaffoldKey,
       appBar: appBar,
       drawer: _currentDeviceDrawer,
       body: GestureDetector(
@@ -484,7 +482,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _updateDefaultCommandCards() {
-    List<Widget> updatedList = new List<Widget>();
+    List<Widget> updatedList = <Widget>[];
     for (DefaultCommand command in _defaultCommands) {
       _addDefaultCommand(updatedList, command);
     }
@@ -496,7 +494,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   void _updateBrightnessSliderCard() {
     int brightnessCardIndex =
         _defaultCommands.indexOf(DefaultCommand.MonitorBrightness);
-    List<Widget> updatedList = new List<Widget>();
+    List<Widget> updatedList = <Widget>[];
     updatedList.addAll(_defaultCommandCards);
     updatedList.removeAt(brightnessCardIndex);
     Widget brightnessSliderCard = _createBrightnessSliderCard();
@@ -574,7 +572,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _showSnackbar(String message, BuildContext context) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       elevation: 5.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(5.0)),

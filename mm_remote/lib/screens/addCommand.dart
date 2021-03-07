@@ -74,10 +74,12 @@ class _AddCommandPageState extends State<AddCommandPage> {
             ),
             ButtonBar(
               children: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Text('CLEAR'),
-                  shape: BeveledRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                  style: TextButton.styleFrom(
+                    shape: BeveledRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                    ),
                   ),
                   onPressed: () {
                     _titleController.clear();
@@ -89,15 +91,17 @@ class _AddCommandPageState extends State<AddCommandPage> {
                     });
                   },
                 ),
-                RaisedButton(
+                ElevatedButton(
                   child: Text(
                     'CREATE',
                     style: TextStyle(color: secondaryColor),
                   ),
-                  elevation: 8.0,
-                  color: primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 5.0,
+                    primary: primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                    ),
                   ),
                   onPressed: (_isComposingTitle && _isComposingNotification)
                       ? () => _handleSubmitted(_titleController.text,
@@ -121,7 +125,7 @@ class _AddCommandPageState extends State<AddCommandPage> {
       _isComposingTitle = false;
       _isComposingNotification = false;
     });
-    if (_checkCommandNameLenght(commandName)) {
+    if (_checkCommandNameLength(commandName)) {
       Navigator.pop(
         context,
         CommandArguments(
@@ -134,7 +138,7 @@ class _AddCommandPageState extends State<AddCommandPage> {
     }
   }
 
-  bool _checkCommandNameLenght(String commandName) {
+  bool _checkCommandNameLength(String commandName) {
     if (commandName.length > 20) {
       _titleField = 'Name should not be longer than 20 characters';
       return false;

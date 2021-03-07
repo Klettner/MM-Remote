@@ -81,11 +81,8 @@ class _AddDevicePageState extends State<AddDevicePage> {
             ),
             ButtonBar(
               children: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Text('CLEAR'),
-                  shape: BeveledRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(7.0)),
-                  ),
                   onPressed: () {
                     _titleController.clear();
                     _ipController.clear();
@@ -97,16 +94,17 @@ class _AddDevicePageState extends State<AddDevicePage> {
                     });
                   },
                 ),
-                RaisedButton(
+                ElevatedButton(
                   child: Text(
                     'CREATE',
                     style: TextStyle(color: secondaryColor),
                   ),
-                  elevation: 8.0,
-                  color: primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15.0)),
-                  ),
+                  style: ElevatedButton.styleFrom(
+                      primary: primaryColor,
+                      elevation: 5.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                      )),
                   onPressed: (_isComposingTitle &&
                           _isComposingIp &&
                           _isComposingApiKey)

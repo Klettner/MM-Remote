@@ -12,7 +12,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final _alertDurationController = TextEditingController();
   final _apiKeyController = TextEditingController();
-  List<DefaultCommand> _defaultCommands = new List<DefaultCommand>();
+  List<DefaultCommand> _defaultCommands = <DefaultCommand>[];
   bool _stateInitialized = false;
   int _alertDuration;
   String _apiKey;
@@ -125,15 +125,17 @@ class _SettingsPageState extends State<SettingsPage> {
               SizedBox(height: 10),
               ButtonBar(
                 children: <Widget>[
-                  RaisedButton(
+                  ElevatedButton(
                       child: Text(
                         'FINISH',
                         style: TextStyle(color: secondaryColor),
                       ),
-                      elevation: 8.0,
-                      color: primaryColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                      style: ElevatedButton.styleFrom(
+                        primary: primaryColor,
+                        elevation: 8.0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                        ),
                       ),
                       onPressed: () {
                         _submitSettings();
