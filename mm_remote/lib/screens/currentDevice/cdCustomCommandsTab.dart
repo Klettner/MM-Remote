@@ -154,8 +154,10 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
                   ],
                 ),
                 onPressed: () {
-                  this.widget._httpRest.executeCustomCommand(
-                      commandName, notification, payload, context);
+                  this
+                      .widget
+                      ._httpRest
+                      .executeCustomCommand(commandName, notification, payload);
                 },
               ),
             ),

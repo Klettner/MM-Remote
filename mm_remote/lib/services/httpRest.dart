@@ -10,7 +10,7 @@ class HttpRest {
   String port;
   String _baseUrl;
   Function() _getApiKey;
-  Function(String, BuildContext) showSnackbar;
+  Function(String) showSnackbar;
 
   HttpRest(this.ip, this._getApiKey, this.showSnackbar) {
     _baseUrl = "$ip:8080";
@@ -37,7 +37,7 @@ class HttpRest {
     http.get(Uri.http(_baseUrl, "/api/brightness/$value"),
         headers: _getHeader());
     if (message) {
-      showSnackbar("Brightness changed to $value", context);
+      showSnackbar("Brightness changed to $value");
     }
   }
 
@@ -54,19 +54,19 @@ class HttpRest {
         headers: _getHeader(), body: jsonEncode(body));
   }
 
-  void backgroundSlideShowPlay(BuildContext context) {
+  void backgroundSlideShowPlay() {
     sendCustomCommand("BACKGROUNDSLIDESHOW_PLAY", "");
-    showSnackbar("Started SlideShow", context);
+    showSnackbar("Started SlideShow");
   }
 
-  void backgroundSlideShowNext(BuildContext context) {
+  void backgroundSlideShowNext() {
     sendCustomCommand("BACKGROUNDSLIDESHOW_NEXT", "");
-    showSnackbar("Next picture", context);
+    showSnackbar("Next picture");
   }
 
-  void backgroundSlideShowStop(BuildContext context) {
+  void backgroundSlideShowStop() {
     sendCustomCommand("BACKGROUNDSLIDESHOW_STOP", "");
-    showSnackbar("Stopped SlideShow", context);
+    showSnackbar("Stopped SlideShow");
   }
 
   void rebootPi() {
@@ -77,34 +77,36 @@ class HttpRest {
     http.get(Uri.http(_baseUrl, "/api/shutdown"), headers: _getHeader());
   }
 
-  void stopWatchUnpause(BuildContext context) {
+  void stopWatchUnpause() {
     sendCustomCommand("UNPAUSE_STOPWATCH", "");
-    showSnackbar("Continued stop-watch", context);
+    showSnackbar("Continued stop-watch");
   }
 
-  void stopWatchStart(BuildContext context) {
+  void stopWatchStart() {
     sendCustomCommand("START_STOPWATCH", "");
-    showSnackbar("Started stop-watch", context);
+    showSnackbar("Started stop-watch");
   }
 
-  void stopWatchTimerPause(BuildContext context) {
+  void stopWatchTimerPause() {
     sendCustomCommand("PAUSE_STOPWATCHTIMER", "");
-    showSnackbar("Paused Timer/Stop-watch", context);
+    showSnackbar("Paused Timer/Stop-watch");
   }
 
-  void stopWatchTimerInterrupt(BuildContext context) {
+  void stopWatchTimerInterrupt() {
     sendCustomCommand("INTERRUPT_STOPWATCHTIMER", "");
-    showSnackbar("Interrupted Timer/Stop-watch", context);
+    showSnackbar("Interrupted Timer/Stop-watch");
   }
 
-  void timerStart(int seconds, BuildContext context) {
+  void timerStart(
+    int seconds,
+  ) {
     sendCustomCommand("START_TIMER", "$seconds");
-    showSnackbar("Started timer", context);
+    showSnackbar("Started timer");
   }
 
-  void timerUnpause(BuildContext context) {
+  void timerUnpause() {
     sendCustomCommand("UNPAUSE_TIMER", "");
-    showSnackbar("Continued timer", context);
+    showSnackbar("Continued timer");
   }
 
   void toggleMonitorOn() {
@@ -121,19 +123,22 @@ class HttpRest {
     return !result.body.contains("off");
   }
 
-  void incrementPage(BuildContext context) {
+  void incrementPage() {
     sendCustomCommand("PAGE_INCREMENT", "");
-    showSnackbar('Page Incremented', context);
+    showSnackbar('Page Incremented');
   }
 
-  void decrementPage(BuildContext context) {
+  void decrementPage() {
     sendCustomCommand("PAGE_DECREMENT", "");
-    showSnackbar('Page Decremented', context);
+    showSnackbar('Page Decremented');
   }
 
-  void executeCustomCommand(String commandName, String notification,
-      String payload, BuildContext context) {
+  void executeCustomCommand(
+    String commandName,
+    String notification,
+    String payload,
+  ) {
     sendCustomCommand(notification, payload);
-    showSnackbar(commandName + ' sended', context);
+    showSnackbar(commandName + ' sended');
   }
 }
