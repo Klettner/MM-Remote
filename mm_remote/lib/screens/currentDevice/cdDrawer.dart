@@ -91,7 +91,7 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
                         child: IconButton(
                           icon: Icon(
                             Icons.edit,
-                            color: Colors.white,
+                            color: secondaryColor,
                           ),
                           onPressed: () {
                             _pickImage();
@@ -189,13 +189,19 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
           title: Text('Do you want to reboot the mirror?'),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: primaryColor),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Reboot'),
+              child: Text(
+                'Reboot',
+                style: TextStyle(color: primaryColor),
+              ),
               onPressed: () {
                 this.widget._httpRest.rebootPi();
                 Navigator.of(context).pop();
@@ -217,13 +223,19 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
           title: Text('Do you want to shutdown the mirror?'),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: primaryColor),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Shutdown'),
+              child: Text(
+                'Shutdown',
+                style: TextStyle(color: primaryColor),
+              ),
               onPressed: () {
                 this.widget._httpRest.shutdownPi();
                 Navigator.of(context).pop();

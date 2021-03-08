@@ -14,7 +14,11 @@ class _HelpPageState extends State<HelpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('HELP'),
+          iconTheme: IconThemeData(color: secondaryColor),
+          title: Text(
+            'HELP',
+            style: TextStyle(color: secondaryColor),
+          ),
           backgroundColor: primaryColor,
         ),
         body: Container(

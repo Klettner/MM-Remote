@@ -32,10 +32,16 @@ class _SettingsPageState extends State<SettingsPage> {
     }
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: secondaryColor),
         brightness: Brightness.light,
         elevation: 10.0,
         titleSpacing: 0.0,
-        title: Text('Settings'),
+        title: Text(
+          'Settings',
+          style: TextStyle(
+            color: secondaryColor,
+          ),
+        ),
       ),
       body: GestureDetector(
         onTap: () {
@@ -99,6 +105,8 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget _createCheckboxListTile(DefaultCommand defaultCommand, String title) {
     return CheckboxListTile(
       title: Text(title),
+      activeColor: primaryColor,
+      checkColor: secondaryColor,
       value: _isDefaultCommandEnabled(defaultCommand),
       secondary: _isDefaultCommandEnabled(defaultCommand)
           ? _getNumberWidget(_getIndex(defaultCommand))
@@ -173,7 +181,7 @@ class _SettingsPageState extends State<SettingsPage> {
           suffixIcon: IconButton(
             icon: Icon(
               this._showPassword ? Icons.visibility : Icons.visibility_off,
-              color: this._showPassword ? Colors.blue : Colors.grey,
+              color: this._showPassword ? primaryColor : tertiaryColorLight,
             ),
             onPressed: () {
               setState(() => this._showPassword = !this._showPassword);

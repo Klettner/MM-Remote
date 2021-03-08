@@ -25,10 +25,14 @@ class _AddDevicePageState extends State<AddDevicePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: secondaryColor),
         brightness: Brightness.light,
         elevation: 10.0,
         titleSpacing: 0.0,
-        title: Text('Add Device'),
+        title: Text(
+          'Add Device',
+          style: TextStyle(color: secondaryColor),
+        ),
       ),
       body: SafeArea(
         child: ListView(
@@ -82,7 +86,10 @@ class _AddDevicePageState extends State<AddDevicePage> {
             ButtonBar(
               children: <Widget>[
                 TextButton(
-                  child: Text('CLEAR'),
+                  child: Text(
+                    'CLEAR',
+                    style: TextStyle(color: secondaryColor),
+                  ),
                   onPressed: () {
                     _titleController.clear();
                     _ipController.clear();

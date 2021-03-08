@@ -44,7 +44,12 @@ class _StartPageState extends State<StartPage> {
         brightness: Brightness.light,
         elevation: 10.0,
         titleSpacing: 20.0,
-        title: Text('Choose Device'),
+        title: Text(
+          'Choose Device',
+          style: TextStyle(
+            color: secondaryColor,
+          ),
+        ),
       ),
       backgroundColor: backgroundColor,
       body: new SafeArea(
@@ -187,6 +192,7 @@ class _StartPageState extends State<StartPage> {
                         Text(
                           'IP: ' + device.ip,
                           textScaleFactor: 1.1,
+                          style: TextStyle(color: tertiaryColorDark),
                         ),
                         SizedBox(height: 4.0),
                       ],
