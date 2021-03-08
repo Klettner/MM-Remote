@@ -75,9 +75,9 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       // therefore it has to be instantiated first
       _httpRest = new HttpRest(ip, _getApiKey, _showSnackbar);
       _initializeDrawerImage();
-      _initializeSettings(deviceName, context);
-      _initializeDefaultCommandCards(context);
-      _syncBrightness(context);
+      _initializeSettings(deviceName);
+      _initializeDefaultCommandCards();
+      _syncBrightness();
     }
 
     var appBar = AppBar(
@@ -100,7 +100,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
-          _syncBrightness(context);
+          _syncBrightness();
         },
         child: Builder(
           builder: (context) => TabBarView(
@@ -124,7 +124,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     );
   }
 
-  Widget _createBackgroundSlideShowCard(BuildContext context) {
+  Widget _createBackgroundSlideShowCard() {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
@@ -154,7 +154,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     color: tertiaryColorDark,
                     iconSize: 35.0,
                     onPressed: () {
-                      _httpRest.backgroundSlideShowStop(context);
+                      _httpRest.backgroundSlideShowStop();
                     }),
                 new IconButton(
                     icon: Icon(Icons.play_arrow,
@@ -163,7 +163,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     color: tertiaryColorDark,
                     iconSize: 35.0,
                     onPressed: () {
-                      _httpRest.backgroundSlideShowPlay(context);
+                      _httpRest.backgroundSlideShowPlay();
                     }),
                 new IconButton(
                     icon:
@@ -172,7 +172,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     color: tertiaryColorDark,
                     iconSize: 35.0,
                     onPressed: () {
-                      _httpRest.backgroundSlideShowNext(context);
+                      _httpRest.backgroundSlideShowNext();
                     }),
                 new SizedBox(
                   width: 5.0,
@@ -185,7 +185,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     );
   }
 
-  Widget _createStopWatchTimerCard(BuildContext context) {
+  Widget _createStopWatchTimerCard() {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
@@ -206,7 +206,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                           setState(() {
                             _stopWatchTimerValue = result;
                           });
-                          _updateDefaultCommandCards(context);
+                          _updateDefaultCommandCards();
                         },
                         child: Row(
                           children: [
@@ -269,7 +269,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     color: tertiaryColorDark,
                     iconSize: 30,
                     onPressed: () {
-                      _httpRest.stopWatchTimerInterrupt(context);
+                      _httpRest.stopWatchTimerInterrupt();
                       _isStarted = false;
                       _updateStopWatchTimerCard();
                     }),
@@ -287,15 +287,15 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   void _handlePauseUnpause() {
     if (_isTimer()) {
       if (_isPaused) {
-        _httpRest.timerUnpause(context);
+        _httpRest.timerUnpause();
       } else {
-        _httpRest.stopWatchTimerPause(context);
+        _httpRest.stopWatchTimerPause();
       }
     } else {
       if (_isPaused) {
-        _httpRest.stopWatchUnpause(context);
+        _httpRest.stopWatchUnpause();
       } else {
-        _httpRest.stopWatchTimerPause(context);
+        _httpRest.stopWatchTimerPause();
       }
     }
     _isPaused = !_isPaused;
@@ -303,9 +303,11 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
   _handleStart() {
     if (_isTimer()) {
-      _httpRest.timerStart(_getSeconds(), context);
+      _httpRest.timerStart(
+        _getSeconds(),
+      );
     } else {
-      _httpRest.stopWatchStart(context);
+      _httpRest.stopWatchStart();
     }
     _isStarted = true;
     _isPaused = false;
@@ -362,7 +364,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     return minutes * 60 + seconds;
   }
 
-  Widget _createBrightnessSliderCard(BuildContext context) {
+  Widget _createBrightnessSliderCard() {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Padding(
@@ -439,7 +441,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                   tooltip:
                       'Send an alert or send "/AlertDuration: int" to set the display-time of an alert',
                   onPressed: _isComposing
-                      ? () => _evaluateAlert(_textController.text, context)
+                      ? () => _evaluateAlert(_textController.text)
                       : null,
                 ),
               ),
@@ -484,17 +486,17 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     });
   }
 
-  void _initializeDefaultCommandCards(BuildContext context) {
+  void _initializeDefaultCommandCards() {
     _defaultCommands.add(DefaultCommand.PhotoSlideshow);
     _defaultCommands.add(DefaultCommand.MonitorBrightness);
     _defaultCommands.add(DefaultCommand.StopwatchTimer);
-    _updateDefaultCommandCards(context);
+    _updateDefaultCommandCards();
   }
 
-  void _updateDefaultCommandCards(BuildContext context) {
+  void _updateDefaultCommandCards() {
     List<Widget> updatedList = <Widget>[];
     for (DefaultCommand command in _defaultCommands) {
-      _addDefaultCommand(updatedList, command, context);
+      _addDefaultCommand(updatedList, command);
     }
     setState(() {
       _defaultCommandCards = updatedList;
@@ -507,7 +509,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     List<Widget> updatedList = <Widget>[];
     updatedList.addAll(_defaultCommandCards);
     updatedList.removeAt(brightnessCardIndex);
-    Widget brightnessSliderCard = _createBrightnessSliderCard(context);
+    Widget brightnessSliderCard = _createBrightnessSliderCard();
     updatedList.insert(brightnessCardIndex, brightnessSliderCard);
     setState(() {
       _defaultCommandCards = updatedList;
@@ -520,14 +522,14 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     List<Widget> updatedList = <Widget>[];
     updatedList.addAll(_defaultCommandCards);
     updatedList.removeAt(stopWatchTimerCardIndex);
-    Widget stopWatchTimerCard = _createStopWatchTimerCard(context);
+    Widget stopWatchTimerCard = _createStopWatchTimerCard();
     updatedList.insert(stopWatchTimerCardIndex, stopWatchTimerCard);
     setState(() {
       _defaultCommandCards = updatedList;
     });
   }
 
-  void _syncBrightness(BuildContext context) async {
+  void _syncBrightness() async {
     _httpRest.getBrightness().then((brightness) {
       setState(() {
         _brightnessValue = brightness;
@@ -537,16 +539,18 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _addDefaultCommand(
-      List<Widget> commands, DefaultCommand command, BuildContext context) {
+    List<Widget> commands,
+    DefaultCommand command,
+  ) {
     switch (command) {
       case DefaultCommand.PhotoSlideshow:
-        commands.add(_createBackgroundSlideShowCard(context));
+        commands.add(_createBackgroundSlideShowCard());
         break;
       case DefaultCommand.MonitorBrightness:
-        commands.add(_createBrightnessSliderCard(context));
+        commands.add(_createBrightnessSliderCard());
         break;
       case DefaultCommand.StopwatchTimer:
-        commands.add(_createStopWatchTimerCard(context));
+        commands.add(_createStopWatchTimerCard());
         break;
       default:
         print("This default command is not specified");
@@ -554,7 +558,8 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _createDefaultCommands(
-      List<String> defaultCommandStrings, BuildContext context) {
+    List<String> defaultCommandStrings,
+  ) {
     _defaultCommands.clear();
     for (String defaultCommandString in defaultCommandStrings) {
       if (defaultCommandString.compareTo("MonitorBrightness") == 0) {
@@ -567,7 +572,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         _defaultCommands.add(DefaultCommand.StopwatchTimer);
       }
     }
-    _updateDefaultCommandCards(context);
+    _updateDefaultCommandCards();
   }
 
   Widget _createBottomAppBar(var _deviceOrientation) {
@@ -585,7 +590,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                   semanticLabel: 'previous page'),
               tooltip: 'Previous mirror-page',
               onPressed: () {
-                _httpRest.decrementPage(context);
+                _httpRest.decrementPage();
               }),
           new SizedBox(
             width: 50.0,
@@ -597,7 +602,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 size: 35.0, color: secondaryColor, semanticLabel: 'next page'),
             tooltip: 'Next mirror-page',
             onPressed: () {
-              _httpRest.incrementPage(context);
+              _httpRest.incrementPage();
             },
           ),
         ],
@@ -605,7 +610,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     );
   }
 
-  void _showSnackbar(String message, BuildContext context) {
+  void _showSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       elevation: 5.0,
       shape: RoundedRectangleBorder(
@@ -623,7 +628,9 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     ));
   }
 
-  void _initializeSettings(String deviceName, BuildContext context) {
+  void _initializeSettings(
+    String deviceName,
+  ) {
     _stateInitialized = true;
 
     fetchSettingsFromDatabase(deviceName)
@@ -640,11 +647,13 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
     fetchDefaultCommandsFromDatabase(deviceName)
         .then((List<String> defaultCommandStrings) {
-      _createDefaultCommands(defaultCommandStrings, context);
+      _createDefaultCommands(defaultCommandStrings);
     });
   }
 
-  void _evaluateAlert(String text, BuildContext context) {
+  void _evaluateAlert(
+    String text,
+  ) {
     _textController.clear();
     setState(() {
       _isComposing = false;
@@ -655,13 +664,13 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
             .substring(0, _temptext.indexOf(':') + 1)
             .compareTo('/ALERTDURATION:') ==
         0) {
-      _setAlertDuration(_temptext, context);
+      _setAlertDuration(_temptext);
     } else {
       _httpRest.sendAlert(text, _alertDuration);
     }
   }
 
-  void _setAlertDuration(String text, BuildContext context) {
+  void _setAlertDuration(String text) {
     String _amount = text.substring(text.indexOf(':') + 1);
 
     if (int.tryParse(_amount) != null) {
@@ -669,11 +678,11 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       // Change the duration to seconds
       _alertDuration = _alertDuration;
       updateAlertDurationSetting(deviceName, _alertDuration);
-      _showSnackbar('Alert duration set to ' + _amount, context);
+      _showSnackbar('Alert duration set to ' + _amount);
     }
   }
 
-  _navigateToSettingsPage(BuildContext context) async {
+  _navigateToSettingsPage() async {
     SettingArguments _currentSettings =
         new SettingArguments(_defaultCommands, _alertDuration, _apiKey);
     final result =
@@ -685,7 +694,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       _alertDuration = settings.alertDuration;
       _defaultCommands = settings.defaultCommands;
       _apiKey = settings.apiKey;
-      _updateDefaultCommandCards(context);
+      _updateDefaultCommandCards();
       persistDefaultCommands(deviceName, _defaultCommands);
       updateAlertDurationSetting(deviceName, _alertDuration);
       updateApiKey(deviceName, _apiKey);
