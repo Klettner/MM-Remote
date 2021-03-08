@@ -30,6 +30,7 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
   final picker = ImagePicker();
   SharedPreferences prefs;
   Color _monitorToggleColor;
+  bool _isNightMode = true;
 
   @override
   void initState() {
@@ -81,12 +82,34 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text(
-                          this.widget.deviceName,
-                          style: TextStyle(
-                            color: secondaryColor,
-                            fontSize: 20,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              this.widget.deviceName,
+                              style: TextStyle(
+                                color: secondaryColor,
+                                fontSize: 20,
+                              ),
+                            ),
+                            IconButton(
+                              alignment: Alignment.topRight,
+                              padding: EdgeInsets.fromLTRB(8.0, 2.0, 8.0, 0),
+                              icon: Icon(
+                                _isNightMode
+                                    ? Icons.wb_sunny
+                                    : Icons.nights_stay,
+                                color: highlightColor,
+                              ),
+                              onPressed: () {
+                                _isNightMode ? setLightMode() : setDarkMode();
+                                setState(() {
+                                  _isNightMode = !_isNightMode;
+                                });
+                              },
+                            ),
+                          ],
                         ),
                         Align(
                           alignment: FractionalOffset.bottomRight,
