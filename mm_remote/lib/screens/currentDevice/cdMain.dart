@@ -43,6 +43,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   CurrentDeviceDrawer _currentDeviceDrawer;
 
   bool _isPaused = false;
+  bool _isStarted = false;
   String _stopWatchTimerValue = "Timer";
   List<Widget> _defaultCommandCards = <Widget>[];
   List<DefaultCommand> _defaultCommands = <DefaultCommand>[];
@@ -240,22 +241,27 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                   width: 5.0,
                 ),
                 new IconButton(
-                    icon: Icon(Icons.pause,
+                    icon: Icon(Icons.replay,
                         semanticLabel: 'stop timer/stop-watch'),
-                    tooltip: 'Stop timer/stop-watch',
-                    color: tertiaryColorDark,
-                    iconSize: 35.0,
-                    onPressed: () {
-                      _handlePauseUnpause(context);
-                    }),
-                new IconButton(
-                    icon: Icon(Icons.play_arrow,
-                        semanticLabel: 'start timer/stop-watch'),
-                    tooltip: 'Start timer/stop-watch',
+                    tooltip: 'Restart timer/stop-watch',
                     color: tertiaryColorDark,
                     iconSize: 35.0,
                     onPressed: () {
                       _handleStart();
+                      _updateStopWatchTimerCard();
+                    }),
+                new IconButton(
+                    icon: _isPaused || !_isStarted
+                        ? Icon(Icons.play_arrow,
+                            semanticLabel: 'start timer/stop-watch')
+                        : Icon(Icons.pause,
+                            semanticLabel: 'pause timer/stop-watch'),
+                    tooltip: 'Start and pause timer/stop-watch',
+                    color: tertiaryColorDark,
+                    iconSize: 35.0,
+                    onPressed: () {
+                      _isStarted ? _handlePauseUnpause() : _handleStart();
+                      _updateStopWatchTimerCard();
                     }),
                 new IconButton(
                     icon: Icon(Icons.flash_on, semanticLabel: 'interrupt'),
@@ -264,6 +270,8 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     iconSize: 30,
                     onPressed: () {
                       _httpRest.stopWatchTimerInterrupt(context);
+                      _isStarted = false;
+                      _updateStopWatchTimerCard();
                     }),
                 new SizedBox(
                   width: 5.0,
@@ -276,41 +284,35 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     );
   }
 
-  void _handlePauseUnpause(BuildContext context) {
+  void _handlePauseUnpause() {
     if (_isTimer()) {
       if (_isPaused) {
-        _isPaused = false;
         _httpRest.timerUnpause(context);
       } else {
-        _isPaused = true;
         _httpRest.stopWatchTimerPause(context);
       }
     } else {
       if (_isPaused) {
-        _isPaused = false;
         _httpRest.stopWatchUnpause(context);
       } else {
-        _isPaused = true;
         _httpRest.stopWatchTimerPause(context);
       }
     }
+    _isPaused = !_isPaused;
   }
 
   _handleStart() {
     if (_isTimer()) {
-      _isPaused = false;
       _httpRest.timerStart(_getSeconds(), context);
     } else {
-      _isPaused = false;
       _httpRest.stopWatchStart(context);
     }
+    _isStarted = true;
+    _isPaused = false;
   }
 
   bool _isTimer() {
-    if (_stopWatchTimerValue.compareTo("Timer") == 0) {
-      return true;
-    }
-    return false;
+    return (_stopWatchTimerValue.compareTo("Timer") == 0);
   }
 
   Widget _createTimerInputFields() {
@@ -393,7 +395,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 setState(() {
                   _brightnessValue = newValue.round();
                 });
-                _updateBrightnessSliderCard(context);
+                _updateBrightnessSliderCard();
                 _httpRest.setBrightness(_brightnessValue, true, context);
               },
               onChangeEnd: (double newValue) {
@@ -499,7 +501,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     });
   }
 
-  void _updateBrightnessSliderCard(BuildContext context) {
+  void _updateBrightnessSliderCard() {
     int brightnessCardIndex =
         _defaultCommands.indexOf(DefaultCommand.MonitorBrightness);
     List<Widget> updatedList = <Widget>[];
@@ -512,12 +514,25 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     });
   }
 
+  void _updateStopWatchTimerCard() {
+    int stopWatchTimerCardIndex =
+        _defaultCommands.indexOf(DefaultCommand.StopwatchTimer);
+    List<Widget> updatedList = <Widget>[];
+    updatedList.addAll(_defaultCommandCards);
+    updatedList.removeAt(stopWatchTimerCardIndex);
+    Widget stopWatchTimerCard = _createStopWatchTimerCard(context);
+    updatedList.insert(stopWatchTimerCardIndex, stopWatchTimerCard);
+    setState(() {
+      _defaultCommandCards = updatedList;
+    });
+  }
+
   void _syncBrightness(BuildContext context) async {
     _httpRest.getBrightness().then((brightness) {
       setState(() {
         _brightnessValue = brightness;
       });
-      _updateBrightnessSliderCard(context);
+      _updateBrightnessSliderCard();
     });
   }
 
