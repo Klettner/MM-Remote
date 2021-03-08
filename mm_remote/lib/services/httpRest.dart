@@ -79,22 +79,24 @@ class HttpRest {
 
   void stopWatchUnpause() {
     sendCustomCommand("UNPAUSE_STOPWATCH", "");
-    showSnackbar("Continued stop-watch");
+    showSnackbar("Continued stopwatch");
   }
 
   void stopWatchStart() {
     sendCustomCommand("START_STOPWATCH", "");
-    showSnackbar("Started stop-watch");
+    showSnackbar("Started stopwatch");
   }
 
-  void stopWatchTimerPause() {
+  void stopWatchTimerPause(isTimer) {
     sendCustomCommand("PAUSE_STOPWATCHTIMER", "");
-    showSnackbar("Paused Timer/Stop-watch");
+    isTimer ? showSnackbar("Paused timer") : showSnackbar("Paused stopwatch");
   }
 
-  void stopWatchTimerInterrupt() {
+  void stopWatchTimerInterrupt(bool isTimer) {
     sendCustomCommand("INTERRUPT_STOPWATCHTIMER", "");
-    showSnackbar("Interrupted Timer/Stop-watch");
+    isTimer
+        ? showSnackbar("Interrupted timer")
+        : showSnackbar("Interrupted stopwatch");
   }
 
   void timerStart(
