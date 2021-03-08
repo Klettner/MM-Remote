@@ -211,7 +211,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                         child: Row(
                           children: [
                             Text(
-                              (_isTimer()) ? "Timer" : "Stop-watch",
+                              (_isTimer()) ? "Timer" : "Stopwatch",
                               textScaleFactor: 1.3,
                             ),
                             Icon(
@@ -227,7 +227,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                             child: Text('Timer'),
                           ),
                           PopupMenuItem<String>(
-                              value: 'Stop-watch', child: Text('Stop-watch'))
+                              value: 'Stopwatch', child: Text('Stopwatch'))
                         ],
                       )),
                 ),
@@ -242,8 +242,8 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 ),
                 new IconButton(
                     icon: Icon(Icons.replay,
-                        semanticLabel: 'stop timer/stop-watch'),
-                    tooltip: 'Restart timer/stop-watch',
+                        semanticLabel: 'stop timer/stopwatch'),
+                    tooltip: 'Restart timer/stopwatch',
                     color: tertiaryColorDark,
                     iconSize: 35.0,
                     onPressed: () {
@@ -253,10 +253,10 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 new IconButton(
                     icon: _isPaused || !_isStarted
                         ? Icon(Icons.play_arrow,
-                            semanticLabel: 'start timer/stop-watch')
+                            semanticLabel: 'start timer/stopwatch')
                         : Icon(Icons.pause,
-                            semanticLabel: 'pause timer/stop-watch'),
-                    tooltip: 'Start and pause timer/stop-watch',
+                            semanticLabel: 'pause timer/stopwatch'),
+                    tooltip: 'Start and pause timer/stopwatch',
                     color: tertiaryColorDark,
                     iconSize: 35.0,
                     onPressed: () {
@@ -269,7 +269,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     color: tertiaryColorDark,
                     iconSize: 30,
                     onPressed: () {
-                      _httpRest.stopWatchTimerInterrupt();
+                      _httpRest.stopWatchTimerInterrupt(_isTimer());
                       _isStarted = false;
                       _updateStopWatchTimerCard();
                     }),
@@ -289,13 +289,13 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       if (_isPaused) {
         _httpRest.timerUnpause();
       } else {
-        _httpRest.stopWatchTimerPause();
+        _httpRest.stopWatchTimerPause(_isTimer());
       }
     } else {
       if (_isPaused) {
         _httpRest.stopWatchUnpause();
       } else {
-        _httpRest.stopWatchTimerPause();
+        _httpRest.stopWatchTimerPause(_isTimer());
       }
     }
     _isPaused = !_isPaused;
