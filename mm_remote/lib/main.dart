@@ -21,7 +21,7 @@ class MirrorApp extends StatelessWidget {
         focusColor: accentColor,
         backgroundColor: backgroundColor,
         dividerColor: highlightColor,
-        dialogBackgroundColor: backgroundColor,
+        dialogBackgroundColor: secondaryBackgroundColor,
       ),
       home: StartPage(),
       routes: {

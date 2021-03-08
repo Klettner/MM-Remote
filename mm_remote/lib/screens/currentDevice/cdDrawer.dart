@@ -60,7 +60,7 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: backgroundColor,
+        color: secondaryBackgroundColor,
         child: Column(
           children: <Widget>[
             Expanded(
@@ -161,7 +161,9 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
                     child: Container(
                         child: Column(
                       children: <Widget>[
-                        Divider(),
+                        Divider(
+                          color: lineColor,
+                        ),
                         ListTile(
                           leading: Icon(Icons.settings,
                               semanticLabel: 'settings',

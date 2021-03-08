@@ -231,7 +231,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                           ],
                         ),
                         itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<String>>[
+                            <PopupMenuEntry<String>>[
                           PopupMenuItem<String>(
                             value: 'Timer',
                             child: Text(
@@ -438,10 +438,13 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
   Widget _createAlertLauncher() {
     return new Container(
-      color: backgroundColor,
+      color: secondaryBackgroundColor,
       child: Column(
         children: <Widget>[
-          new Divider(height: 1.0),
+          new Divider(
+            height: 1.0,
+            color: lineColor,
+          ),
           new Row(
             children: <Widget>[
               new Flexible(

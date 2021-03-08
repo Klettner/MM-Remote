@@ -89,7 +89,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
                 TextButton(
                   child: Text(
                     'CLEAR',
-                    style: TextStyle(color: secondaryColor),
+                    style: TextStyle(color: inverseHighlightColor),
                   ),
                   onPressed: () {
                     _titleController.clear();
