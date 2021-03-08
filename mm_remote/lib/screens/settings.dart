@@ -46,44 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
             padding: EdgeInsets.symmetric(horizontal: 24.0),
             children: <Widget>[
               SizedBox(height: 30),
-              Column(
-                children: [
-                  Text(
-                    "Default commands",
-                    textScaleFactor: 1.3,
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  CheckboxListTile(
-                    title: const Text("Photo slideshow"),
-                    value: _defaultCommands
-                        .contains(DefaultCommand.PhotoSlideshow),
-                    onChanged: (bool value) {
-                      _changeDefaultCommand(
-                          value, DefaultCommand.PhotoSlideshow);
-                    },
-                  ),
-                  CheckboxListTile(
-                    title: const Text("Monitor brightness"),
-                    value: _defaultCommands
-                        .contains(DefaultCommand.MonitorBrightness),
-                    onChanged: (bool value) {
-                      _changeDefaultCommand(
-                          value, DefaultCommand.MonitorBrightness);
-                    },
-                  ),
-                  CheckboxListTile(
-                    title: const Text("Stop-watch/Timer"),
-                    value: _defaultCommands
-                        .contains(DefaultCommand.StopwatchTimer),
-                    onChanged: (bool value) {
-                      _changeDefaultCommand(
-                          value, DefaultCommand.StopwatchTimer);
-                    },
-                  )
-                ],
-              ),
+              _createDefaultCommandsSelector(),
               SizedBox(
                 height: 30,
               ),
@@ -93,10 +56,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   textScaleFactor: 1.3,
                 ),
               ),
-              AccentColorOverride(
-                color: primaryColor,
-                child: _createAlertDurationTextField(),
-              ),
+              _createAlertDurationTextField(),
               SizedBox(
                 height: 30,
               ),
@@ -106,30 +66,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   textScaleFactor: 1.3,
                 ),
               ),
-              AccentColorOverride(
-                color: primaryColor,
-                child: _createApiKeyTextField(),
-              ),
+              _createApiKeyTextField(),
               SizedBox(height: 10),
-              ButtonBar(
-                children: <Widget>[
-                  ElevatedButton(
-                      child: Text(
-                        'FINISH',
-                        style: TextStyle(color: secondaryColor),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        primary: primaryColor,
-                        elevation: 5.0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                        ),
-                      ),
-                      onPressed: () {
-                        _submitSettings();
-                      })
-                ],
-              )
+              _createFinishButton(),
             ],
           ),
         ),
@@ -137,49 +76,99 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  Widget _createDefaultCommandsSelector() {
+    return Column(
+      children: [
+        Text(
+          "Default commands",
+          textScaleFactor: 1.3,
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        CheckboxListTile(
+          title: const Text("Photo slideshow"),
+          value: _defaultCommands.contains(DefaultCommand.PhotoSlideshow),
+          onChanged: (bool value) {
+            _changeDefaultCommand(value, DefaultCommand.PhotoSlideshow);
+          },
+        ),
+        CheckboxListTile(
+          title: const Text("Monitor brightness"),
+          value: _defaultCommands.contains(DefaultCommand.MonitorBrightness),
+          onChanged: (bool value) {
+            _changeDefaultCommand(value, DefaultCommand.MonitorBrightness);
+          },
+        ),
+        CheckboxListTile(
+          title: const Text("Stop-watch/Timer"),
+          value: _defaultCommands.contains(DefaultCommand.StopwatchTimer),
+          onChanged: (bool value) {
+            _changeDefaultCommand(value, DefaultCommand.StopwatchTimer);
+          },
+        )
+      ],
+    );
+  }
+
   Widget _createAlertDurationTextField() {
     _alertDurationController.text = '$_alertDuration';
-    return TextField(
-      keyboardType: TextInputType.number,
-      controller: _alertDurationController,
-      decoration: InputDecoration(
-        labelText: "Alert duration (in seconds)",
+    return AccentColorOverride(
+      color: primaryColor,
+      child: TextField(
+        keyboardType: TextInputType.number,
+        controller: _alertDurationController,
+        decoration: InputDecoration(
+          labelText: "Alert duration (in seconds)",
+        ),
       ),
     );
   }
 
   Widget _createApiKeyTextField() {
     _apiKeyController.text = _apiKey;
-    return TextField(
-      controller: _apiKeyController,
-      obscureText: !this._showPassword,
-      decoration: InputDecoration(
-        labelText: 'Current API key:',
-        suffixIcon: IconButton(
-          icon: Icon(
-            this._showPassword ? Icons.visibility : Icons.visibility_off,
-            color: this._showPassword ? Colors.blue : Colors.grey,
+    return AccentColorOverride(
+      color: primaryColor,
+      child: TextField(
+        controller: _apiKeyController,
+        obscureText: !this._showPassword,
+        decoration: InputDecoration(
+          labelText: 'Current API key:',
+          suffixIcon: IconButton(
+            icon: Icon(
+              this._showPassword ? Icons.visibility : Icons.visibility_off,
+              color: this._showPassword ? Colors.blue : Colors.grey,
+            ),
+            onPressed: () {
+              setState(() => this._showPassword = !this._showPassword);
+            },
           ),
-          onPressed: () {
-            setState(() => this._showPassword = !this._showPassword);
-          },
         ),
       ),
     );
   }
 
-  /*
-  AccentColorOverride(
-                color: primaryColor,
-                child: TextField(
-                  keyboardType: TextInputType.visiblePassword,
-                  controller: _apiKeyController,
-                  decoration: InputDecoration(
-                    labelText: "Current API key: $_apiKey",
-                  ),
-                ),
+  Widget _createFinishButton() {
+    return ButtonBar(
+      children: <Widget>[
+        ElevatedButton(
+            child: Text(
+              'FINISH',
+              style: TextStyle(color: secondaryColor),
+            ),
+            style: ElevatedButton.styleFrom(
+              primary: primaryColor,
+              elevation: 5.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
               ),
-   */
+            ),
+            onPressed: () {
+              _submitSettings();
+            })
+      ],
+    );
+  }
 
   void _changeDefaultCommand(bool value, DefaultCommand defaultCommand) {
     if (value) {
