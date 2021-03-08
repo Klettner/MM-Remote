@@ -17,13 +17,11 @@ class _AddDevicePageState extends State<AddDevicePage> {
   bool _isComposingTitle = false;
   bool _isComposingIp = false;
   bool _isComposingApiKey = false;
-  String _titleField = 'Device name';
-  String _ipField = 'IP-Address';
-  String _apiKeyField = 'API Key';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         iconTheme: IconThemeData(color: secondaryColor),
         brightness: Brightness.light,
@@ -40,11 +38,12 @@ class _AddDevicePageState extends State<AddDevicePage> {
           children: <Widget>[
             SizedBox(height: 75),
             AccentColorOverride(
-              color: primaryColor,
+              color: accentColor,
               child: TextField(
                 controller: _titleController,
+                style: TextStyle(color: tertiaryColorDark),
                 decoration: InputDecoration(
-                  labelText: _titleField,
+                  labelText: 'Device name',
                 ),
                 onChanged: (String text) {
                   setState(() {
@@ -55,11 +54,12 @@ class _AddDevicePageState extends State<AddDevicePage> {
             ),
             SizedBox(height: 12.0),
             AccentColorOverride(
-              color: primaryColor,
+              color: accentColor,
               child: TextField(
                 controller: _ipController,
+                style: TextStyle(color: tertiaryColorDark),
                 decoration: InputDecoration(
-                  labelText: _ipField,
+                  labelText: 'IP-Address',
                 ),
                 onChanged: (String text) {
                   setState(() {
@@ -70,11 +70,12 @@ class _AddDevicePageState extends State<AddDevicePage> {
             ),
             SizedBox(height: 12.0),
             AccentColorOverride(
-              color: primaryColor,
+              color: accentColor,
               child: TextField(
                 controller: _apiKeyController,
+                style: TextStyle(color: tertiaryColorDark),
                 decoration: InputDecoration(
-                  labelText: _apiKeyField,
+                  labelText: 'API Key',
                 ),
                 onChanged: (String text) {
                   setState(() {
@@ -107,16 +108,16 @@ class _AddDevicePageState extends State<AddDevicePage> {
                     style: TextStyle(color: secondaryColor),
                   ),
                   style: ElevatedButton.styleFrom(
-                      primary: primaryColor,
+                      primary: accentColor,
                       elevation: 5.0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(15.0)),
                       )),
                   onPressed: (_isComposingTitle &&
-                          _isComposingIp &&
-                          _isComposingApiKey)
+                      _isComposingIp &&
+                      _isComposingApiKey)
                       ? () => _handleSubmitted(_titleController.text,
-                          _ipController.text, _apiKeyController.text)
+                      _ipController.text, _apiKeyController.text)
                       : null,
                 )
               ],
