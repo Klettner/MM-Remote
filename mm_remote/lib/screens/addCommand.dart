@@ -23,10 +23,14 @@ class _AddCommandPageState extends State<AddCommandPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: secondaryColor),
         brightness: Brightness.light,
         elevation: 10.0,
         titleSpacing: 0.0,
-        title: Text('Add Command'),
+        title: Text(
+          'Add Command',
+          style: TextStyle(color: secondaryColor),
+        ),
       ),
       body: SafeArea(
         child: ListView(
@@ -75,7 +79,10 @@ class _AddCommandPageState extends State<AddCommandPage> {
             ButtonBar(
               children: <Widget>[
                 TextButton(
-                  child: Text('CLEAR'),
+                  child: Text(
+                    'CLEAR',
+                    style: TextStyle(color: secondaryColor),
+                  ),
                   style: TextButton.styleFrom(
                     shape: BeveledRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(7.0)),

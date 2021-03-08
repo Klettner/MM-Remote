@@ -81,16 +81,22 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     }
 
     var appBar = AppBar(
+      iconTheme: IconThemeData(color: secondaryColor),
       brightness: Brightness.light,
       elevation: 10.0,
       titleSpacing: 0.0,
       title: Text(
         args.deviceName,
+        style: TextStyle(
+          color: secondaryColor,
+        ),
       ),
       bottom: TabBar(
         controller: _tabController,
         tabs: myTabs,
         labelPadding: EdgeInsets.zero,
+        indicatorColor: secondaryColor,
+        labelColor: secondaryColor,
       ),
     );
 

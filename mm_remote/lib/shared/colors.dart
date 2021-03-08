@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-const primaryColor = Colors.blue;
-const secondaryColor = Colors.white;
+var primaryColor = Colors.blue[400];
+var secondaryColor = Colors.white;
 
-const tertiaryColorDark = Colors.black54;
-const tertiaryColorMedium = Colors.black45;
-const tertiaryColorLight = Colors.black26;
+var tertiaryColorDark = Colors.black54;
+var tertiaryColorMedium = Colors.black45;
+var tertiaryColorLight = Colors.black26;
 
 var backgroundColor = Colors.grey[200];

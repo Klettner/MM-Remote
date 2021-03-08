@@ -15,7 +15,7 @@ class MirrorApp extends StatelessWidget {
     return MaterialApp(
       title: 'MM-Remote',
       theme: ThemeData(
-        primarySwatch: primaryColor,
+        primaryColor: primaryColor,
       ),
       home: StartPage(),
       routes: {
