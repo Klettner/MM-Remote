@@ -86,28 +86,64 @@ class _SettingsPageState extends State<SettingsPage> {
         SizedBox(
           height: 15,
         ),
-        CheckboxListTile(
-          title: const Text("Photo slideshow"),
-          value: _defaultCommands.contains(DefaultCommand.PhotoSlideshow),
-          onChanged: (bool value) {
-            _changeDefaultCommand(value, DefaultCommand.PhotoSlideshow);
-          },
-        ),
-        CheckboxListTile(
-          title: const Text("Monitor brightness"),
-          value: _defaultCommands.contains(DefaultCommand.MonitorBrightness),
-          onChanged: (bool value) {
-            _changeDefaultCommand(value, DefaultCommand.MonitorBrightness);
-          },
-        ),
-        CheckboxListTile(
-          title: const Text("Stop-watch/Timer"),
-          value: _defaultCommands.contains(DefaultCommand.StopwatchTimer),
-          onChanged: (bool value) {
-            _changeDefaultCommand(value, DefaultCommand.StopwatchTimer);
-          },
-        )
+        _createCheckboxListTile(
+            DefaultCommand.PhotoSlideshow, "Photo slideshow"),
+        _createCheckboxListTile(
+            DefaultCommand.MonitorBrightness, "Monitor brightness"),
+        _createCheckboxListTile(
+            DefaultCommand.StopwatchTimer, "Stopwatch/Timer"),
       ],
+    );
+  }
+
+  Widget _createCheckboxListTile(DefaultCommand defaultCommand, String title) {
+    return CheckboxListTile(
+      title: Text(title),
+      value: _isDefaultCommandEnabled(defaultCommand),
+      secondary: _isDefaultCommandEnabled(defaultCommand)
+          ? _getNumberWidget(_getIndex(defaultCommand))
+          : Icon(Icons.indeterminate_check_box),
+      onChanged: (bool value) {
+        _changeDefaultCommand(value, defaultCommand);
+      },
+    );
+  }
+
+  bool _isDefaultCommandEnabled(DefaultCommand defaultCommand) {
+    return _defaultCommands.contains(defaultCommand);
+  }
+
+  int _getIndex(DefaultCommand defaultCommand) {
+    return _defaultCommands.indexOf(defaultCommand);
+  }
+
+  Widget _getNumberWidget(int index) {
+    var icon;
+    switch (index + 1) {
+      case 1:
+        icon = Icons.looks_one;
+        break;
+      case 2:
+        icon = Icons.looks_two;
+        break;
+      case 3:
+        icon = Icons.looks_3;
+        break;
+      case 4:
+        icon = Icons.looks_4;
+        break;
+      case 5:
+        icon = Icons.looks_5;
+        break;
+      case 6:
+        icon = Icons.looks_6;
+        break;
+      default:
+        icon = Icons.indeterminate_check_box;
+    }
+    return Icon(
+      icon,
+      color: primaryColor,
     );
   }
 
