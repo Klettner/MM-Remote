@@ -85,7 +85,7 @@ class _AddCommandPageState extends State<AddCommandPage> {
                 TextButton(
                   child: Text(
                     'CLEAR',
-                    style: TextStyle(color: secondaryColor),
+                    style: TextStyle(color: inverseHighlightColor),
                   ),
                   style: TextButton.styleFrom(
                     shape: BeveledRectangleBorder(
