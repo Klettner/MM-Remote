@@ -16,7 +16,7 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _stateInitialized = false;
   int _alertDuration;
   String _apiKey;
-  bool _showPassword = false;
+  bool _showApiKey = false;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +31,7 @@ class _SettingsPageState extends State<SettingsPage> {
       _apiKey = tmp.apiKey;
     }
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         iconTheme: IconThemeData(color: secondaryColor),
         brightness: Brightness.light,
@@ -60,6 +61,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Text(
                   "Alert settings",
                   textScaleFactor: 1.3,
+                  style: TextStyle(
+                    color: tertiaryColorDark,
+                  ),
                 ),
               ),
               _createAlertDurationTextField(),
@@ -70,6 +74,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Text(
                   "API Key",
                   textScaleFactor: 1.3,
+                  style: TextStyle(
+                    color: tertiaryColorDark,
+                  ),
                 ),
               ),
               _createApiKeyTextField(),
@@ -88,6 +95,9 @@ class _SettingsPageState extends State<SettingsPage> {
         Text(
           "Default commands",
           textScaleFactor: 1.3,
+          style: TextStyle(
+            color: tertiaryColorDark,
+          ),
         ),
         SizedBox(
           height: 15,
@@ -103,17 +113,28 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Widget _createCheckboxListTile(DefaultCommand defaultCommand, String title) {
-    return CheckboxListTile(
-      title: Text(title),
-      activeColor: primaryColor,
-      checkColor: secondaryColor,
-      value: _isDefaultCommandEnabled(defaultCommand),
-      secondary: _isDefaultCommandEnabled(defaultCommand)
-          ? _getNumberWidget(_getIndex(defaultCommand))
-          : Icon(Icons.indeterminate_check_box),
-      onChanged: (bool value) {
-        _changeDefaultCommand(value, defaultCommand);
-      },
+    return Theme(
+      data: ThemeData(unselectedWidgetColor: tertiaryColorDark),
+      child: CheckboxListTile(
+        title: Text(
+          title,
+          style: TextStyle(
+            color: tertiaryColorDark,
+          ),
+        ),
+        activeColor: accentColor,
+        checkColor: secondaryColor,
+        value: _isDefaultCommandEnabled(defaultCommand),
+        secondary: _isDefaultCommandEnabled(defaultCommand)
+            ? _getNumberWidget(_getIndex(defaultCommand))
+            : Icon(
+                Icons.indeterminate_check_box,
+                color: tertiaryColorDark,
+              ),
+        onChanged: (bool value) {
+          _changeDefaultCommand(value, defaultCommand);
+        },
+      ),
     );
   }
 
@@ -151,15 +172,16 @@ class _SettingsPageState extends State<SettingsPage> {
     }
     return Icon(
       icon,
-      color: primaryColor,
+      color: accentColor,
     );
   }
 
   Widget _createAlertDurationTextField() {
     _alertDurationController.text = '$_alertDuration';
     return AccentColorOverride(
-      color: primaryColor,
+      color: accentColor,
       child: TextField(
+        style: TextStyle(color: tertiaryColorDark),
         keyboardType: TextInputType.number,
         controller: _alertDurationController,
         decoration: InputDecoration(
@@ -172,19 +194,20 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget _createApiKeyTextField() {
     _apiKeyController.text = _apiKey;
     return AccentColorOverride(
-      color: primaryColor,
+      color: accentColor,
       child: TextField(
+        style: TextStyle(color: tertiaryColorDark),
         controller: _apiKeyController,
-        obscureText: !this._showPassword,
+        obscureText: !this._showApiKey,
         decoration: InputDecoration(
           labelText: 'Current API key:',
           suffixIcon: IconButton(
             icon: Icon(
-              this._showPassword ? Icons.visibility : Icons.visibility_off,
-              color: this._showPassword ? primaryColor : tertiaryColorLight,
+              this._showApiKey ? Icons.visibility : Icons.visibility_off,
+              color: this._showApiKey ? accentColor : tertiaryColorLight,
             ),
             onPressed: () {
-              setState(() => this._showPassword = !this._showPassword);
+              setState(() => this._showApiKey = !this._showApiKey);
             },
           ),
         ),
@@ -201,7 +224,7 @@ class _SettingsPageState extends State<SettingsPage> {
               style: TextStyle(color: secondaryColor),
             ),
             style: ElevatedButton.styleFrom(
-              primary: primaryColor,
+              primary: accentColor,
               elevation: 5.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0)),

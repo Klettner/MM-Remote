@@ -65,7 +65,7 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
                 child: FloatingActionButton(
                   child: Icon(
                     Icons.add,
-                    color: primaryColor,
+                    color: accentColor,
                     size: 35,
                   ),
                   backgroundColor: secondaryColor,
@@ -148,7 +148,7 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
                       maxLines: 2,
                       textScaleFactor: 1.1,
                       style: TextStyle(
-                        color: primaryColor,
+                        color: accentColor,
                       ),
                     ),
                   ],
@@ -163,7 +163,7 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
             ),
             IconButton(
               icon: Icon(Icons.delete, size: 24.0),
-              color: tertiaryColorDark,
+              color: tertiaryColorMedium,
               tooltip: 'Delete command',
               onPressed: () {
                 _deleteCommand(commandName);

@@ -16,6 +16,12 @@ class MirrorApp extends StatelessWidget {
       title: 'MM-Remote',
       theme: ThemeData(
         primaryColor: primaryColor,
+        hintColor: tertiaryColorDark,
+        cardColor: cardBackgroundColor,
+        focusColor: accentColor,
+        backgroundColor: backgroundColor,
+        dividerColor: highlightColor,
+        dialogBackgroundColor: backgroundColor,
       ),
       home: StartPage(),
       routes: {

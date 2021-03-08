@@ -78,7 +78,7 @@ class _StartPageState extends State<StartPage> {
         child: new SizedBox(height: 50),
       ),
       floatingActionButton: new FloatingActionButton(
-        backgroundColor: primaryColor,
+        backgroundColor: accentColor,
         child: new Icon(
           Icons.add,
           size: 30.0,
@@ -123,19 +123,28 @@ class _StartPageState extends State<StartPage> {
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Do you want to delete this device?'),
+          title: Text(
+            'Do you want to delete this device?',
+            style: TextStyle(color: tertiaryColorDark),
+          ),
           actions: <Widget>[
             TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Cancel')),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(color: accentColor),
+                )),
             TextButton(
               onPressed: () {
                 _deleteDevice(deviceName);
                 Navigator.of(context).pop();
               },
-              child: Text('Delete'),
+              child: Text(
+                'Delete',
+                style: TextStyle(color: tertiaryColorMedium),
+              ),
             )
           ],
         );
@@ -185,7 +194,7 @@ class _StartPageState extends State<StartPage> {
                           device.deviceName,
                           textScaleFactor: 1.2,
                           style: TextStyle(
-                            color: primaryColor,
+                            color: accentColor,
                           ),
                         ),
                         SizedBox(height: 12.0),
@@ -215,7 +224,7 @@ class _StartPageState extends State<StartPage> {
               icon: Icon(
                 Icons.delete,
                 size: 30.0,
-                color: tertiaryColorDark,
+                color: tertiaryColorMedium,
                 semanticLabel: 'Delete device',
               ),
               tooltip: 'Delete device',

@@ -22,6 +22,7 @@ class _AddCommandPageState extends State<AddCommandPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         iconTheme: IconThemeData(color: secondaryColor),
         brightness: Brightness.light,
@@ -38,8 +39,9 @@ class _AddCommandPageState extends State<AddCommandPage> {
           children: <Widget>[
             SizedBox(height: 75),
             AccentColorOverride(
-              color: primaryColor,
+              color: accentColor,
               child: TextField(
+                style: TextStyle(color: tertiaryColorDark),
                 controller: _titleController,
                 decoration: InputDecoration(
                   labelText: _titleField,
@@ -53,8 +55,9 @@ class _AddCommandPageState extends State<AddCommandPage> {
             ),
             SizedBox(height: 12.0),
             AccentColorOverride(
-              color: primaryColor,
+              color: accentColor,
               child: TextField(
+                style: TextStyle(color: tertiaryColorDark),
                 controller: _notificationController,
                 decoration: InputDecoration(
                   labelText: _notificationField,
@@ -68,8 +71,9 @@ class _AddCommandPageState extends State<AddCommandPage> {
             ),
             SizedBox(height: 12.0),
             AccentColorOverride(
-              color: primaryColor,
+              color: accentColor,
               child: TextField(
+                style: TextStyle(color: tertiaryColorDark),
                 controller: _payloadController,
                 decoration: InputDecoration(
                   labelText: _payloadField,
@@ -105,14 +109,14 @@ class _AddCommandPageState extends State<AddCommandPage> {
                   ),
                   style: ElevatedButton.styleFrom(
                     elevation: 5.0,
-                    primary: primaryColor,
+                    primary: accentColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20.0)),
                     ),
                   ),
                   onPressed: (_isComposingTitle && _isComposingNotification)
                       ? () => _handleSubmitted(_titleController.text,
-                          _notificationController.text, _payloadController.text)
+                      _notificationController.text, _payloadController.text)
                       : null,
                 )
               ],

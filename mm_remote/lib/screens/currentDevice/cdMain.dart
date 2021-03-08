@@ -95,7 +95,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         controller: _tabController,
         tabs: myTabs,
         labelPadding: EdgeInsets.zero,
-        indicatorColor: secondaryColor,
+        indicatorColor: highlightColor,
         labelColor: secondaryColor,
       ),
     );
@@ -145,6 +145,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 child: new Text(
                   'Photo slideshow',
                   textScaleFactor: 1.3,
+                  style: TextStyle(color: tertiaryColorDark),
                 ),
               ),
             ),
@@ -206,6 +207,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                   child: new Container(
                       margin: new EdgeInsets.symmetric(horizontal: 6.0),
                       child: PopupMenuButton<String>(
+                        color: backgroundColor,
                         onSelected: (String result) {
                           _timerSecondsController.clear();
                           _timerMinutesController.clear();
@@ -219,21 +221,30 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                             Text(
                               (_isTimer()) ? "Timer" : "Stopwatch",
                               textScaleFactor: 1.3,
+                              style: TextStyle(color: tertiaryColorDark),
                             ),
                             Icon(
                               Icons.arrow_drop_down,
                               size: 25,
+                              color: accentColor,
                             )
                           ],
                         ),
                         itemBuilder: (BuildContext context) =>
-                            <PopupMenuEntry<String>>[
+                        <PopupMenuEntry<String>>[
                           PopupMenuItem<String>(
                             value: 'Timer',
-                            child: Text('Timer'),
+                            child: Text(
+                              'Timer',
+                              style: TextStyle(color: tertiaryColorDark),
+                            ),
                           ),
                           PopupMenuItem<String>(
-                              value: 'Stopwatch', child: Text('Stopwatch'))
+                              value: 'Stopwatch',
+                              child: Text(
+                                'Stopwatch',
+                                style: TextStyle(color: tertiaryColorDark),
+                              ))
                         ],
                       )),
                 ),
@@ -331,12 +342,16 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         ),
         SizedBox(
           width: 50,
-          child: TextField(
-            keyboardType: TextInputType.number,
-            controller: _timerMinutesController,
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.zero,
-              labelText: "min.",
+          child: AccentColorOverride(
+            color: accentColor,
+            child: TextField(
+              style: TextStyle(color: tertiaryColorDark),
+              keyboardType: TextInputType.number,
+              controller: _timerMinutesController,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.zero,
+                labelText: "min.",
+              ),
             ),
           ),
         ),
@@ -345,12 +360,16 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         ),
         SizedBox(
           width: 50,
-          child: TextField(
-            keyboardType: TextInputType.number,
-            controller: _timerSecondsController,
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.zero,
-              labelText: "sec.",
+          child: AccentColorOverride(
+            color: accentColor,
+            child: TextField(
+              style: TextStyle(color: tertiaryColorDark),
+              keyboardType: TextInputType.number,
+              controller: _timerSecondsController,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.zero,
+                labelText: "sec.",
+              ),
             ),
           ),
         )
@@ -385,6 +404,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 child: new Text(
                   'Monitor brightness',
                   textScaleFactor: 1.3,
+                  style: TextStyle(color: tertiaryColorDark),
                 ),
               ),
             ),
@@ -393,7 +413,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
               min: 0.0,
               max: 200.0,
               divisions: 20,
-              activeColor: primaryColor,
+              activeColor: accentColor,
               inactiveColor: tertiaryColorDark,
               label: 'changing brightness',
               semanticFormatterCallback: (double newValue) {
@@ -418,7 +438,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
 
   Widget _createAlertLauncher() {
     return new Container(
-      color: secondaryColor,
+      color: backgroundColor,
       child: Column(
         children: <Widget>[
           new Divider(height: 1.0),
@@ -433,6 +453,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                       _isComposing = text.length > 0;
                     });
                   },
+                  style: TextStyle(color: tertiaryColorDark),
                   decoration: new InputDecoration.collapsed(
                     hintText: "  Send alert",
                   ),
