@@ -16,6 +16,7 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _stateInitialized = false;
   int _alertDuration;
   String _apiKey;
+  bool _showPassword = false;
 
   @override
   Widget build(BuildContext context) {
@@ -114,13 +115,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               AccentColorOverride(
                 color: primaryColor,
-                child: TextField(
-                  keyboardType: TextInputType.visiblePassword,
-                  controller: _apiKeyController,
-                  decoration: InputDecoration(
-                    labelText: "Current API key: $_apiKey",
-                  ),
-                ),
+                child: _createPasswordTextField(),
               ),
               SizedBox(height: 10),
               ButtonBar(
@@ -132,7 +127,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                       style: ElevatedButton.styleFrom(
                         primary: primaryColor,
-                        elevation: 8.0,
+                        elevation: 5.0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(20.0)),
                         ),
@@ -148,6 +143,39 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     );
   }
+
+  Widget _createPasswordTextField() {
+    _apiKeyController.text = _apiKey;
+    return TextField(
+      controller: _apiKeyController,
+      obscureText: !this._showPassword,
+      decoration: InputDecoration(
+        labelText: 'Current API key:',
+        suffixIcon: IconButton(
+          icon: Icon(
+            this._showPassword ? Icons.visibility : Icons.visibility_off,
+            color: this._showPassword ? Colors.blue : Colors.grey,
+          ),
+          onPressed: () {
+            setState(() => this._showPassword = !this._showPassword);
+          },
+        ),
+      ),
+    );
+  }
+
+  /*
+  AccentColorOverride(
+                color: primaryColor,
+                child: TextField(
+                  keyboardType: TextInputType.visiblePassword,
+                  controller: _apiKeyController,
+                  decoration: InputDecoration(
+                    labelText: "Current API key: $_apiKey",
+                  ),
+                ),
+              ),
+   */
 
   void _changeDefaultCommand(bool value, DefaultCommand defaultCommand) {
     if (value) {
