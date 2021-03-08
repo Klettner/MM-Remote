@@ -95,14 +95,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               AccentColorOverride(
                 color: primaryColor,
-                child: TextField(
-                  keyboardType: TextInputType.number,
-                  controller: _alertDurationController,
-                  decoration: InputDecoration(
-                    labelText:
-                        "Alert duration (currently $_alertDuration sec.)",
-                  ),
-                ),
+                child: _createAlertDurationTextField(),
               ),
               SizedBox(
                 height: 30,
@@ -115,7 +108,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               AccentColorOverride(
                 color: primaryColor,
-                child: _createPasswordTextField(),
+                child: _createApiKeyTextField(),
               ),
               SizedBox(height: 10),
               ButtonBar(
@@ -144,7 +137,18 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _createPasswordTextField() {
+  Widget _createAlertDurationTextField() {
+    _alertDurationController.text = '$_alertDuration';
+    return TextField(
+      keyboardType: TextInputType.number,
+      controller: _alertDurationController,
+      decoration: InputDecoration(
+        labelText: "Alert duration (in seconds)",
+      ),
+    );
+  }
+
+  Widget _createApiKeyTextField() {
     _apiKeyController.text = _apiKey;
     return TextField(
       controller: _apiKeyController,
