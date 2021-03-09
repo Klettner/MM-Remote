@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mm_remote/models/darkThemeProvider.dart';
 import 'package:mm_remote/models/mirrorStateArguments.dart';
 import 'package:mm_remote/screens/currentDevice/cdDatabaseAccess.dart';
 import 'package:mm_remote/screens/help.dart';
@@ -9,6 +10,7 @@ import 'package:mm_remote/services/httpRest.dart';
 import 'package:mm_remote/shared/colors.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as pPath;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CurrentDeviceDrawer extends StatefulWidget {
@@ -59,6 +61,7 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    final themeChange = Provider.of<DarkThemeProvider>(context);
     return Drawer(
       child: Container(
         color: secondaryBackgroundColor,
@@ -73,9 +76,9 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
                       image: (_image == null)
                           ? null
                           : DecorationImage(
-                              image: FileImage(_image),
-                              fit: BoxFit.cover,
-                            ),
+                        image: FileImage(_image),
+                        fit: BoxFit.cover,
+                      ),
                       color: primaryColor,
                     ),
                     child: Column(
@@ -100,11 +103,11 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
                                 _isNightMode
                                     ? Icons.wb_sunny
                                     : Icons.nights_stay,
-                                color: highlightColor,
+                                color: secondaryColor,
                               ),
                               onPressed: () {
-                                _isNightMode ? setLightMode() : setDarkMode();
                                 setState(() {
+                                  themeChange.darkTheme = !_isNightMode;
                                   _isNightMode = !_isNightMode;
                                 });
                               },
@@ -178,42 +181,42 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
               ),
             ),
             Container(
-                // This align moves its children to the bottom
+              // This align moves its children to the bottom
                 child: Align(
                     alignment: FractionalOffset.bottomCenter,
                     child: Container(
                         child: Column(
-                      children: <Widget>[
-                        Divider(
-                          color: lineColor,
-                        ),
-                        ListTile(
-                          leading: Icon(Icons.settings,
-                              semanticLabel: 'settings',
-                              color: tertiaryColorMedium),
-                          title: Text(
-                            'Settings',
-                            style: TextStyle(color: tertiaryColorDark),
-                          ),
-                          onTap: () {
-                            this.widget._navigateToSettingsPage();
-                          },
-                        ),
-                        ListTile(
-                          leading: Icon(
-                            Icons.help,
-                            color: tertiaryColorMedium,
-                          ),
-                          title: Text(
-                            'Help & About (online)',
-                            style: TextStyle(color: tertiaryColorDark),
-                          ),
-                          onTap: () {
-                            Navigator.pushNamed(context, HelpPage.routeName);
-                          },
-                        )
-                      ],
-                    ))))
+                          children: <Widget>[
+                            Divider(
+                              color: lineColor,
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.settings,
+                                  semanticLabel: 'settings',
+                                  color: tertiaryColorMedium),
+                              title: Text(
+                                'Settings',
+                                style: TextStyle(color: tertiaryColorDark),
+                              ),
+                              onTap: () {
+                                this.widget._navigateToSettingsPage();
+                              },
+                            ),
+                            ListTile(
+                              leading: Icon(
+                                Icons.help,
+                                color: tertiaryColorMedium,
+                              ),
+                              title: Text(
+                                'Help & About (online)',
+                                style: TextStyle(color: tertiaryColorDark),
+                              ),
+                              onTap: () {
+                                Navigator.pushNamed(context, HelpPage.routeName);
+                              },
+                            )
+                          ],
+                        ))))
           ],
         ),
       ),

@@ -30,6 +30,7 @@ dependencies:
   logger: 0.9.4
   image_picker: 0.7.2
   shared_preferences: 2.0.3
+  provider: 5.0.0
 
 
   # The following adds the Cupertino Icons font to your application.
