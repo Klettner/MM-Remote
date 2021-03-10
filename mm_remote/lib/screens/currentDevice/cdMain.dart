@@ -158,7 +158,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 new IconButton(
                     icon: Icon(Icons.stop, semanticLabel: 'stop slideshow'),
                     tooltip: 'Stop slideshow',
-                    color: tertiaryColorDark,
+                    color: buttonColor,
                     iconSize: 35.0,
                     onPressed: () {
                       _httpRest.backgroundSlideShowStop();
@@ -167,7 +167,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     icon: Icon(Icons.play_arrow,
                         semanticLabel: 'start slideshow'),
                     tooltip: 'Start slideshow',
-                    color: tertiaryColorDark,
+                    color: buttonColor,
                     iconSize: 35.0,
                     onPressed: () {
                       _httpRest.backgroundSlideShowPlay();
@@ -176,7 +176,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     icon:
                         Icon(Icons.fast_forward, semanticLabel: 'next picture'),
                     tooltip: 'Next picture',
-                    color: tertiaryColorDark,
+                    color: buttonColor,
                     iconSize: 35.0,
                     onPressed: () {
                       _httpRest.backgroundSlideShowNext();
@@ -261,7 +261,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                     icon: Icon(Icons.replay,
                         semanticLabel: 'stop timer/stopwatch'),
                     tooltip: 'Restart timer/stopwatch',
-                    color: tertiaryColorDark,
+                    color: buttonColor,
                     iconSize: 35.0,
                     onPressed: () {
                       _handleStart();
@@ -274,7 +274,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                         : Icon(Icons.pause,
                             semanticLabel: 'pause timer/stopwatch'),
                     tooltip: 'Start and pause timer/stopwatch',
-                    color: tertiaryColorDark,
+                    color: buttonColor,
                     iconSize: 35.0,
                     onPressed: () {
                       _isStarted ? _handlePauseUnpause() : _handleStart();
@@ -283,7 +283,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 new IconButton(
                     icon: Icon(Icons.flash_on, semanticLabel: 'interrupt'),
                     tooltip: 'Interrupt',
-                    color: tertiaryColorDark,
+                    color: buttonColor,
                     iconSize: 30,
                     onPressed: () {
                       _httpRest.stopWatchTimerInterrupt(_isTimer());
@@ -414,7 +414,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
               max: 200.0,
               divisions: 20,
               activeColor: accentColor,
-              inactiveColor: tertiaryColorDark,
+              inactiveColor: buttonColor,
               label: 'changing brightness',
               semanticFormatterCallback: (double newValue) {
                 return '${newValue.round()}/200 brightness';
