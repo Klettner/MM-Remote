@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mm_remote/models/darkThemeProvider.dart';
 import 'package:mm_remote/models/deviceArguments.dart';
 import 'package:mm_remote/models/mirrorStateArguments.dart';
 import 'package:mm_remote/services/database.dart';
 import 'package:mm_remote/shared/colors.dart';
+import 'package:provider/provider.dart';
 
 import 'addDevice.dart';
 import 'currentDevice/cdMain.dart';
@@ -38,9 +40,25 @@ class _StartPageState extends State<StartPage> {
   @override
   Widget build(BuildContext context) {
     var _deviceOrientation = MediaQuery.of(context).orientation;
-
+    final themeChange = Provider.of<DarkThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          Icon(
+            themeChange.darkTheme ? Icons.lightbulb : Icons.nights_stay,
+            size: 25,
+            color: secondaryColor,
+          ),
+          Switch(
+              value: themeChange.darkTheme,
+              activeColor: Colors.blue[400],
+              activeTrackColor: tertiaryColorMedium,
+              inactiveTrackColor: backgroundColor,
+              onChanged: (bool isOn) {
+                themeChange.darkTheme = isOn;
+                _updateDeviceCards();
+              }),
+        ],
         brightness: Brightness.light,
         elevation: 10.0,
         titleSpacing: 20.0,
@@ -91,6 +109,19 @@ class _StartPageState extends State<StartPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
+  }
+
+  _updateDeviceCards() {
+    final List<Widget> _devicesTemp = <Widget>[];
+    fetchDevicesFromDatabase().then((List<DeviceArguments> devices) {
+      for (DeviceArguments device in devices) {
+        Card _newDevice = _createDevice(device, false);
+        _devicesTemp.add(_newDevice);
+      }
+      setState(() {
+        _devices = _devicesTemp;
+      });
+    });
   }
 
   _navigateAndCreateDevice(BuildContext context) async {

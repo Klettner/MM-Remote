@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mm_remote/models/darkThemeProvider.dart';
 import 'package:mm_remote/models/mirrorStateArguments.dart';
 import 'package:mm_remote/screens/currentDevice/cdDatabaseAccess.dart';
 import 'package:mm_remote/screens/help.dart';
@@ -10,7 +9,6 @@ import 'package:mm_remote/services/httpRest.dart';
 import 'package:mm_remote/shared/colors.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as pPath;
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CurrentDeviceDrawer extends StatefulWidget {
@@ -32,7 +30,6 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
   final picker = ImagePicker();
   SharedPreferences prefs;
   Color _monitorToggleColor;
-  bool _isNightMode = true;
 
   @override
   void initState() {
@@ -61,7 +58,6 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final themeChange = Provider.of<DarkThemeProvider>(context);
     return Drawer(
       child: Container(
         color: secondaryBackgroundColor,
@@ -95,22 +91,6 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
                                 color: secondaryColor,
                                 fontSize: 20,
                               ),
-                            ),
-                            IconButton(
-                              alignment: Alignment.topRight,
-                              padding: EdgeInsets.fromLTRB(8.0, 2.0, 8.0, 0),
-                              icon: Icon(
-                                _isNightMode
-                                    ? Icons.wb_sunny
-                                    : Icons.nights_stay,
-                                color: secondaryColor,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  themeChange.darkTheme = !_isNightMode;
-                                  _isNightMode = !_isNightMode;
-                                });
-                              },
                             ),
                           ],
                         ),
