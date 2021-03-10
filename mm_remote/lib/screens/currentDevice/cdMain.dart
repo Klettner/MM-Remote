@@ -424,10 +424,11 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                   _brightnessValue = newValue.round();
                 });
                 _updateBrightnessSliderCard();
-                _httpRest.setBrightness(_brightnessValue, true, context);
+                _httpRest.setBrightness(_brightnessValue);
               },
               onChangeEnd: (double newValue) {
                 updateBrightnessSetting(deviceName, newValue.round());
+                _showSnackbar("Brightness changed to ${newValue.round()}");
               },
             )
           ],

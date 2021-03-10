@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class HttpRest {
@@ -33,12 +31,9 @@ class HttpRest {
     }
   }
 
-  void setBrightness(int value, bool message, BuildContext context) {
+  void setBrightness(int value) {
     http.get(Uri.http(_baseUrl, "/api/brightness/$value"),
         headers: _getHeader());
-    if (message) {
-      showSnackbar("Brightness changed to $value");
-    }
   }
 
   Future<int> getBrightness() async {
