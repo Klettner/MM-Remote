@@ -13,6 +13,12 @@ class Styles {
       backgroundColor: backgroundColor,
       dividerColor: highlightColor,
       dialogBackgroundColor: secondaryBackgroundColor,
+      iconTheme: IconThemeData(color: tertiaryColorMedium),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          primary: tertiaryColorDark,
+        ),
+      ),
     );
   }
 }

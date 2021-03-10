@@ -56,7 +56,6 @@ class _StartPageState extends State<StartPage> {
               inactiveTrackColor: backgroundColor,
               onChanged: (bool isOn) {
                 themeChange.darkTheme = isOn;
-                _updateDeviceCards();
               }),
         ],
         brightness: Brightness.light,
@@ -109,19 +108,6 @@ class _StartPageState extends State<StartPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
-  }
-
-  _updateDeviceCards() {
-    final List<Widget> _devicesTemp = <Widget>[];
-    fetchDevicesFromDatabase().then((List<DeviceArguments> devices) {
-      for (DeviceArguments device in devices) {
-        Card _newDevice = _createDevice(device, false);
-        _devicesTemp.add(_newDevice);
-      }
-      setState(() {
-        _devices = _devicesTemp;
-      });
-    });
   }
 
   _navigateAndCreateDevice(BuildContext context) async {
@@ -232,7 +218,6 @@ class _StartPageState extends State<StartPage> {
                         Text(
                           'IP: ' + device.ip,
                           textScaleFactor: 1.1,
-                          style: TextStyle(color: tertiaryColorDark),
                         ),
                         SizedBox(height: 4.0),
                       ],
@@ -255,7 +240,6 @@ class _StartPageState extends State<StartPage> {
               icon: Icon(
                 Icons.delete,
                 size: 30.0,
-                color: tertiaryColorMedium,
                 semanticLabel: 'Delete device',
               ),
               tooltip: 'Delete device',
