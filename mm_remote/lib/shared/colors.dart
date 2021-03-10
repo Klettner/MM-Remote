@@ -14,6 +14,7 @@ var lineColor = Colors.grey[300];
 var backgroundColor = Colors.grey[200];
 var secondaryBackgroundColor = Colors.white;
 var cardBackgroundColor = Colors.white;
+var buttonColor = Colors.blueGrey[100];
 
 void setDarkMode() {
   primaryColor = Colors.blueGrey[800];
@@ -30,6 +31,7 @@ void setDarkMode() {
   backgroundColor = Colors.blueGrey[900];
   secondaryBackgroundColor = Colors.blueGrey[900];
   cardBackgroundColor = Colors.blueGrey[800];
+  buttonColor = Colors.blueGrey[100];
 }
 
 void setLightMode() {
@@ -47,4 +49,5 @@ void setLightMode() {
   backgroundColor = Colors.grey[200];
   secondaryBackgroundColor = Colors.white;
   cardBackgroundColor = Colors.white;
+  buttonColor = Colors.black54;
 }
