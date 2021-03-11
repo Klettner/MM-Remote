@@ -35,7 +35,7 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
         setState(() {
           (tempSettings.monitorStatus.compareTo('ON') == 0)
               ? _monitorToggleColor = accentColor
-              : _monitorToggleColor = tertiaryColorDark;
+              : _monitorToggleColor = tertiaryColorMedium;
         });
       }
     });
@@ -44,7 +44,7 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
       setState(() {
         isOn
             ? _monitorToggleColor = accentColor
-            : _monitorToggleColor = tertiaryColorDark;
+            : _monitorToggleColor = tertiaryColorMedium;
       });
     });
   }
