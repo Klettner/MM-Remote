@@ -74,7 +74,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       // _httpRest will be needed for the initialization of DefaultCommandCards,
       // therefore it has to be instantiated first
       _httpRest = new HttpRest(ip, _getApiKey, _showSnackbar);
-      _initializeDrawerImage();
       _initializeSettings(deviceName);
       _initializeDefaultCommandCards();
       _syncBrightness();
@@ -508,15 +507,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     );
   }
 
-  void _initializeDrawerImage() {
-    getImage(deviceName).then((_image) {
-      setState(() {
-        _currentDeviceDrawer = CurrentDeviceDrawer(_httpRest, deviceName,
-            _image, _navigateToSettingsPage, _initializeDrawerImage);
-      });
-    });
-  }
-
   void _initializeDefaultCommandCards() {
     _defaultCommands.add(DefaultCommand.PhotoSlideshow);
     _defaultCommands.add(DefaultCommand.MonitorBrightness);
@@ -679,6 +669,11 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     fetchDefaultCommandsFromDatabase(deviceName)
         .then((List<String> defaultCommandStrings) {
       _createDefaultCommands(defaultCommandStrings);
+    });
+
+    setState(() {
+      _currentDeviceDrawer =
+          CurrentDeviceDrawer(_httpRest, deviceName, _navigateToSettingsPage);
     });
   }
 

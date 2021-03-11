@@ -1,25 +1,20 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mm_remote/models/mirrorStateArguments.dart';
 import 'package:mm_remote/screens/currentDevice/cdDatabaseAccess.dart';
 import 'package:mm_remote/screens/help.dart';
 import 'package:mm_remote/services/httpRest.dart';
 import 'package:mm_remote/shared/colors.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart' as pPath;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CurrentDeviceDrawer extends StatefulWidget {
   final HttpRest _httpRest;
   final String deviceName;
-  final File _image;
   final Function _navigateToSettingsPage;
-  final Function _initializeDrawerImage;
 
-  CurrentDeviceDrawer(this._httpRest, this.deviceName, this._image,
-      this._navigateToSettingsPage, this._initializeDrawerImage);
+  CurrentDeviceDrawer(
+      this._httpRest, this.deviceName, this._navigateToSettingsPage);
 
   @override
   _CurrentDeviceDrawerState createState() => _CurrentDeviceDrawerState();
@@ -27,14 +22,12 @@ class CurrentDeviceDrawer extends StatefulWidget {
 
 class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
   File _image;
-  final picker = ImagePicker();
   SharedPreferences prefs;
   Color _monitorToggleColor;
 
   @override
   void initState() {
     super.initState();
-    _image = widget._image;
     //get monitorToggleColor from database
     fetchSettingsFromDatabase(this.widget.deviceName)
         .then((MirrorStateArguments tempSettings) {
@@ -94,18 +87,6 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
                             ),
                           ],
                         ),
-                        Align(
-                          alignment: FractionalOffset.bottomRight,
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.edit,
-                              color: highlightColor,
-                            ),
-                            onPressed: () {
-                              _pickImage();
-                            },
-                          ),
-                        )
                       ],
                     ),
                   ),
@@ -299,34 +280,4 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
     updateMonitorStatusSetting(widget.deviceName, 'OFF');
   }
 
-  Future _pickImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-    // Check if a image was picked
-    if (pickedFile == null) {
-      return;
-    }
-
-    setState(() {
-      _image = File(pickedFile.path);
-    });
-
-    final appDir = await pPath.getApplicationDocumentsDirectory();
-    final String imagePath = appDir.path;
-    final fileName = path.basename(pickedFile.path);
-    final File localImage = await _image.copy('$imagePath/$fileName');
-
-    //persist image path
-    prefs = await SharedPreferences.getInstance();
-    prefs.setString(this.widget.deviceName + 'Image', localImage.path);
-    this.widget._initializeDrawerImage();
-  }
-}
-
-Future<File> getImage(String deviceName) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  if (prefs.getString(deviceName + 'Image') != null) {
-    return File(prefs.getString(deviceName + 'Image'));
-  }
-  return null;
 }
