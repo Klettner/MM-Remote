@@ -28,7 +28,6 @@ dependencies:
   path_provider: 2.0.1
   sqflite: 2.0.0+2
   logger: 0.9.4
-  image_picker: 0.7.2
   shared_preferences: 2.0.3
   provider: 5.0.0
 
