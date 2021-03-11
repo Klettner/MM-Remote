@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:mm_remote/models/darkThemeProvider.dart';
 import 'package:mm_remote/models/deviceArguments.dart';
 import 'package:mm_remote/models/mirrorStateArguments.dart';
@@ -26,14 +27,14 @@ class _StartPageState extends State<StartPage> {
   void initState() {
     super.initState();
     final List<Widget> _devicesTemp = <Widget>[];
-    fetchDevicesFromDatabase().then((List<DeviceArguments> devices) {
-      for (DeviceArguments device in devices) {
-        Card _newDevice = _createDevice(device, false);
-        _devicesTemp.add(_newDevice);
-      }
-      setState(() {
-        _devices = _devicesTemp;
-      });
+    final deviceArgumentsBox = Hive.box('deviceArguments');
+
+    deviceArgumentsBox.values.forEach((device) {
+      Card _newDevice = _createDevice(device, false);
+      _devicesTemp.add(_newDevice);
+    });
+    setState(() {
+      _devices = _devicesTemp;
     });
   }
 
@@ -170,18 +171,23 @@ class _StartPageState extends State<StartPage> {
   }
 
   void _deleteDevice(String deviceName) {
-    var dbHelper = SqLite();
-    dbHelper.deleteDevice(deviceName);
+    final deviceArgumentsBox = Hive.box('deviceArguments');
 
+    deviceArgumentsBox.delete(deviceName);
+    _updateDeviceCards();
+  }
+
+  void _updateDeviceCards() {
+    final deviceArgumentsBox = Hive.box('deviceArguments');
     final List<Widget> _devicesTemp = <Widget>[];
-    fetchDevicesFromDatabase().then((List<DeviceArguments> devices) {
-      for (DeviceArguments device in devices) {
-        Card _newDevice = _createDevice(device, false);
-        _devicesTemp.add(_newDevice);
-      }
-      setState(() {
-        _devices = _devicesTemp;
-      });
+
+    List<DeviceArguments> devices = deviceArgumentsBox.values;
+    for (DeviceArguments device in devices) {
+      Card _newDevice = _createDevice(device, false);
+      _devicesTemp.add(_newDevice);
+    }
+    setState(() {
+      _devices = _devicesTemp;
     });
   }
 
@@ -200,41 +206,38 @@ class _StartPageState extends State<StartPage> {
             Flexible(
               fit: FlexFit.tight,
               child: TextButton(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          device.deviceName,
-                          textScaleFactor: 1.2,
-                          style: TextStyle(
-                            color: accentColor,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            device.deviceName,
+                            textScaleFactor: 1.2,
+                            style: TextStyle(
+                              color: accentColor,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 12.0),
-                        Text(
-                          'IP: ' + device.ip,
-                          textScaleFactor: 1.1,
-                        ),
-                        SizedBox(height: 4.0),
-                      ],
+                          SizedBox(height: 12.0),
+                          Text(
+                            'IP: ' + device.ip,
+                            textScaleFactor: 1.1,
+                          ),
+                          SizedBox(height: 4.0),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                onPressed: () {
-                  fetchDeviceFromDatabase(device.deviceName)
-                      .then((DeviceArguments newDevice) {
+                  onPressed: () {
+                    DeviceArguments newDevice = _getDevice(device.deviceName);
                     Navigator.pushNamed(
                       context,
                       CurrentDevicePage.routeName,
                       arguments: newDevice,
                     );
-                  });
-                },
-              ),
+                  }),
             ),
             new IconButton(
               icon: Icon(
@@ -254,8 +257,13 @@ class _StartPageState extends State<StartPage> {
   }
 
   void _persistDevice(DeviceArguments device) {
-    var dbHelper = SqLite();
-    dbHelper.saveDevice(device);
+    final deviceArgumentsBox = Hive.box('deviceArguments');
+    deviceArgumentsBox.put(device.deviceName, device);
+  }
+
+  DeviceArguments _getDevice(String deviceName) {
+    final deviceArgumentsBox = Hive.box('deviceArguments');
+    return deviceArgumentsBox.get(deviceName);
   }
 
   void _initializeDefaultCommands(String deviceName) {
@@ -273,16 +281,4 @@ class _StartPageState extends State<StartPage> {
     dbHelper.deleteSettings(deviceName);
     dbHelper.saveSetting(setting);
   }
-}
-
-Future<List<DeviceArguments>> fetchDevicesFromDatabase() async {
-  var dbHelper = SqLite();
-  Future<List<DeviceArguments>> devices = dbHelper.getDevices();
-  return devices;
-}
-
-Future<DeviceArguments> fetchDeviceFromDatabase(String deviceName) async {
-  var dbHelper = SqLite();
-  Future<DeviceArguments> device = dbHelper.getDevice(deviceName);
-  return device;
 }

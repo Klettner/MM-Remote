@@ -34,6 +34,7 @@ class _MirrorAppState extends State<MirrorApp> {
 
   @override
   void dispose() {
+    Hive.box('deviceArguments').compact();
     Hive.close();
     super.dispose();
   }
@@ -56,7 +57,7 @@ class _MirrorAppState extends State<MirrorApp> {
             title: 'MM-Remote',
             theme: Styles.themeData(themeChangeProvider.darkTheme, context),
             home: FutureBuilder(
-              future: Hive.openBox<DeviceArguments>('deviceArguments'),
+              future: Hive.openBox('deviceArguments'),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   if (snapshot.hasError) {
