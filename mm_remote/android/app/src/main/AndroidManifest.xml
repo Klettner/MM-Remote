@@ -9,8 +9,8 @@
         </intent>
     </queries>
     <application
-        android:label="mm_remote"
-        android:icon="@mipmap/ic_launcher"
+        android:label="MM-Remote"
+        android:icon="@mipmap/launcher_icon"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
