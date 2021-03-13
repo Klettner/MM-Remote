@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 part 'deviceArguments.g.dart';
 
 @HiveType(typeId: 1)
-class DeviceArguments {
+class DeviceArguments extends HiveObject {
   @HiveField(0)
   String deviceName;
 

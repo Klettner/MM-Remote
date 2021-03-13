@@ -18,8 +18,3 @@ void persistDefaultCommands(
     dbHelper.saveDefaultCommand(deviceName, defaultCommandString);
   }
 }
-
-void updateApiKey(String deviceName, String apiKey) {
-  var dbHelper = SqLite();
-  dbHelper.updateApiKey(deviceName, apiKey);
-}
