@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mm_remote/models/deviceArguments.dart';
+import 'package:mm_remote/models/mirrorStateArguments.dart';
 import 'package:mm_remote/screens/help.dart';
 import 'package:mm_remote/screens/settings.dart';
 import 'package:mm_remote/shared/styles.dart';
@@ -15,6 +16,9 @@ import 'screens/currentDevice/cdMain.dart';
 void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(DeviceArgumentsAdapter());
+  Hive.registerAdapter(MirrorStateArgumentsAdapter());
+  await Hive.openBox('deviceArguments');
+  await Hive.openBox('mirrorStateArguments');
   runApp(MirrorApp());
 }
 
@@ -35,6 +39,7 @@ class _MirrorAppState extends State<MirrorApp> {
   @override
   void dispose() {
     Hive.box('deviceArguments').compact();
+    Hive.box('mirrorStateArguments').close();
     Hive.close();
     super.dispose();
   }
@@ -56,20 +61,7 @@ class _MirrorAppState extends State<MirrorApp> {
             debugShowCheckedModeBanner: false,
             title: 'MM-Remote',
             theme: Styles.themeData(themeChangeProvider.darkTheme, context),
-            home: FutureBuilder(
-              future: Hive.openBox('deviceArguments'),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasError) {
-                    return Text(snapshot.error.toString());
-                  } else {
-                    return StartPage();
-                  }
-                } else {
-                  return Scaffold();
-                }
-              },
-            ),
+            home: StartPage(),
             routes: <String, WidgetBuilder>{
               CurrentDevicePage.routeName: (context) => CurrentDevicePage(),
               AddDevicePage.routeName: (context) => AddDevicePage(),

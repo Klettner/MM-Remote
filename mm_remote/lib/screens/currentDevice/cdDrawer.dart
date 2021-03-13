@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mm_remote/dao/mirrorStateArgumentsDao.dart';
 import 'package:mm_remote/models/mirrorStateArguments.dart';
-import 'package:mm_remote/screens/currentDevice/cdDatabaseAccess.dart';
 import 'package:mm_remote/screens/help.dart';
 import 'package:mm_remote/services/httpRest.dart';
 import 'package:mm_remote/shared/colors.dart';
@@ -29,16 +29,16 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
   void initState() {
     super.initState();
     //get monitorToggleColor from database
-    fetchSettingsFromDatabase(this.widget.deviceName)
-        .then((MirrorStateArguments tempSettings) {
-      if (tempSettings != null) {
-        setState(() {
-          (tempSettings.monitorStatus.compareTo('ON') == 0)
-              ? _monitorToggleColor = accentColor
-              : _monitorToggleColor = tertiaryColorMedium;
-        });
-      }
-    });
+    MirrorStateArguments tempSettings =
+        getMirrorStateArguments(this.widget.deviceName);
+    if (tempSettings != null) {
+      setState(() {
+        (tempSettings.monitorStatus.compareTo('ON') == 0)
+            ? _monitorToggleColor = accentColor
+            : _monitorToggleColor = tertiaryColorMedium;
+      });
+    }
+
     // get current monitor status from mirror
     this.widget._httpRest.isMonitorOn().then((bool isOn) {
       setState(() {
@@ -269,7 +269,7 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
       _monitorToggleColor = accentColor;
     });
     this.widget._httpRest.toggleMonitorOn();
-    updateMonitorStatusSetting(widget.deviceName, 'ON');
+    updateMonitorState(widget.deviceName, 'ON');
   }
 
   void _toggleMonitorOff() async {
@@ -277,7 +277,7 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
       _monitorToggleColor = tertiaryColorDark;
     });
     this.widget._httpRest.toggleMonitorOff();
-    updateMonitorStatusSetting(widget.deviceName, 'OFF');
+    updateMonitorState(widget.deviceName, 'OFF');
   }
 
 }
