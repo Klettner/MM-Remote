@@ -4,7 +4,7 @@
 [![GitHub license](https://img.shields.io/github/license/Klettner/MM-Remote)](https://github.com/Klettner/MM-Remote/blob/master/LICENSE)
 ![GitHub All Releases](https://img.shields.io/github/downloads/Klettner/MM-Remote/total)
   
-MM-Remote is an Android and Windows app to control your [**MagicMirror**](https://magicmirror.builders/) remotely via a smartphone :iphone:.  
+MM-Remote is an Android and Windows app to control your [**MagicMirror**](https://magicmirror.builders/) remotely :iphone:.  
   
 ![](assets/currentDeviceHomeTab.png)
   
@@ -20,11 +20,11 @@ MM-Remote is an Android and Windows app to control your [**MagicMirror**](https:
   * Start a stop-watch :hourglass_flowing_sand: on the mirror
 
 ### v3.0.0 ###
-  * Add Windows desktop support
-  * Switch between light and dark mode
-  * Improve settings page
+  * Windows desktop :computer: support
   * Sync monitor brightness and status (on/of) with mirror
-  * Improve Stopwatch/Timer card
+  * Switch between light and dark mode :first_quarter_moon_with_face:
+  * Improved Stopwatch/Timer card
+  * Improved settings page
   * Upgrade of Flutter and Android version
   
 &nbsp;
