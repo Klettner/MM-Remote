@@ -4,7 +4,7 @@
 [![GitHub license](https://img.shields.io/github/license/Klettner/MM-Remote)](https://github.com/Klettner/MM-Remote/blob/master/LICENSE)
 ![GitHub All Releases](https://img.shields.io/github/downloads/Klettner/MM-Remote/total)
   
-MM-Remote is an Android and Windows app to control your [**MagicMirror**](https://magicmirror.builders/) remotely :iphone:.  
+MM-Remote is an Android 📱 and Windows 💻 app to control your [**MagicMirror**](https://magicmirror.builders/) remotely.  
   
 ![](assets/currentDeviceHomeTab.png)
   
