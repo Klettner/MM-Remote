@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mm_remote/dao/defaultCommandsDao.dart';
 import 'package:mm_remote/dao/deviceArgumentsDao.dart';
 import 'package:mm_remote/dao/mirrorStateArgumentsDao.dart';
 import 'package:mm_remote/models/deviceArguments.dart';
 import 'package:mm_remote/models/mirrorStateArguments.dart';
 import 'package:mm_remote/models/settingArguments.dart';
 import 'package:mm_remote/screens/currentDevice/cdCustomCommandsTab.dart';
-import 'package:mm_remote/screens/currentDevice/cdDatabaseAccess.dart';
 import 'package:mm_remote/screens/currentDevice/cdDrawer.dart';
 import 'package:mm_remote/screens/settings.dart';
 import 'package:mm_remote/services/httpRest.dart';
@@ -77,7 +77,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       // therefore it has to be instantiated first
       _httpRest = new HttpRest(ip, _getApiKey, _showSnackbar);
       _initializeSettings(deviceName);
-      _initializeDefaultCommandCards();
+      _createDefaultCommands(getDefaultCommands(this.deviceName));
       _syncBrightness();
     }
 
@@ -509,13 +509,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     );
   }
 
-  void _initializeDefaultCommandCards() {
-    _defaultCommands.add(DefaultCommand.PhotoSlideshow);
-    _defaultCommands.add(DefaultCommand.MonitorBrightness);
-    _defaultCommands.add(DefaultCommand.StopwatchTimer);
-    _updateDefaultCommandCards();
-  }
-
   void _updateDefaultCommandCards() {
     List<Widget> updatedList = <Widget>[];
     for (DefaultCommand command in _defaultCommands) {
@@ -666,10 +659,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       _alertDuration = _tempAlertDuration;
     });
 
-    fetchDefaultCommandsFromDatabase(deviceName)
-        .then((List<String> defaultCommandStrings) {
-      _createDefaultCommands(defaultCommandStrings);
-    });
+    _createDefaultCommands(getDefaultCommands(deviceName));
 
     setState(() {
       _currentDeviceDrawer =
