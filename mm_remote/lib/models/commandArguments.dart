@@ -1,7 +1,19 @@
-class CommandArguments {
+import 'package:hive/hive.dart';
+
+part 'commandArguments.g.dart';
+
+@HiveType(typeId: 3)
+class CommandArguments extends HiveObject {
+  @HiveField(0)
   String deviceName;
+
+  @HiveField(1)
   String commandName;
+
+  @HiveField(2)
   String notification;
+
+  @HiveField(3)
   String payload;
 
   CommandArguments(
