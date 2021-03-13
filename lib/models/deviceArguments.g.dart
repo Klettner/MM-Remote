@@ -26,8 +26,7 @@ class DeviceArgumentsAdapter extends TypeAdapter<DeviceArguments> {
   @override
   void write(BinaryWriter writer, DeviceArguments obj) {
     writer
-      ..writeByte(3)
-      ..writeByte(0)
+      ..writeByte(3)..writeByte(0)
       ..write(obj.deviceName)
       ..writeByte(1)
       ..write(obj.ip)
@@ -41,7 +40,7 @@ class DeviceArgumentsAdapter extends TypeAdapter<DeviceArguments> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is DeviceArgumentsAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+          other is DeviceArgumentsAdapter &&
+              runtimeType == other.runtimeType &&
+              typeId == other.typeId;
 }

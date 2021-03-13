@@ -35,7 +35,9 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
 
   @override
   Widget build(BuildContext context) {
-    var _deviceOrientation = MediaQuery.of(context).orientation;
+    var _deviceOrientation = MediaQuery
+        .of(context)
+        .orientation;
     return new Container(
       color: backgroundColor,
       child: Column(
@@ -44,7 +46,7 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
           Expanded(
             child: GridView.count(
               crossAxisCount:
-                  _deviceOrientation == Orientation.portrait ? 1 : 2,
+              _deviceOrientation == Orientation.portrait ? 1 : 2,
               padding: _deviceOrientation == Orientation.portrait
                   ? EdgeInsets.all(16.0)
                   : EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
@@ -56,7 +58,7 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
           ),
           Align(
               alignment:
-                  Alignment.lerp(Alignment.center, Alignment.centerRight, 0.85),
+              Alignment.lerp(Alignment.center, Alignment.centerRight, 0.85),
               child: Tooltip(
                 message: 'Create new custom-command',
                 child: FloatingActionButton(
