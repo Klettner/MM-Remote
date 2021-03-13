@@ -1,7 +1,7 @@
 # MM-Remote 
 [![Build and Release apk](https://github.com/Klettner/MM-Remote/workflows/Build%20and%20Release%20apk/badge.svg)](https://GitHub.com/Klettner/MM-Remote/releases/)
 [![GitHub release](https://img.shields.io/github/release/Klettner/MM-Remote)](https://GitHub.com/Klettner/MM-Remote/releases/)
-[![GitHub license](https://img.shields.io/github/license/Klettner/MM-Remote)](https://github.com/Klettner/MM-Remote/blob/master/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/Klettner/MM-Remote)](https://github.com/Klettner/MM-Remote/blob/master/LICENSE.md)
 ![GitHub All Releases](https://img.shields.io/github/downloads/Klettner/MM-Remote/total)
   
 MM-Remote is an Android 📱 and Windows 💻 app to control your [**MagicMirror**](https://magicmirror.builders/) remotely.  
