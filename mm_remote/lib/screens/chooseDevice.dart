@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mm_remote/dao/defaultCommandsDao.dart';
 import 'package:mm_remote/dao/deviceArgumentsDao.dart';
 import 'package:mm_remote/dao/mirrorStateArgumentsDao.dart';
 import 'package:mm_remote/models/darkThemeProvider.dart';
 import 'package:mm_remote/models/deviceArguments.dart';
-import 'package:mm_remote/services/database.dart';
+import 'package:mm_remote/models/settingArguments.dart';
 import 'package:mm_remote/shared/colors.dart';
 import 'package:provider/provider.dart';
 
@@ -254,11 +255,11 @@ class _StartPageState extends State<StartPage> {
   }
 
   void _initializeDefaultCommands(String deviceName) {
-    // delete already existing defaultCommands for this device
-    var dbHelper = SqLite();
-    dbHelper.deleteAllDefaultCommands(deviceName);
-    dbHelper.saveDefaultCommand(deviceName, "PhotoSlideshow");
-    dbHelper.saveDefaultCommand(deviceName, "MonitorBrightness");
-    dbHelper.saveDefaultCommand(deviceName, "StopwatchTimer");
+    List<DefaultCommand> initialDefaultCommands = <DefaultCommand>[];
+
+    initialDefaultCommands.add(DefaultCommand.PhotoSlideshow);
+    initialDefaultCommands.add(DefaultCommand.MonitorBrightness);
+    initialDefaultCommands.add(DefaultCommand.StopwatchTimer);
+    persistDefaultCommands(deviceName, initialDefaultCommands);
   }
 }

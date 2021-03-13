@@ -22,6 +22,7 @@ void main() async {
   await Hive.openBox('deviceArguments');
   await Hive.openBox('mirrorStateArguments');
   await Hive.openBox('commandArguments');
+  await Hive.openBox('defaultCommands3');
   runApp(MirrorApp());
 }
 
@@ -44,10 +45,12 @@ class _MirrorAppState extends State<MirrorApp> {
     Hive.box('deviceArguments').compact();
     Hive.box('mirrorStateArguments').compact();
     Hive.box('commandArguments').compact();
+    Hive.box('defaultCommands3').compact();
 
     Hive.box('deviceArguments').close();
     Hive.box('mirrorStateArguments').close();
     Hive.box('commandArguments').close();
+    Hive.box('defaultCommands3').close();
 
     Hive.close();
     super.dispose();
