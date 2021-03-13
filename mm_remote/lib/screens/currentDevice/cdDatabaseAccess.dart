@@ -1,4 +1,3 @@
-import 'package:mm_remote/models/commandArguments.dart';
 import 'package:mm_remote/models/settingArguments.dart';
 import 'package:mm_remote/services/database.dart';
 
@@ -7,21 +6,6 @@ Future<List<String>> fetchDefaultCommandsFromDatabase(String deviceName) async {
   Future<List<String>> defaultCommandString =
       dbHelper.getDefaultCommands(deviceName);
   return defaultCommandString;
-}
-
-Future<List<CommandArguments>> fetchCommandsFromDatabase(
-    String deviceName) async {
-  var dbHelper = SqLite();
-  Future<List<CommandArguments>> commands = dbHelper.getCommands(deviceName);
-  return commands;
-}
-
-void persistCommand(String deviceName, String commandName, String notification,
-    String payload) {
-  var command =
-      CommandArguments(deviceName, commandName, notification, payload);
-  var dbHelper = SqLite();
-  dbHelper.saveCommand(command);
 }
 
 void persistDefaultCommands(

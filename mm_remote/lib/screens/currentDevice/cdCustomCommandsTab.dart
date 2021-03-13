@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mm_remote/dao/commandArgumentsDao.dart';
 import 'package:mm_remote/models/commandArguments.dart';
 import 'package:mm_remote/screens/addCommand.dart';
-import 'package:mm_remote/screens/currentDevice/cdDatabaseAccess.dart';
-import 'package:mm_remote/services/database.dart';
 import 'package:mm_remote/services/httpRest.dart';
 import 'package:mm_remote/shared/colors.dart';
 
@@ -23,16 +22,14 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
   void initState() {
     super.initState();
     final List<Widget> _customCommandsTemp = <Widget>[];
-    fetchCommandsFromDatabase(this.widget.deviceName)
-        .then((List<CommandArguments> commands) {
-      for (CommandArguments command in commands) {
-        Card _newCommand = _createCommandCard(command.commandName,
-            command.notification, command.payload, context, false);
-        _customCommandsTemp.add(_newCommand);
-      }
-      setState(() {
-        _customCommands = _customCommandsTemp;
-      });
+
+    getAllCommandArguments(this.widget.deviceName).forEach((command) {
+      Card _newCommand = _createCommandCard(command.commandName,
+          command.notification, command.payload, context, false);
+      _customCommandsTemp.add(_newCommand);
+    });
+    setState(() {
+      _customCommands = _customCommandsTemp;
     });
   }
 
@@ -105,27 +102,25 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
   }
 
   void _deleteCommand(String commandName) {
-    var dbHelper = SqLite();
-    dbHelper.deleteCommand(widget.deviceName, commandName);
+    deleteCommandArguments(widget.deviceName, commandName);
 
     final List<Widget> _customCommandsTemp = <Widget>[];
-    fetchCommandsFromDatabase(widget.deviceName)
-        .then((List<CommandArguments> commands) {
-      for (CommandArguments command in commands) {
-        Card _newCommand = _createCommandCard(command.commandName,
-            command.notification, command.payload, context, false);
-        _customCommandsTemp.add(_newCommand);
-      }
-      setState(() {
-        _customCommands = _customCommandsTemp;
-      });
+    getAllCommandArguments(widget.deviceName).forEach((command) {
+      Card _newCommand = _createCommandCard(command.commandName,
+          command.notification, command.payload, context, false);
+      _customCommandsTemp.add(_newCommand);
+    });
+
+    setState(() {
+      _customCommands = _customCommandsTemp;
     });
   }
 
   Card _createCommandCard(String commandName, String notification,
       String payload, BuildContext context, bool persist) {
     if (persist) {
-      persistCommand(widget.deviceName, commandName, notification, payload);
+      persistCommandArguments(
+          widget.deviceName, commandName, notification, payload);
     }
     return Card(
       clipBehavior: Clip.antiAlias,
