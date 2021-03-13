@@ -39,14 +39,7 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
       });
     }
 
-    // get current monitor status from mirror
-    this.widget._httpRest.isMonitorOn().then((bool isOn) {
-      setState(() {
-        isOn
-            ? _monitorToggleColor = accentColor
-            : _monitorToggleColor = tertiaryColorMedium;
-      });
-    });
+    _syncMonitorStatus();
   }
 
   @override
@@ -173,15 +166,28 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
                                 style: TextStyle(color: tertiaryColorDark),
                               ),
                               onTap: () {
-                                Navigator.pushNamed(context, HelpPage.routeName);
-                              },
-                            )
-                          ],
-                        ))))
+                            Navigator.pushNamed(context, HelpPage.routeName);
+                          },
+                        )
+                      ],
+                    ))))
           ],
         ),
       ),
     );
+  }
+
+  void _syncMonitorStatus() async {
+    try {
+      bool isMonitorOn = await this.widget._httpRest.isMonitorOn();
+      setState(() {
+        isMonitorOn
+            ? _monitorToggleColor = accentColor
+            : _monitorToggleColor = tertiaryColorMedium;
+      });
+    } catch (e) {
+      print("Monitor currently unavailable");
+    }
   }
 
   void _toggleMonitor() {

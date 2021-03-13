@@ -546,12 +546,15 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   }
 
   void _syncBrightness() async {
-    _httpRest.getBrightness().then((brightness) {
+    try {
+      int mirrorBrightness = await _httpRest.getBrightness();
       setState(() {
-        _brightnessValue = brightness;
+        _brightnessValue = mirrorBrightness;
       });
       _updateBrightnessSliderCard();
-    });
+    } catch (e) {
+      print("Mirror unavailable for sync");
+    }
   }
 
   void _addDefaultCommand(
@@ -658,8 +661,6 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       _brightnessValue = _tempBrightnessValue;
       _alertDuration = _tempAlertDuration;
     });
-
-    _createDefaultCommands(getDefaultCommands(deviceName));
 
     setState(() {
       _currentDeviceDrawer =
