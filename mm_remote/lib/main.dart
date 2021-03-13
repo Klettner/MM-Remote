@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mm_remote/models/commandArguments.dart';
+import 'package:mm_remote/models/defaultCommandsOfDevice.dart';
 import 'package:mm_remote/models/deviceArguments.dart';
 import 'package:mm_remote/models/mirrorStateArguments.dart';
 import 'package:mm_remote/screens/help.dart';
@@ -10,6 +11,8 @@ import 'package:mm_remote/shared/styles.dart';
 import 'package:provider/provider.dart';
 
 import 'models/darkThemeProvider.dart';
+import 'models/defaultCommands.dart';
+import 'models/defaultCommandsOfDevice.dart';
 import 'screens/addDevice.dart';
 import 'screens/chooseDevice.dart';
 import 'screens/currentDevice/cdMain.dart';
@@ -18,9 +21,12 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(DeviceArgumentsAdapter());
   Hive.registerAdapter(MirrorStateArgumentsAdapter());
+  Hive.registerAdapter(DefaultCommandsAdapter());
+  Hive.registerAdapter(DefaultCommandsOfDeviceAdapter());
   Hive.registerAdapter(CommandArgumentsAdapter());
   await Hive.openBox('deviceArguments');
   await Hive.openBox('mirrorStateArguments');
+  await Hive.openBox('defaultCommandsOfDevice');
   await Hive.openBox('commandArguments');
   runApp(MirrorApp());
 }
@@ -43,10 +49,14 @@ class _MirrorAppState extends State<MirrorApp> {
   void dispose() {
     Hive.box('deviceArguments').compact();
     Hive.box('mirrorStateArguments').compact();
+    Hive.box('defaultCommandsOfDevice').compact();
     Hive.box('commandArguments').compact();
+
     Hive.box('deviceArguments').close();
     Hive.box('mirrorStateArguments').close();
+    Hive.box('defaultCommandsOfDevice').close();
     Hive.box('commandArguments').close();
+
     Hive.close();
     super.dispose();
   }

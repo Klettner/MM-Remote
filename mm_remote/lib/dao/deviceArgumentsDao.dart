@@ -21,3 +21,9 @@ DeviceArguments getDeviceArgument(String deviceName) {
   final deviceArgumentsBox = Hive.box('deviceArguments');
   return deviceArgumentsBox.get(deviceName);
 }
+
+void updateApiKey(String deviceName, String apiKey) {
+  DeviceArguments deviceArguments = Hive.box('deviceArguments').get(deviceName);
+  deviceArguments.apiKey = apiKey;
+  deviceArguments.save();
+}
