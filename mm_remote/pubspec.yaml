@@ -26,7 +26,6 @@ dependencies:
   http: 0.13.0
   webview_flutter: 2.0.2
   path_provider: 2.0.1
-  logger: 0.9.4
   shared_preferences: 2.0.3
   provider: 5.0.0
   hive: 2.0.0
