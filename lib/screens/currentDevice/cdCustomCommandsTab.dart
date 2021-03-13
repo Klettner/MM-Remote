@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mmremotecontrol/shared/colors.dart';
-import 'package:mmremotecontrol/screens/currentDevice/cdDatabaseAccess.dart';
-import 'package:mmremotecontrol/models/commandArguments.dart';
-import 'package:mmremotecontrol/screens/addCommand.dart';
-import 'package:mmremotecontrol/services/database.dart';
-import 'package:mmremotecontrol/services/httpRest.dart';
+import 'package:mm_remote/dao/commandArgumentsDao.dart';
+import 'package:mm_remote/models/commandArguments.dart';
+import 'package:mm_remote/screens/addCommand.dart';
+import 'package:mm_remote/services/httpRest.dart';
+import 'package:mm_remote/shared/colors.dart';
 
 class CustomCommandsTab extends StatefulWidget {
   final String deviceName;
@@ -17,29 +16,29 @@ class CustomCommandsTab extends StatefulWidget {
 }
 
 class _CustomCommandsTabState extends State<CustomCommandsTab> {
-  List<Widget> _customCommands = List<Widget>();
+  List<Widget> _customCommands = <Widget>[];
 
   @override
   void initState() {
     super.initState();
-    final List<Widget> _customCommandsTemp = List<Widget>();
-    fetchCommandsFromDatabase(this.widget.deviceName)
-        .then((List<CommandArguments> commands) {
-      for (CommandArguments command in commands) {
-        Card _newCommand = _createCommandCard(command.commandName,
-            command.notification, command.payload, context, false);
-        _customCommandsTemp.add(_newCommand);
-      }
-      setState(() {
-        _customCommands = _customCommandsTemp;
-      });
+    final List<Widget> _customCommandsTemp = <Widget>[];
+
+    getAllCommandArguments(this.widget.deviceName).forEach((command) {
+      Card _newCommand = _createCommandCard(command.commandName,
+          command.notification, command.payload, context, false);
+      _customCommandsTemp.add(_newCommand);
+    });
+    setState(() {
+      _customCommands = _customCommandsTemp;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var _deviceOrientation = MediaQuery.of(context).orientation;
-    return  new Container(
+    var _deviceOrientation = MediaQuery
+        .of(context)
+        .orientation;
+    return new Container(
       color: backgroundColor,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -65,7 +64,7 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
                 child: FloatingActionButton(
                   child: Icon(
                     Icons.add,
-                    color: primaryColor,
+                    color: accentColor,
                     size: 35,
                   ),
                   backgroundColor: secondaryColor,
@@ -95,7 +94,7 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
         _commandArguments.payload,
         context,
         true);
-    final List<Widget> _customCommandsTemp = List<Widget>();
+    final List<Widget> _customCommandsTemp = <Widget>[];
     _customCommandsTemp.addAll(_customCommands);
     _customCommandsTemp.add(_newCommand);
 
@@ -105,27 +104,25 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
   }
 
   void _deleteCommand(String commandName) {
-    var dbHelper = SqLite();
-    dbHelper.deleteCommand(widget.deviceName, commandName);
+    deleteCommandArguments(widget.deviceName, commandName);
 
-    final List<Widget> _customCommandsTemp = List<Widget>();
-    fetchCommandsFromDatabase(widget.deviceName)
-        .then((List<CommandArguments> commands) {
-      for (CommandArguments command in commands) {
-        Card _newCommand = _createCommandCard(command.commandName,
-            command.notification, command.payload, context, false);
-        _customCommandsTemp.add(_newCommand);
-      }
-      setState(() {
-        _customCommands = _customCommandsTemp;
-      });
+    final List<Widget> _customCommandsTemp = <Widget>[];
+    getAllCommandArguments(widget.deviceName).forEach((command) {
+      Card _newCommand = _createCommandCard(command.commandName,
+          command.notification, command.payload, context, false);
+      _customCommandsTemp.add(_newCommand);
+    });
+
+    setState(() {
+      _customCommands = _customCommandsTemp;
     });
   }
 
   Card _createCommandCard(String commandName, String notification,
       String payload, BuildContext context, bool persist) {
     if (persist) {
-      persistCommand(widget.deviceName, commandName, notification, payload);
+      persistCommandArguments(
+          widget.deviceName, commandName, notification, payload);
     }
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -137,7 +134,7 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
           children: <Widget>[
             Flexible(
               fit: FlexFit.tight,
-              child: FlatButton(
+              child: TextButton(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
@@ -148,20 +145,22 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
                       maxLines: 2,
                       textScaleFactor: 1.1,
                       style: TextStyle(
-                        color: primaryColor,
+                        color: accentColor,
                       ),
                     ),
                   ],
                 ),
                 onPressed: () {
-                  this.widget._httpRest.executeCustomCommand(
-                      commandName, notification, payload, context);
+                  this
+                      .widget
+                      ._httpRest
+                      .executeCustomCommand(commandName, notification, payload);
                 },
               ),
             ),
             IconButton(
               icon: Icon(Icons.delete, size: 24.0),
-              color: tertiaryColorDark,
+              color: tertiaryColorMedium,
               tooltip: 'Delete command',
               onPressed: () {
                 _deleteCommand(commandName);
@@ -172,5 +171,4 @@ class _CustomCommandsTabState extends State<CustomCommandsTab> {
       ),
     );
   }
-
 }

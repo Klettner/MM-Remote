@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mmremotecontrol/models/commandArguments.dart';
-import 'package:mmremotecontrol/shared/colors.dart';
+import 'package:mm_remote/models/commandArguments.dart';
+import 'package:mm_remote/shared/colors.dart';
 
 class AddCommandPage extends StatefulWidget {
   static const routeName = '/addCommand';
@@ -22,11 +22,16 @@ class _AddCommandPageState extends State<AddCommandPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
+        iconTheme: IconThemeData(color: secondaryColor),
         brightness: Brightness.light,
         elevation: 10.0,
         titleSpacing: 0.0,
-        title: Text('Add Command'),
+        title: Text(
+          'Add Command',
+          style: TextStyle(color: secondaryColor),
+        ),
       ),
       body: SafeArea(
         child: ListView(
@@ -34,8 +39,9 @@ class _AddCommandPageState extends State<AddCommandPage> {
           children: <Widget>[
             SizedBox(height: 75),
             AccentColorOverride(
-              color: primaryColor,
+              color: accentColor,
               child: TextField(
+                style: TextStyle(color: tertiaryColorDark),
                 controller: _titleController,
                 decoration: InputDecoration(
                   labelText: _titleField,
@@ -49,8 +55,9 @@ class _AddCommandPageState extends State<AddCommandPage> {
             ),
             SizedBox(height: 12.0),
             AccentColorOverride(
-              color: primaryColor,
+              color: accentColor,
               child: TextField(
+                style: TextStyle(color: tertiaryColorDark),
                 controller: _notificationController,
                 decoration: InputDecoration(
                   labelText: _notificationField,
@@ -64,8 +71,9 @@ class _AddCommandPageState extends State<AddCommandPage> {
             ),
             SizedBox(height: 12.0),
             AccentColorOverride(
-              color: primaryColor,
+              color: accentColor,
               child: TextField(
+                style: TextStyle(color: tertiaryColorDark),
                 controller: _payloadController,
                 decoration: InputDecoration(
                   labelText: _payloadField,
@@ -74,10 +82,15 @@ class _AddCommandPageState extends State<AddCommandPage> {
             ),
             ButtonBar(
               children: <Widget>[
-                FlatButton(
-                  child: Text('CLEAR'),
-                  shape: BeveledRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                TextButton(
+                  child: Text(
+                    'CLEAR',
+                    style: TextStyle(color: inverseHighlightColor),
+                  ),
+                  style: TextButton.styleFrom(
+                    shape: BeveledRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                    ),
                   ),
                   onPressed: () {
                     _titleController.clear();
@@ -89,15 +102,17 @@ class _AddCommandPageState extends State<AddCommandPage> {
                     });
                   },
                 ),
-                RaisedButton(
-                  child: Text('CREATE',
-                  style: TextStyle(
-                    color: secondaryColor
-                  ),),
-                  elevation: 8.0,
-                  color: primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                ElevatedButton(
+                  child: Text(
+                    'CREATE',
+                    style: TextStyle(color: secondaryColor),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 5.0,
+                    primary: accentColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                    ),
                   ),
                   onPressed: (_isComposingTitle && _isComposingNotification)
                       ? () => _handleSubmitted(_titleController.text,
@@ -121,7 +136,7 @@ class _AddCommandPageState extends State<AddCommandPage> {
       _isComposingTitle = false;
       _isComposingNotification = false;
     });
-    if (_checkCommandNameLenght(commandName)) {
+    if (_checkCommandNameLength(commandName)) {
       Navigator.pop(
         context,
         CommandArguments(
@@ -134,7 +149,7 @@ class _AddCommandPageState extends State<AddCommandPage> {
     }
   }
 
-  bool _checkCommandNameLenght(String commandName) {
+  bool _checkCommandNameLength(String commandName) {
     if (commandName.length > 20) {
       _titleField = 'Name should not be longer than 20 characters';
       return false;

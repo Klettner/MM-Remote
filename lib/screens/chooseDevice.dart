@@ -1,13 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mmremotecontrol/models/mirrorStateArguments.dart';
+import 'package:mm_remote/dao/defaultCommandsDao.dart';
+import 'package:mm_remote/dao/deviceArgumentsDao.dart';
+import 'package:mm_remote/dao/mirrorStateArgumentsDao.dart';
+import 'package:mm_remote/models/darkThemeProvider.dart';
+import 'package:mm_remote/models/deviceArguments.dart';
+import 'package:mm_remote/models/settingArguments.dart';
+import 'package:mm_remote/shared/colors.dart';
+import 'package:provider/provider.dart';
 
-import 'currentDevice/cdMain.dart';
 import 'addDevice.dart';
-import 'package:mmremotecontrol/shared/colors.dart';
-import 'package:mmremotecontrol/models/deviceArguments.dart';
-import 'package:mmremotecontrol/services/database.dart';
-
+import 'currentDevice/cdMain.dart';
 
 class StartPage extends StatefulWidget {
   static const routeName = '/startPage';
@@ -19,34 +22,52 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
-  List<Widget> _devices = List<Widget>();
+  List<Widget> _devices = <Widget>[];
 
   @override
   void initState() {
     super.initState();
-    final List<Widget> _devicesTemp = List<Widget>();
-    fetchDevicesFromDatabase().then((List<DeviceArguments> devices) {
-      for (DeviceArguments device in devices) {
-        Card _newDevice =
-            _createDevice(device, false);
-        _devicesTemp.add(_newDevice);
-      }
-      setState(() {
-        _devices = _devicesTemp;
-      });
+    final List<Widget> _devicesTemp = <Widget>[];
+
+    getAllDeviceArguments().forEach((device) {
+      Card _newDevice = _createDevice(device, false);
+      _devicesTemp.add(_newDevice);
+    });
+    setState(() {
+      _devices = _devicesTemp;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     var _deviceOrientation = MediaQuery.of(context).orientation;
-
+    final themeChange = Provider.of<DarkThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          Icon(
+            themeChange.darkTheme ? Icons.lightbulb : Icons.nights_stay,
+            size: 25,
+            color: secondaryColor,
+          ),
+          Switch(
+              value: themeChange.darkTheme,
+              activeColor: Colors.blue[400],
+              activeTrackColor: tertiaryColorMedium,
+              inactiveTrackColor: backgroundColor,
+              onChanged: (bool isOn) {
+                themeChange.darkTheme = isOn;
+              }),
+        ],
         brightness: Brightness.light,
         elevation: 10.0,
         titleSpacing: 20.0,
-        title:  Text('Choose Device'),
+        title: Text(
+          'Choose Device',
+          style: TextStyle(
+            color: secondaryColor,
+          ),
+        ),
       ),
       backgroundColor: backgroundColor,
       body: new SafeArea(
@@ -75,7 +96,7 @@ class _StartPageState extends State<StartPage> {
         child: new SizedBox(height: 50),
       ),
       floatingActionButton: new FloatingActionButton(
-        backgroundColor: primaryColor,
+        backgroundColor: accentColor,
         child: new Icon(
           Icons.add,
           size: 30.0,
@@ -100,66 +121,76 @@ class _StartPageState extends State<StartPage> {
     Card _newDevice = _createDevice(_deviceArguments, true);
     _initializeDevice(_newDevice);
     _initializeDefaultCommands(_deviceArguments.deviceName);
-    _initializeSettings(_deviceArguments.deviceName);
+    initializeMirrorStateArguments(_deviceArguments.deviceName);
   }
 
   void _initializeDevice(Card _newDevice) {
-    final List<Widget> _devicesTemp = List<Widget>();
+    final List<Widget> _devicesTemp = <Widget>[];
     _devicesTemp.addAll(_devices);
     _devicesTemp.add(_newDevice);
 
     setState(() {
       _devices = _devicesTemp;
-    })  ;
+    });
   }
 
-  Future<void> _deleteDeviceDialog(BuildContext context, String deviceName) async {
+  Future<void> _deleteDeviceDialog(
+      BuildContext context, String deviceName) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Do you want to delete this device?'),
+          title: Text(
+            'Do you want to delete this device?',
+            style: TextStyle(color: tertiaryColorDark),
+          ),
           actions: <Widget>[
-            FlatButton(
-              child: Text('Cancel'),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(color: accentColor),
+                )),
+            TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-              },
-            ),
-            FlatButton(
-              child: Text('Delete'),
-              onPressed: () {
                 _deleteDevice(deviceName);
-                Navigator.of(context).pop();
               },
-            ),
+              child: Text(
+                'Delete',
+                style: TextStyle(color: tertiaryColorMedium),
+              ),
+            )
           ],
         );
       },
     );
   }
 
-  void _deleteDevice(String deviceName){
-    var dbHelper = SqLite();
-    dbHelper.deleteDevice(deviceName);
+  void _deleteDevice(String deviceName) {
+    deleteDeviceArguments(deviceName);
+    _updateDeviceCards();
+  }
 
-    final List<Widget> _devicesTemp = List<Widget>();
-    fetchDevicesFromDatabase().then((List<DeviceArguments> devices) {
-      for (DeviceArguments device in devices) {
-        Card _newDevice =
-        _createDevice(device, false);
-        _devicesTemp.add(_newDevice);
-      }
-      setState(() {
-        _devices = _devicesTemp;
-      });
+  void _updateDeviceCards() {
+    final List<Widget> _devicesTemp = <Widget>[];
+
+    getAllDeviceArguments().forEach((device) {
+      Card _newDevice = _createDevice(device, false);
+      _devicesTemp.add(_newDevice);
+    });
+
+    setState(() {
+      _devices = _devicesTemp;
     });
   }
 
   Card _createDevice(DeviceArguments device, bool persist) {
     if (persist) {
-      _persistDevice(device);
+      persistDeviceArguments(device);
     }
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -171,47 +202,45 @@ class _StartPageState extends State<StartPage> {
           children: <Widget>[
             Flexible(
               fit: FlexFit.tight,
-              child: FlatButton(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          device.deviceName,
-                          textScaleFactor: 1.2,
-                          style: TextStyle(
-                            color: primaryColor,
+              child: TextButton(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            device.deviceName,
+                            textScaleFactor: 1.2,
+                            style: TextStyle(
+                              color: accentColor,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 12.0),
-                        Text(
-                          'IP: ' + device.ip,
-                          textScaleFactor: 1.1,
-                        ),
-                        SizedBox(height: 4.0),
-                      ],
+                          SizedBox(height: 12.0),
+                          Text(
+                            'IP: ' + device.ip,
+                            textScaleFactor: 1.1,
+                          ),
+                          SizedBox(height: 4.0),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                onPressed: () {
-                  fetchDeviceFromDatabase(device.deviceName).then((DeviceArguments newDevice){
+                  onPressed: () {
+                    DeviceArguments newDevice =
+                        getDeviceArgument(device.deviceName);
                     Navigator.pushNamed(
                       context,
                       CurrentDevicePage.routeName,
                       arguments: newDevice,
                     );
-                  });
-                },
-              ),
+                  }),
             ),
             new IconButton(
               icon: Icon(
                 Icons.delete,
                 size: 30.0,
-                color: tertiaryColorDark,
                 semanticLabel: 'Delete device',
               ),
               tooltip: 'Delete device',
@@ -225,37 +254,12 @@ class _StartPageState extends State<StartPage> {
     );
   }
 
-  void _persistDevice(DeviceArguments device) {
-    var dbHelper = SqLite();
-    dbHelper.saveDevice(device);
-  }
-
   void _initializeDefaultCommands(String deviceName) {
-    // delete already existing defaultCommands for this device
-    var dbHelper = SqLite();
-    dbHelper.deleteAllDefaultCommands(deviceName);
-    dbHelper.saveDefaultCommand(deviceName, "PhotoSlideshow");
-    dbHelper.saveDefaultCommand(deviceName, "MonitorBrightness");
-    dbHelper.saveDefaultCommand(deviceName, "StopwatchTimer");
+    List<DefaultCommand> initialDefaultCommands = <DefaultCommand>[];
+
+    initialDefaultCommands.add(DefaultCommand.PhotoSlideshow);
+    initialDefaultCommands.add(DefaultCommand.MonitorBrightness);
+    initialDefaultCommands.add(DefaultCommand.StopwatchTimer);
+    persistDefaultCommands(deviceName, initialDefaultCommands);
   }
-
-  void _initializeSettings(String deviceName) {
-    var setting = MirrorStateArguments(
-        deviceName, '200', '10', 'ON');
-    var dbHelper = SqLite();
-    dbHelper.deleteSettings(deviceName);
-    dbHelper.saveSetting(setting);
-  }
-}
-
-Future<List<DeviceArguments>> fetchDevicesFromDatabase() async {
-  var dbHelper = SqLite();
-  Future<List<DeviceArguments>> devices = dbHelper.getDevices();
-  return devices;
-}
-
-Future<DeviceArguments> fetchDeviceFromDatabase(String deviceName) async {
-  var dbHelper = SqLite();
-  Future<DeviceArguments> device = dbHelper.getDevice(deviceName);
-  return device;
 }
