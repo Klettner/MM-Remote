@@ -50,35 +50,11 @@ If you do not use all the optional dependencies some default commands won't work
 * For Windows 💻 look [here](https://github.com/Klettner/MM-Remote/wiki/Installation-Windows)
 
 ## Getting started ##
-After starting the MM-Remote app, tab on the :heavy_plus_sign: on the bottom-right to add you MagicMirror. 
-  - Give your mirror a name
-  - Add it's IP-address to the next field (e.g. something like 192.168.0.0). You can get the IP-address by typing `hostname -I` in the console of the raspberry pi 
-  - The last field requires the apiKey you have specified for the MMM-Remote-Control module in the config.js of your mirror (make sure it is correct, otherwise the app will not be able to communicate with the mirror)
-
-**How to get your apiKey:**  
-Open the config.js file and search for MMM-Remote-Control. It should look something like this:  
-```
-{
-    module: 'MMM-Remote-Control'
-    config: {
-        apiKey: 'bc2e979db92f4741afad01d5d18eb8e2'
-    }
-},
-```
-If you can't find the attribute 'apiKey', add it to your config. You can choose the value of this attribute by yourself.
-Don't make it to simple, think about it as a password for your mirror. This is the value you need to add in the apiKey 
-field when creating a device in the MM-Remote app. You can find more information about the apiKey [here](https://github.com/Jopyth/MMM-Remote-Control/blob/master/API/README.md).
-
-Now you should be able to remote control your mirror. If you want to reorder or hide some default commands displayed in
-the **HOME** tab, go to settings and check :white_check_mark: the default command boxes in the order in which these commands 
-should be displayed. Keep in mind, if you don't use all the modules mentioned under dependencies, some buttons might not
-work (e.g. changing the displayed UI-pages of your mirror via the left and right arrows on the bottom only works if you 
-are using the MMM-Pages module). You can always create you own commands in the **CUSTOM-COMMANDS** tab to extend the 
-functionalities of the app. If there are any MagicMirror modules for which it is impractical to create your own **CUSTOM-COMMANDS** (e.g. because you need text input fields, a slider or many buttons) let me know, I might consider creating :wrench: a default command for it in future releases.  
+* Have a look at [wiki/Getting-started](https://github.com/Klettner/MM-Remote/wiki/Getting-started)
    
 &nbsp;
 ## :bulb: Trouble shooting :bulb: ##  
- * If something is not working properly, have a look at the [wiki](https://github.com/Klettner/MM-Remote/wiki/Trouble-shooting) first. 
+ * If something is not working properly, have a look at [wiki/Trouble-shooting](https://github.com/Klettner/MM-Remote/wiki/Trouble-shooting) first. 
  * If it still can't be resolved, create an issue.
 
 &nbsp;
