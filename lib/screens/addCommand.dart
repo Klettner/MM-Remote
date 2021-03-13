@@ -116,7 +116,7 @@ class _AddCommandPageState extends State<AddCommandPage> {
                   ),
                   onPressed: (_isComposingTitle && _isComposingNotification)
                       ? () => _handleSubmitted(_titleController.text,
-                      _notificationController.text, _payloadController.text)
+                          _notificationController.text, _payloadController.text)
                       : null,
                 )
               ],

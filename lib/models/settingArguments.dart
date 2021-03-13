@@ -3,11 +3,9 @@ class SettingArguments {
   String apiKey;
   List<DefaultCommand> defaultCommands;
 
-  SettingArguments(
-    this.defaultCommands,
-    this.alertDuration,
-    this.apiKey,
-  );
+  SettingArguments(this.defaultCommands,
+      this.alertDuration,
+      this.apiKey,);
 
   SettingArguments.fromMap(Map map) {
     alertDuration = map[alertDuration];

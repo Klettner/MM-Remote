@@ -114,10 +114,10 @@ class _AddDevicePageState extends State<AddDevicePage> {
                         borderRadius: BorderRadius.all(Radius.circular(15.0)),
                       )),
                   onPressed: (_isComposingTitle &&
-                      _isComposingIp &&
-                      _isComposingApiKey)
+                          _isComposingIp &&
+                          _isComposingApiKey)
                       ? () => _handleSubmitted(_titleController.text,
-                      _ipController.text, _apiKeyController.text)
+                          _ipController.text, _apiKeyController.text)
                       : null,
                 )
               ],
