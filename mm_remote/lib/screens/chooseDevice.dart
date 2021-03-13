@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:mm_remote/dao/deviceArgumentsDao.dart';
+import 'package:mm_remote/dao/mirrorStateArgumentsDao.dart';
 import 'package:mm_remote/models/darkThemeProvider.dart';
 import 'package:mm_remote/models/deviceArguments.dart';
-import 'package:mm_remote/models/mirrorStateArguments.dart';
 import 'package:mm_remote/services/database.dart';
 import 'package:mm_remote/shared/colors.dart';
 import 'package:provider/provider.dart';
@@ -27,9 +27,8 @@ class _StartPageState extends State<StartPage> {
   void initState() {
     super.initState();
     final List<Widget> _devicesTemp = <Widget>[];
-    final deviceArgumentsBox = Hive.box('deviceArguments');
 
-    deviceArgumentsBox.values.forEach((device) {
+    getAllDeviceArguments().forEach((device) {
       Card _newDevice = _createDevice(device, false);
       _devicesTemp.add(_newDevice);
     });
@@ -121,7 +120,7 @@ class _StartPageState extends State<StartPage> {
     Card _newDevice = _createDevice(_deviceArguments, true);
     _initializeDevice(_newDevice);
     _initializeDefaultCommands(_deviceArguments.deviceName);
-    _initializeSettings(_deviceArguments.deviceName);
+    initializeMirrorStateArguments(_deviceArguments.deviceName);
   }
 
   void _initializeDevice(Card _newDevice) {
@@ -156,8 +155,8 @@ class _StartPageState extends State<StartPage> {
                 )),
             TextButton(
               onPressed: () {
-                _deleteDevice(deviceName);
                 Navigator.of(context).pop();
+                _deleteDevice(deviceName);
               },
               child: Text(
                 'Delete',
@@ -171,21 +170,18 @@ class _StartPageState extends State<StartPage> {
   }
 
   void _deleteDevice(String deviceName) {
-    final deviceArgumentsBox = Hive.box('deviceArguments');
-
-    deviceArgumentsBox.delete(deviceName);
+    deleteDeviceArguments(deviceName);
     _updateDeviceCards();
   }
 
   void _updateDeviceCards() {
-    final deviceArgumentsBox = Hive.box('deviceArguments');
     final List<Widget> _devicesTemp = <Widget>[];
 
-    List<DeviceArguments> devices = deviceArgumentsBox.values;
-    for (DeviceArguments device in devices) {
+    getAllDeviceArguments().forEach((device) {
       Card _newDevice = _createDevice(device, false);
       _devicesTemp.add(_newDevice);
-    }
+    });
+
     setState(() {
       _devices = _devicesTemp;
     });
@@ -193,7 +189,7 @@ class _StartPageState extends State<StartPage> {
 
   Card _createDevice(DeviceArguments device, bool persist) {
     if (persist) {
-      _persistDevice(device);
+      persistDeviceArguments(device);
     }
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -231,7 +227,8 @@ class _StartPageState extends State<StartPage> {
                     ),
                   ),
                   onPressed: () {
-                    DeviceArguments newDevice = _getDevice(device.deviceName);
+                    DeviceArguments newDevice =
+                        getDeviceArgument(device.deviceName);
                     Navigator.pushNamed(
                       context,
                       CurrentDevicePage.routeName,
@@ -256,16 +253,6 @@ class _StartPageState extends State<StartPage> {
     );
   }
 
-  void _persistDevice(DeviceArguments device) {
-    final deviceArgumentsBox = Hive.box('deviceArguments');
-    deviceArgumentsBox.put(device.deviceName, device);
-  }
-
-  DeviceArguments _getDevice(String deviceName) {
-    final deviceArgumentsBox = Hive.box('deviceArguments');
-    return deviceArgumentsBox.get(deviceName);
-  }
-
   void _initializeDefaultCommands(String deviceName) {
     // delete already existing defaultCommands for this device
     var dbHelper = SqLite();
@@ -273,12 +260,5 @@ class _StartPageState extends State<StartPage> {
     dbHelper.saveDefaultCommand(deviceName, "PhotoSlideshow");
     dbHelper.saveDefaultCommand(deviceName, "MonitorBrightness");
     dbHelper.saveDefaultCommand(deviceName, "StopwatchTimer");
-  }
-
-  void _initializeSettings(String deviceName) {
-    var setting = MirrorStateArguments(deviceName, '200', '10', 'ON');
-    var dbHelper = SqLite();
-    dbHelper.deleteSettings(deviceName);
-    dbHelper.saveSetting(setting);
   }
 }

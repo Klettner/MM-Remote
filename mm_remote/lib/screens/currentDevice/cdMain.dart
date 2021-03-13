@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mm_remote/dao/mirrorStateArgumentsDao.dart';
 import 'package:mm_remote/models/deviceArguments.dart';
 import 'package:mm_remote/models/mirrorStateArguments.dart';
 import 'package:mm_remote/models/settingArguments.dart';
@@ -426,7 +427,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
                 _httpRest.setBrightness(_brightnessValue);
               },
               onChangeEnd: (double newValue) {
-                updateBrightnessSetting(deviceName, newValue.round());
+                updateBrightnessState(deviceName, newValue.round());
                 _showSnackbar("Brightness changed to ${newValue.round()}");
               },
             )
@@ -654,16 +655,14 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   ) {
     _stateInitialized = true;
 
-    fetchSettingsFromDatabase(deviceName)
-        .then((MirrorStateArguments tempSettings) {
-      if (tempSettings != null) {
-        int _tempBrightnessValue = int.parse(tempSettings.brightness);
-        int _tempAlertDuration = int.parse(tempSettings.alertDuration);
-        setState(() {
-          _brightnessValue = _tempBrightnessValue;
-          _alertDuration = _tempAlertDuration;
-        });
-      }
+    MirrorStateArguments mirrorStateArguments =
+        getMirrorStateArguments(deviceName);
+    int _tempBrightnessValue = int.parse(mirrorStateArguments.brightness);
+    int _tempAlertDuration = int.parse(mirrorStateArguments.alertDuration);
+
+    setState(() {
+      _brightnessValue = _tempBrightnessValue;
+      _alertDuration = _tempAlertDuration;
     });
 
     fetchDefaultCommandsFromDatabase(deviceName)
@@ -703,7 +702,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       _alertDuration = int.tryParse(_amount);
       // Change the duration to seconds
       _alertDuration = _alertDuration;
-      updateAlertDurationSetting(deviceName, _alertDuration);
+      updateAlertDurationState(deviceName, _alertDuration);
       _showSnackbar('Alert duration set to ' + _amount);
     }
   }
@@ -722,7 +721,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       _apiKey = settings.apiKey;
       _updateDefaultCommandCards();
       persistDefaultCommands(deviceName, _defaultCommands);
-      updateAlertDurationSetting(deviceName, _alertDuration);
+      updateAlertDurationState(deviceName, _alertDuration);
       updateApiKey(deviceName, _apiKey);
     }
   }
