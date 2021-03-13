@@ -4,7 +4,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mm_remote/models/commandArguments.dart';
 import 'package:mm_remote/models/deviceArguments.dart';
 import 'package:mm_remote/models/mirrorStateArguments.dart';
-import 'package:mm_remote/screens/help.dart';
 import 'package:mm_remote/screens/settings.dart';
 import 'package:mm_remote/shared/styles.dart';
 import 'package:provider/provider.dart';
@@ -78,7 +77,6 @@ class _MirrorAppState extends State<MirrorApp> {
               CurrentDevicePage.routeName: (context) => CurrentDevicePage(),
               AddDevicePage.routeName: (context) => AddDevicePage(),
               StartPage.routeName: (context) => StartPage(),
-              HelpPage.routeName: (context) => HelpPage(),
               SettingsPage.routeName: (context) => SettingsPage(),
             },
           );

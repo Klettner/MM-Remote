@@ -24,12 +24,12 @@ dependencies:
   flutter:
     sdk: flutter
   http: 0.13.0
-  webview_flutter: 2.0.2
   path_provider: 2.0.1
   shared_preferences: 2.0.3
   provider: 5.0.0
   hive: 2.0.0
   hive_flutter: 1.0.0
+  url_launcher: 6.0.2
 
 
   # The following adds the Cupertino Icons font to your application.

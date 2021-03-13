@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mm_remote/dao/mirrorStateArgumentsDao.dart';
 import 'package:mm_remote/models/mirrorStateArguments.dart';
-import 'package:mm_remote/screens/help.dart';
 import 'package:mm_remote/services/httpRest.dart';
 import 'package:mm_remote/shared/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CurrentDeviceDrawer extends StatefulWidget {
   final HttpRest _httpRest;
@@ -58,9 +58,9 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
                       image: (_image == null)
                           ? null
                           : DecorationImage(
-                        image: FileImage(_image),
-                        fit: BoxFit.cover,
-                      ),
+                              image: FileImage(_image),
+                              fit: BoxFit.cover,
+                            ),
                       color: primaryColor,
                     ),
                     child: Column(
@@ -140,33 +140,35 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
                     alignment: FractionalOffset.bottomCenter,
                     child: Container(
                         child: Column(
-                          children: <Widget>[
-                            Divider(
-                              color: lineColor,
-                            ),
-                            ListTile(
-                              leading: Icon(Icons.settings,
-                                  semanticLabel: 'settings',
-                                  color: tertiaryColorMedium),
-                              title: Text(
-                                'Settings',
-                                style: TextStyle(color: tertiaryColorDark),
-                              ),
-                              onTap: () {
-                                this.widget._navigateToSettingsPage();
-                              },
-                            ),
-                            ListTile(
-                              leading: Icon(
-                                Icons.help,
-                                color: tertiaryColorMedium,
-                              ),
-                              title: Text(
-                                'Help & About (online)',
-                                style: TextStyle(color: tertiaryColorDark),
-                              ),
-                              onTap: () {
-                            Navigator.pushNamed(context, HelpPage.routeName);
+                      children: <Widget>[
+                        Divider(
+                          color: lineColor,
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.settings,
+                              semanticLabel: 'settings',
+                              color: tertiaryColorMedium),
+                          title: Text(
+                            'Settings',
+                            style: TextStyle(color: tertiaryColorDark),
+                          ),
+                          onTap: () {
+                            this.widget._navigateToSettingsPage();
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(
+                            Icons.help,
+                            color: tertiaryColorMedium,
+                          ),
+                          title: Text(
+                            'Help & About (online)',
+                            style: TextStyle(color: tertiaryColorDark),
+                          ),
+                          onTap: () async {
+                            const url =
+                                'https://klettner.github.io/MM-Remote_App.html';
+                            _launchURL(url);
                           },
                         )
                       ],
@@ -176,6 +178,10 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
       ),
     );
   }
+
+  void _launchURL(String url) async => await canLaunch(url)
+      ? await launch(url, forceWebView: true, forceSafariVC: false)
+      : throw 'Could not launch $url';
 
   void _syncMonitorStatus() async {
     try {
@@ -285,5 +291,4 @@ class _CurrentDeviceDrawerState extends State<CurrentDeviceDrawer> {
     this.widget._httpRest.toggleMonitorOff();
     updateMonitorState(widget.deviceName, 'OFF');
   }
-
 }
