@@ -36,6 +36,7 @@ MM-Remote is an Android 📱 and Windows 💻 app to control your [**MagicMirror
 * For Android 📱 look at [wiki/Installation-Android](https://github.com/Klettner/MM-Remote/wiki/Installation-Android)
 * For Windows 💻 look [wiki/Installation-Windows](https://github.com/Klettner/MM-Remote/wiki/Installation-Windows)
 
+&nbsp;
 ## Getting started ##
 * Have a look at [wiki/Getting-started](https://github.com/Klettner/MM-Remote/wiki/Getting-started)
    
