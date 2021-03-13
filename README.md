@@ -29,25 +29,12 @@ MM-Remote is an Android 📱 and Windows 💻 app to control your [**MagicMirror
   
 &nbsp;
 ## Dependencies ##
-  
-### Required :warning: (the app won't work without it): ###
-| Module | Usage |
-| ------ |------ |
-| [MMM-Remote-Control](https://github.com/Jopyth/MMM-Remote-Control) (version 2.2.0 or higher)| Communication between app and mirror |
-    
-### Optional (without these, some default commands won't work): ###
-If you do not use all the optional dependencies some default commands won't work, but such commands can be hidden in the settings.  
-
-| Module | Usage |  
-| ------ |------ |  
-| [MMM-BackgroundSlideshow](https://github.com/darickc/MMM-BackgroundSlideshow) | Controlling a photo-slideshow on the mirror |  
-| [MMM-Pages](https://github.com/edward-shen/MMM-pages) | Switching between different UI-pages |  
-| [MMM-StopwatchTimer](https://github.com/klettner/MMM-StopwatchTimer) | Controlling a timer/stop-watch on the mirror |  
+* Have a look at [wiki/Dependencies](https://github.com/Klettner/MM-Remote/wiki/Dependencies)
   
 &nbsp;
 ## Installation guide ##
-* For Android 📱 look [here](https://github.com/Klettner/MM-Remote/wiki/Installation-Android)
-* For Windows 💻 look [here](https://github.com/Klettner/MM-Remote/wiki/Installation-Windows)
+* For Android 📱 look at [wiki/Installation-Android](https://github.com/Klettner/MM-Remote/wiki/Installation-Android)
+* For Windows 💻 look [wiki/Installation-Windows](https://github.com/Klettner/MM-Remote/wiki/Installation-Windows)
 
 ## Getting started ##
 * Have a look at [wiki/Getting-started](https://github.com/Klettner/MM-Remote/wiki/Getting-started)
