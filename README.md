@@ -4,7 +4,7 @@
 [![GitHub license](https://img.shields.io/github/license/Klettner/MM-Remote)](https://github.com/Klettner/MM-Remote/blob/master/LICENSE.md)
 [![GitHub All Releases](https://img.shields.io/github/downloads/Klettner/MM-Remote/total)](https://GitHub.com/Klettner/MM-Remote/releases/)
   
-MM-Remote is an Android 📱 and Windows 💻 app to control your [**MagicMirror**](https://magicmirror.builders/) remotely.  
+MM-Remote is an Android 📱 Linux and Windows 💻 app to control your [**MagicMirror**](https://magicmirror.builders/) remotely.  
   
 ![](assets/MM-Remote_Android2.gif)
   
@@ -21,6 +21,7 @@ MM-Remote is an Android 📱 and Windows 💻 app to control your [**MagicMirror
 
 ### v3.0.0 ###
   * Windows desktop :computer: support
+  * Linux desktop support
   * Sync monitor brightness and status (on/of) with mirror
   * Switch between light and dark mode :first_quarter_moon_with_face:
   * Improved Stopwatch/Timer card
@@ -37,6 +38,7 @@ MM-Remote is an Android 📱 and Windows 💻 app to control your [**MagicMirror
 ## Installation guide ##
 * For Android 📱 look at [wiki/Installation-Android](https://github.com/Klettner/MM-Remote/wiki/Installation-Android)
 * For Windows 💻 look [wiki/Installation-Windows](https://github.com/Klettner/MM-Remote/wiki/Installation-Windows)
+* For Linux 💻 look [wiki/Installation-Linux](https://github.com/Klettner/MM-Remote/wiki/Installation-Linux)
 
 &nbsp;
 ## Getting started ##
