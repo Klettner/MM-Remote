@@ -6,7 +6,7 @@
   
 MM-Remote is an Android 📱 and Windows 💻 app to control your [**MagicMirror**](https://magicmirror.builders/) remotely.  
   
-![](assets/currentDeviceHomeTab.png)
+![](assets/MM-Remote_Android2.gif)
   
 ## Features ##
   * Change the monitor brightness :high_brightness:    
@@ -26,6 +26,8 @@ MM-Remote is an Android 📱 and Windows 💻 app to control your [**MagicMirror
   * Improved Stopwatch/Timer card
   * Improved settings page
   * Upgrade of Flutter and Android version
+
+![](assets/MM-Remote_Desktop.gif)
   
 &nbsp;
 ## Dependencies ##
