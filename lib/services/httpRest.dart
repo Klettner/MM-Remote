@@ -60,7 +60,7 @@ class HttpRest {
   }
 
   void backgroundSlideShowStop() {
-    sendCustomCommand("BACKGROUNDSLIDESHOW_STOP", "");
+    sendCustomCommand("BACKGROUNDSLIDESHOW_PAUSE", "");
     showSnackbar("Stopped SlideShow");
   }
 
