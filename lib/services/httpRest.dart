@@ -22,12 +22,32 @@ class HttpRest {
   }
 
   void sendCustomCommand(String notification, String payload) {
+    // Check if a MMM-Remote-Control API endpoint is used
+    if (notification.trim().startsWith("/")) {
+      _sendAPICommand(notification, payload);
+    } else {
+      _sendNotification(notification, payload);
+    }
+  }
+
+  void _sendNotification(String notification, String payload) {
+    // Check if a payload is used
     if (payload.trim().compareTo('') == 0) {
       http.get(Uri.http(_baseUrl, "/api/notification/$notification"),
           headers: _getHeader());
     } else {
       http.get(Uri.http(_baseUrl, "/api/notification/$notification/$payload"),
           headers: _getHeader());
+    }
+  }
+
+  void _sendAPICommand(String notification, String payload) {
+    // If a payload is used for the endpoint we need to send a post request
+    if (payload.trim().compareTo('') == 0) {
+      http.get(Uri.http(_baseUrl, "/api$notification"), headers: _getHeader());
+    } else {
+      http.post(Uri.http(_baseUrl, "/api$notification"),
+          headers: _getHeader(), body: payload);
     }
   }
 
