@@ -108,6 +108,7 @@ class _SettingsPageState extends State<SettingsPage> {
             DefaultCommand.MonitorBrightness, "Monitor brightness"),
         _createCheckboxListTile(
             DefaultCommand.StopwatchTimer, "Stopwatch/Timer"),
+        _createCheckboxListTile(DefaultCommand.Volume, "Volume"),
       ],
     );
   }

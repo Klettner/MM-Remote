@@ -16,13 +16,17 @@ class MirrorStateArguments extends HiveObject {
   @HiveField(3)
   String monitorStatus;
 
+  @HiveField(4)
+  String volume;
+
   MirrorStateArguments(this.deviceName, this.brightness, this.alertDuration,
-      this.monitorStatus);
+      this.monitorStatus, this.volume);
 
   MirrorStateArguments.fromMap(Map map) {
     deviceName = map[deviceName];
     brightness = map[brightness];
     alertDuration = map[alertDuration];
     monitorStatus = map[monitorStatus];
+    volume = map[volume];
   }
 }

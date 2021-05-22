@@ -21,20 +21,24 @@ class MirrorStateArgumentsAdapter extends TypeAdapter<MirrorStateArguments> {
       fields[1] as String,
       fields[2] as String,
       fields[3] as String,
+      fields[4] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, MirrorStateArguments obj) {
     writer
-      ..writeByte(4)..writeByte(0)
+      ..writeByte(5)
+      ..writeByte(0)
       ..write(obj.deviceName)
       ..writeByte(1)
       ..write(obj.brightness)
       ..writeByte(2)
       ..write(obj.alertDuration)
       ..writeByte(3)
-      ..write(obj.monitorStatus);
+      ..write(obj.monitorStatus)
+      ..writeByte(4)
+      ..write(obj.volume);
   }
 
   @override
@@ -43,7 +47,7 @@ class MirrorStateArgumentsAdapter extends TypeAdapter<MirrorStateArguments> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is MirrorStateArgumentsAdapter &&
-              runtimeType == other.runtimeType &&
-              typeId == other.typeId;
+      other is MirrorStateArgumentsAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }

@@ -14,4 +14,9 @@ class SettingArguments {
   }
 }
 
-enum DefaultCommand { MonitorBrightness, PhotoSlideshow, StopwatchTimer }
+enum DefaultCommand {
+  MonitorBrightness,
+  PhotoSlideshow,
+  StopwatchTimer,
+  Volume
+}
