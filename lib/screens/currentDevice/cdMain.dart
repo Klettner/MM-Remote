@@ -40,6 +40,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   String _apiKey;
   int _brightnessValue = 0;
   int _volumeValue = 0;
+  int _previousVolumeValue = 20;
   int _alertDuration = 10;
   bool _stateInitialized = false;
   HttpRest _httpRest;
@@ -449,13 +450,43 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
           children: <Widget>[
             new Align(
               alignment: Alignment.centerLeft,
-              child: new Container(
-                margin: new EdgeInsets.symmetric(horizontal: 6.0),
-                child: new Text(
-                  'Volume',
-                  textScaleFactor: 1.3,
-                  style: TextStyle(color: tertiaryColorDark),
-                ),
+              child: Row(
+                children: [
+                  new Container(
+                    margin: new EdgeInsets.symmetric(horizontal: 6.0),
+                    child: new Text(
+                      'Volume',
+                      textScaleFactor: 1.3,
+                      style: TextStyle(color: tertiaryColorDark),
+                    ),
+                  ),
+                  new IconButton(
+                      icon: _volumeValue == 0
+                          ? Icon(Icons.volume_off, semanticLabel: 'volume off')
+                          : Icon(Icons.volume_up, semanticLabel: 'volume on'),
+                      tooltip: 'mute and unmute mirror',
+                      color: buttonColor,
+                      iconSize: 25.0,
+                      onPressed: () {
+                        if (_volumeValue == 0) {
+                          // unmute
+                          _volumeValue = _previousVolumeValue;
+                          _httpRest.setVolume(_volumeValue);
+                        } else {
+                          // mute
+                          _previousVolumeValue = _volumeValue;
+                          _volumeValue = 0;
+                          _httpRest.setVolume(_volumeValue);
+                        }
+                        _updateVolumeSliderCard();
+                        _showSnackbar("Volume changed to $_volumeValue");
+
+                        // Persist changes in database
+                        updateVolumeState(deviceName, _volumeValue);
+                        updatePreviousVolumeState(
+                            deviceName, _previousVolumeValue);
+                      }),
+                ],
               ),
             ),
             new Slider(
@@ -471,6 +502,10 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
               },
               onChanged: (double newValue) {
                 setState(() {
+                  // save the previous volume for unmute
+                  if (newValue.round() == 0) {
+                    _previousVolumeValue = _volumeValue;
+                  }
                   _volumeValue = newValue.round();
                 });
                 _updateVolumeSliderCard();
@@ -724,12 +759,17 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     int _tempBrightnessValue = int.parse(mirrorStateArguments.brightness);
     int _tempAlertDuration = int.parse(mirrorStateArguments.alertDuration);
     int _tempVolume = int.parse(mirrorStateArguments.volume);
+    int _tempPreviousVolume = int.parse(mirrorStateArguments.previousVolume);
 
     setState(() {
       _brightnessValue = _tempBrightnessValue;
       _volumeValue = _tempVolume;
+      _previousVolumeValue = _tempPreviousVolume;
       _alertDuration = _tempAlertDuration;
     });
+
+    // sync monitor volume
+    _httpRest.setVolume(_volumeValue);
 
     setState(() {
       _currentDeviceDrawer =
