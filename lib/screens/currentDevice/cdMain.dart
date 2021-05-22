@@ -758,8 +758,16 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         getMirrorStateArguments(deviceName);
     int _tempBrightnessValue = int.parse(mirrorStateArguments.brightness);
     int _tempAlertDuration = int.parse(mirrorStateArguments.alertDuration);
-    int _tempVolume = int.parse(mirrorStateArguments.volume);
-    int _tempPreviousVolume = int.parse(mirrorStateArguments.previousVolume);
+    int _tempVolume = 20;
+    // prevent error when upgrading von previous version
+    if (mirrorStateArguments.volume != null) {
+      _tempVolume = int.parse(mirrorStateArguments.volume);
+    }
+    int _tempPreviousVolume = 20;
+    // prevent error when upgrading von previous version
+    if (mirrorStateArguments.previousVolume != null) {
+      _tempPreviousVolume = int.parse(mirrorStateArguments.previousVolume);
+    }
 
     setState(() {
       _brightnessValue = _tempBrightnessValue;
