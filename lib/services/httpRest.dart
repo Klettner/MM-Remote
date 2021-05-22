@@ -67,14 +67,6 @@ class HttpRest {
     sendCustomCommand("VOLUME_SET", "$value");
   }
 
-  void mute() {
-    sendCustomCommand("VOLUME_STORE", "0");
-  }
-
-  void unMute() {
-    sendCustomCommand("VOLUME_RESTORE", "");
-  }
-
   void sendAlert(String text, int _alertDuration) {
     var body = {"title": text, "timer": _alertDuration * 1000};
     http.post(Uri.http(_baseUrl, "/api/module/alert/showalert"),

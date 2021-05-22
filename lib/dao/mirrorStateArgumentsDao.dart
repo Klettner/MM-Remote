@@ -3,7 +3,7 @@ import 'package:mm_remote/models/mirrorStateArguments.dart';
 
 void initializeMirrorStateArguments(String deviceName) {
   final mirrorStateArgumentsBox = Hive.box('mirrorStateArguments');
-  var setting = MirrorStateArguments(deviceName, '200', '10', 'ON', '20');
+  var setting = MirrorStateArguments(deviceName, '200', '10', 'ON', '20', '20');
 
   mirrorStateArgumentsBox.put(deviceName, setting);
 }
@@ -42,5 +42,12 @@ void updateVolumeState(String deviceName, int volume) {
   MirrorStateArguments mirrorStateArguments =
       Hive.box('mirrorStateArguments').get(deviceName);
   mirrorStateArguments.volume = "$volume";
+  mirrorStateArguments.save();
+}
+
+void updatePreviousVolumeState(String deviceName, int previousVolume) {
+  MirrorStateArguments mirrorStateArguments =
+      Hive.box('mirrorStateArguments').get(deviceName);
+  mirrorStateArguments.previousVolume = "$previousVolume";
   mirrorStateArguments.save();
 }
