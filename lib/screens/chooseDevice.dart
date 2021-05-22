@@ -260,6 +260,7 @@ class _StartPageState extends State<StartPage> {
     initialDefaultCommands.add(DefaultCommand.PhotoSlideshow);
     initialDefaultCommands.add(DefaultCommand.MonitorBrightness);
     initialDefaultCommands.add(DefaultCommand.StopwatchTimer);
+    initialDefaultCommands.add(DefaultCommand.Volume);
     persistDefaultCommands(deviceName, initialDefaultCommands);
   }
 }

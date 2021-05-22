@@ -39,6 +39,7 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
   String deviceName;
   String _apiKey;
   int _brightnessValue = 0;
+  int _volumeValue = 0;
   int _alertDuration = 10;
   bool _stateInitialized = false;
   HttpRest _httpRest;
@@ -438,6 +439,54 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     );
   }
 
+  Widget _createVolumeSliderCard() {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            new Align(
+              alignment: Alignment.centerLeft,
+              child: new Container(
+                margin: new EdgeInsets.symmetric(horizontal: 6.0),
+                child: new Text(
+                  'Volume',
+                  textScaleFactor: 1.3,
+                  style: TextStyle(color: tertiaryColorDark),
+                ),
+              ),
+            ),
+            new Slider(
+              value: _volumeValue.toDouble(),
+              min: 0.0,
+              max: 100.0,
+              divisions: 20,
+              activeColor: accentColor,
+              inactiveColor: buttonColor,
+              label: 'changing volume',
+              semanticFormatterCallback: (double newValue) {
+                return '${newValue.round()}/100 volume';
+              },
+              onChanged: (double newValue) {
+                setState(() {
+                  _volumeValue = newValue.round();
+                });
+                _updateVolumeSliderCard();
+                _httpRest.setVolume(_volumeValue);
+              },
+              onChangeEnd: (double newValue) {
+                updateVolumeState(deviceName, newValue.round());
+                _showSnackbar("Volume changed to ${newValue.round()}");
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _createAlertLauncher() {
     return new Container(
       color: secondaryBackgroundColor,
@@ -532,6 +581,18 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
     });
   }
 
+  void _updateVolumeSliderCard() {
+    int volumeCardIndex = _defaultCommands.indexOf(DefaultCommand.Volume);
+    List<Widget> updatedList = <Widget>[];
+    updatedList.addAll(_defaultCommandCards);
+    updatedList.removeAt(volumeCardIndex);
+    Widget volumeSliderCard = _createVolumeSliderCard();
+    updatedList.insert(volumeCardIndex, volumeSliderCard);
+    setState(() {
+      _defaultCommandCards = updatedList;
+    });
+  }
+
   void _updateStopWatchTimerCard() {
     int stopWatchTimerCardIndex =
         _defaultCommands.indexOf(DefaultCommand.StopwatchTimer);
@@ -571,6 +632,9 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       case DefaultCommand.StopwatchTimer:
         commands.add(_createStopWatchTimerCard());
         break;
+      case DefaultCommand.Volume:
+        commands.add(_createVolumeSliderCard());
+        break;
       default:
         print("This default command is not specified");
     }
@@ -589,6 +653,9 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
       }
       if (defaultCommandString.compareTo("StopwatchTimer") == 0) {
         _defaultCommands.add(DefaultCommand.StopwatchTimer);
+      }
+      if (defaultCommandString.compareTo("Volume") == 0) {
+        _defaultCommands.add(DefaultCommand.Volume);
       }
     }
     _updateDefaultCommandCards();
@@ -656,9 +723,11 @@ class _CurrentDevicePageState extends State<CurrentDevicePage>
         getMirrorStateArguments(deviceName);
     int _tempBrightnessValue = int.parse(mirrorStateArguments.brightness);
     int _tempAlertDuration = int.parse(mirrorStateArguments.alertDuration);
+    int _tempVolume = int.parse(mirrorStateArguments.volume);
 
     setState(() {
       _brightnessValue = _tempBrightnessValue;
+      _volumeValue = _tempVolume;
       _alertDuration = _tempAlertDuration;
     });
 
