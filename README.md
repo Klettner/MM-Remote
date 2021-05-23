@@ -18,15 +18,12 @@ MM-Remote is an Android 📱 Linux and Windows 💻 app to control your [**Magic
   * Create your own custom commands  
   * Start a timer on the mirror
   * Start a stop-watch :hourglass_flowing_sand: on the mirror
+  * Dark mode :first_quarter_moon_with_face:
 
-### v3.0.0 ###
-  * Windows desktop :computer: support
-  * Linux desktop support
-  * Sync monitor brightness and status (on/of) with mirror
-  * Switch between light and dark mode :first_quarter_moon_with_face:
-  * Improved Stopwatch/Timer card
-  * Improved settings page
-  * Upgrade of Flutter and Android version
+### v3.1.0 ###
+  * Add controls for changing the volume of the mirror (@dresch27 thanks for the suggestion)
+  * Add support for MMM-Remote-Control endpoints in custom commands
+  * Fix bug that prevents pausing the photo-slideshow (@Dimasua thanks for the hint)
 
 ![](assets/MM-Remote_Desktop.gif)
   
