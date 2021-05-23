@@ -21,7 +21,7 @@ MM-Remote is an Android 📱 Linux and Windows 💻 app to control your [**Magic
   * Dark mode :first_quarter_moon_with_face:
 
 ### v3.1.0 ###
-  * Add controls for changing the volume of the mirror (@dresch27 thanks for the suggestion)
+  * Add controls for changing the volume 🔉 of the mirror (@dresch27 thanks for the suggestion)
   * Add support for MMM-Remote-Control endpoints in custom commands
   * Fix bug that prevents pausing the photo-slideshow (@Dimasua thanks for the hint)
 
